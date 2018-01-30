@@ -1,0 +1,34 @@
+#tag layout_block("title")
+错误页面
+#end
+#tag layout_block("body")
+<body class="gray-bg">
+    <div class="middle-box text-center animated fadeInDown">
+        <h1>${request.getAttribute('javax.servlet.error.status_code')}</h1>
+        <h3 class="font-bold">
+        	#if(request.getAttribute('javax.servlet.error.status_code')==400)
+        	Bad Request
+        	#elseif(request.getAttribute('javax.servlet.error.status_code')==401)
+        	Unauthorized
+        	#elseif(request.getAttribute('javax.servlet.error.status_code')==403)
+        	Forbidden
+        	#elseif(request.getAttribute('javax.servlet.error.status_code')==404)
+        	Not Found
+        	#elseif(request.getAttribute('javax.servlet.error.status_code')==405)
+        	Method Not Allowed
+        	#elseif(request.getAttribute('javax.servlet.error.status_code')==500)
+        	Internal Server Error
+        	#end
+        </h3>
+        <div class="error-desc">
+        	An exception of '${request.getAttribute('javax.servlet.error.exception')}' was thrown.
+        	<br/>
+            <h4>你可能需要:</h4>
+            <a href="/" class="btn btn-primary m-t">主页</a>
+            <a href="javascript:window.history.go(-1);" class="btn btn-info m-t">返回</a>
+			<a href="/logout" class="btn btn-primary m-t">退出登录</a>
+        </div>
+    </div>
+</body>
+#end  
+#include("/common/base.html")

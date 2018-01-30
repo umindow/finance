@@ -1,0 +1,31 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element"> 
+                	 <span>
+                     	<img alt="image" class="img-circle" src="${url('static/img/user1.png')}" width="65px" height="65px"/>
+                     </span>
+                     <span class="fadeInRight pull-right" style="font-weight: bold;color: #DFE4ED;font-size:x-small;margin-top: 20px;">
+                     ${currentUser().userCnName} | ${currentUserLevelDesc()}
+                     </span>
+                </div>
+                <div class="logo-element">CC+</div>
+            </li>
+            #for(menu : menu())
+             #if(currentLevel() >= menu.level)
+            	<li>
+                	<a href="${menu.url}"><i class="fa fa-fw fa-lg ${menu.icon}"></i><span class="nav-label">${menu.name}</span> <span class="fa arrow"></span></a>
+	                <ul class="nav nav-second-level collapse">
+	                	#for(submenu : menu.sub_menus)
+                            #if(currentLevel() >= submenu.level)
+		                	<li><a url="${submenu.url}" href="javascript:goUrl('${submenu.url}');"><i class="fa fa-fw ${submenu.icon}"></i><span>${submenu.name}</span></a></li>
+	                	    #end
+                        #end
+	                </ul>
+           		</li>
+             #end
+            #end
+        </ul>
+    </div>
+</nav>

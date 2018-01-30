@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    #include("/common/header.html")
+    ${css}<!-- 各页面的独立CSS -->
+</head>
+<body>
+#include("/common/theme.html")
+<div id="wrapper">
+    <!-- 左侧导航 -->
+    #include("/common/nav.html")
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        #include("/common/top.html")
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="wrapper wrapper-content animated fadeInRight">
+                    <div id="debug" class="panel panel-danger" style="display: none;">
+                        <div class="panel-heading">Template's model data used by current view</div>
+                        <div class="panel-body">
+                            <pre>${debug}</pre>
+                        </div>
+                    </div>
+                    <!-- 主要内容 -->
+                    ${mainContent}
+                </div>
+                <div class="footer">
+                    <div class="text-center">
+                        <strong>Copyright &copy; 2018-2018</strong> <a target="_blank" href="#">版权所有</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+</div>
+<script src="${url('/resources/js/jquery-2.1.1.js')}"></script>
+<script src="${url('/resources/js/bootstrap.min.js')}"></script>
+<script src="${url('/resources/js/plugins/metisMenu/jquery.metisMenu.js')}"></script>
+<script src="${url('/resources/js/plugins/slimscroll/jquery.slimscroll.min.js')}"></script>
+<script src="${url('/resources/js/plugins/gritter/jquery.gritter.min.js')}"></script>
+<script src="${url('/resources/js/inspinia.js')}"></script>
+<script src="${url('/resources/js/app.js')}"></script>
+<script src="${url('/resources/js/plugins/pace/pace.min.js')}"></script>
+<script src="${url('/resources/js/plugins/toastr/toastr.min.js')}"></script>
+<script src="${url('/resources/js/plugins/validation/jquery.validate.min.js')}"></script>
+<script src="${url('/resources/js/plugins/validation/additional-methods.js')}"></script>
+<script src="${url('/resources/js/plugins/validation/messages_zh.js')}"></script>
+<script src="${url('/resources/js/plugins/sweetalert/sweetalert.min.js')}"></script>
+<script src="${url('/resources/js/plugins/ladda/spin.min.js')}"></script>
+<script src="${url('/resources/js/plugins/ladda/ladda.min.js')}"></script>
+<script src="${url('/resources/js/plugins/ladda/ladda.jquery.min.js')}"></script>
+<script src="${url('/resources/js/plugins/twbsPagination/jquery.twbsPagination.min.js')}"></script>
+<input id="CSRFToken" type="hidden" value="${CSRFToken?!''}"/>
+${js}<!-- 各页面的独立JS -->
+</body>
+</html>

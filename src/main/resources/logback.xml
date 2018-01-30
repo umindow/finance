@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 日志组件启动时，打印调试信息，并监控此文件变化，周期300秒 -->
+<configuration scan="true" scanPeriod="300 seconds" debug="false">
+
+    <!-- 配置文件，包括此文件内的所有变量的配置 -->
+    <property name="LOG_PATH" value="/data/www/java/work/logs"/>
+    <property name="APP_NAME" value="Demo-app"/>
+    <property name="MY_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36}:%L- %msg%n"/>
+
+
+    <!-- contextName主要是为了区分在一个web容器下部署多个应用启用jmx时，不会出现混乱 -->
+    <contextName>${APP_NAME}</contextName>
+
+    <!-- ***************************************************************** -->
+    <!-- 配置输出到控制台，仅在开发测试时启用输出到控制台 ，下面的语句在window环境下生效，使用mac或者ubuntu的同学，请自己构造下 -->
+    <!-- ***************************************************************** -->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${MY_PATTERN}</pattern>
+        </encoder>
+        <!-- INFO级别以下直接过滤掉
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>-->
+    </appender>
+
+
+    <!-- ***************************************************************** -->
+    <!-- info级别的日志appender -->
+    <!-- ***************************************************************** -->
+    <appender name="app-info"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}-info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-info.log.%d{yyyy-MM-dd}.gz
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${MY_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    
+    <logger name="com.alibaba" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+
+    <!-- 根日志logger -->
+    <root level="INFO">
+     	<appender-ref ref="STDOUT"/>
+        <appender-ref ref="app-info"/>
+    </root>
+
+</configuration>
