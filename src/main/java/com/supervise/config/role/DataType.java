@@ -20,6 +20,9 @@ public enum DataType {
     SUPERVISE_FEE_DATA("收费退费数据", 400),
     SUPERVISE_REPLACE_DATA("代偿数据", 500),
     SUPERVISE_TRACE_DATA("追偿数据", 600);
+//    META_CODE_ADD("原数据编码",700),
+//    META_CODE_MODIFY("",701),、
+//    META_CODE_DELETE("",702);、
     @Getter@Setter
     private String dataName;
     @Getter@Setter
