@@ -11,5 +11,4 @@ package com.supervise.message;
  */
 public interface MessageSender {
 
-
 }
