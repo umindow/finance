@@ -1,9 +1,8 @@
-package com.supervise.schedule;
+package com.supervise.schedule.job;
 
+import com.supervise.schedule.AbstractSchedule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,10 +15,11 @@ import org.springframework.stereotype.Component;
  * User    |    Time    |    Note
  */
 @Component
-public class DataLoadedSchedule extends AbstractSchedule{
+public class DataLoadedSchedule extends AbstractSchedule {
+    private final Logger logger = LoggerFactory.getLogger(DataLoadedSchedule.class);
     @Override
     public String scheduleName() {
-        return "data-loaded-schedule-";
+        return "data-loaded-schedule";
     }
 
     @Override
@@ -27,5 +27,6 @@ public class DataLoadedSchedule extends AbstractSchedule{
         //doing
         //new DataConfig
         //数据处理
+        logger.info("-------------------------test job doing------------------");
     }
 }

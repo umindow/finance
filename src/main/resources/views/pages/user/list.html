@@ -1,0 +1,107 @@
+#tag layout_block("title") 
+Finance  - 用户管理
+#end 
+#tag layout_block("breadcrumb")
+<li class="active"><strong style="color:red;">用户管理</strong></li>
+#end 
+#tag layout_block("mainContent")
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="row m-b-sm m-t-sm">
+                        <div class="col-md-1">
+                            <button type="button" id="refresh" class="btn btn-white btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+                        </div>
+                        <!--<div class="col-md-5">-->
+                            <!--<div class="input-group">-->
+                            <!--<input type="text" id="searchKey" name="searchKey" placeholder="请输入用户姓名搜索" class="input-sm form-control" value="${searchKey?!null}"> -->
+                            <!--<span class="input-group-btn"><button id="searchBtn" type="button" class="btn btn-sm btn-primary"> Go!</button></span>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="col-md-6">
+                       		<a href="/user/add" class="btn btn-primary btn-sm pull-right">新增用户</a>
+                    	</div>
+                    </div>
+
+                    <div class="project-list">
+                        <table class="table table-hover table-striped">
+                        	<thead>
+                        		<th>头像</th>
+                        		<th>用户名</th>
+                        		<th>工号</th>
+                        		<th>内部角色</th>
+                        		<th>邮箱地址</th>
+                        		<th>创建时间</th>
+                        		<th>最后更新</th>
+                                <th>操作</th>
+                        	</thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td class="project-actions">
+                                    <a href="/user/edit?id=1" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> 编辑 </a>
+                                    <a href="/user/edit?id=1" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> 删除 </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!--<ul id="pagination"></ul>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+#tag layout_block("js")
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#refresh").on("click",function(){
+		window.location.reload();
+	})
+//	$('#pagination').twbsPagination({
+//		first: "首页",
+//		prev: "上一页",
+//		next: "下一页",
+//		last: "尾页",
+//        totalPages: ${list.pages},
+//        visiblePages: 7,
+//        href: 'list?p={{pageNumber}}',
+//        hrefVariable: '{{pageNumber}}',
+//        startPage: ${list.pageNum},
+//        onPageClick: function (event, page) {
+//        }
+//    });
+});
+
+function del(id,name){
+	sw_confirm("确认删除吗?","将永久删除User["+name+"]。","warning",function(){
+		$.post("/user/delete",{"id":id},function(result){
+			if(result.success){
+				sw_alert("操作成功","已删除User["+name+"]。","success",function(){
+					window.location.reload();
+				});
+			}else{
+				sw_alert("操作失败","原因:"+result.reason,"error");
+			}
+		});
+	});
+}
+</script>
+#end
+#include("/common/framework.html")

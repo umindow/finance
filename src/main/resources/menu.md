@@ -1,8 +1,16 @@
 [{
     "name": "用户管理", 
-    "url": "/user/list",
+    "url": "#",
     "icon": "fa-github-alt",
-    "level": 1
+    "level": 1,
+    "sub_menus": [
+       {
+         "name": "用户列表", 
+          "url": "/user/list",
+          "icon": "fa-user",
+          "level":  1
+          }
+       ]
 },
 {
     "name": "数据管理", 

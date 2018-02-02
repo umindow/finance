@@ -45,13 +45,7 @@ public class ScheduleChecker implements Checker {
 
     public void changeScheduleStatus(String dupKey, ScheduleStatusEntity.ScheduleStatus scheduleStatus) {
         try {
-            Example example = new Example(ScheduleStatusEntity.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("dupkey", dupKey);
-            ScheduleStatusEntity scheduleStatusEntity = new ScheduleStatusEntity();
-            scheduleStatusEntity.setScheduleStatus(scheduleStatus.getStatus());
-            scheduleStatusEntity.setUpdateTime(new Date());
-            scheduleStatusMapper.updateByExample(scheduleStatusEntity, example);
+            scheduleStatusMapper.updateStatus(scheduleStatus.getStatus(),dupKey,new Date());
         } catch (Exception e) {
             logger.error("Update Schedule Status Fail.", e);
         }

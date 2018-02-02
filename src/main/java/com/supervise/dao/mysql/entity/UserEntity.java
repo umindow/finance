@@ -33,4 +33,6 @@ public class UserEntity extends BaseEntity{
     private int level;// level may appar role=>rule
     @Column(name = "data_levels")
     private String dataLevels;//json(List<Integer)
+    @Column(name = "user_status")
+    private int userStatus;//用户状态，1有效,-1逻辑删除
 }

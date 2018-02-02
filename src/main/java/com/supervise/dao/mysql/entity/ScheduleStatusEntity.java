@@ -28,7 +28,7 @@ public class ScheduleStatusEntity extends BaseEntity{
     private int scheduleStatus;
     @Column(name = "create_time")
     private Date createTime;
-    @Column(name = "update_tim")
+    @Column(name = "update_time")
     private Date updateTime;
 
 

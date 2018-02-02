@@ -1,6 +1,7 @@
 package com.supervise.schedule;
 
 import com.supervise.dao.mysql.entity.ScheduleStatusEntity;
+import com.supervise.schedule.job.DataLoadedSchedule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

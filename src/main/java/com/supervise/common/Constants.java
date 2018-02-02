@@ -11,7 +11,10 @@ package com.supervise.common;
  */
 public final class Constants {
 
+
     public final static class SessionContant{
         public static final String USER_SESSION_KEY = "user.session.key";
     }
+
+    public static final Integer PAGE_SIZE = 10;
 }
