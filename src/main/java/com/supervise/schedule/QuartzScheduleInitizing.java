@@ -1,6 +1,8 @@
 package com.supervise.schedule;
 
 import com.supervise.config.role.DataType;
+import com.supervise.support.SpringContextHolder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +17,7 @@ import javax.annotation.PostConstruct;
  * User    |    Time    |    Note
  */
 @Component
+@ConditionalOnBean(SpringContextHolder.class)
 public class QuartzScheduleInitizing {
     @PostConstruct
     public void initDbSchedule() {

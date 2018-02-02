@@ -27,6 +27,7 @@ public class IndexController {
     @RequestMapping({"/index",""})
     public ModelAndView index(Model model) {
         ModelAndView mv = new ModelAndView("/index");
+        mv.addObject("msg","");
         return mv;
     }
 }

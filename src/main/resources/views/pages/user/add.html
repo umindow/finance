@@ -1,0 +1,139 @@
+#tag layout_block("title")
+Finance  - 用户管理
+#end
+#tag layout_block("breadcrumb")
+<li class="active"><strong style="color:red;">新增用户</strong></li>
+#end
+#tag layout_block("mainContent")
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>新增用户 </h5>
+                </div>
+                <div class="ibox-content">
+                    <form method="post" id="userAddForm" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">用户名</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="userName" placeholder="用户名(必填)"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">密码</label>
+                            <div class="col-sm-9">
+                                <input type="password" name="password" placeholder="密码(必填)"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">中文名</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="userCnName" placeholder="中文名(必填)"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">邮箱</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="email" placeholder="邮箱(必填)"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">手机号</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="phone" placeholder="手机号(必填)"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">角色</label>
+                            <div class="col-sm-9">
+                                <select class="form-control m-b" name="level">
+                                    #for(role:roles)
+                                    <option value="${role.roleLevel}">${role.roleName}</option>
+                                    #end
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">数据权限</label>
+                            <div class="col-sm-9">
+                                #for(dataRole:dataRoles)
+                                <div class="i-checks"><label> <input type="checkbox" name="dataLevels"
+                                                                     value="${dataRole.dataLevel}">
+                                    <i></i>${dataRole.dataName} </label></div>
+                                #end
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-white" type="button">取消</button>
+                                <button id="addUserSubmit" class="btn btn-primary" type="button">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+#tag layout_block("js")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#addUserSubmit").click(function () {
+            var form = $('#userAddForm');
+            var userName = $(form).find('input[name=userName]').val();
+            if('' == userName){
+                error("用户名不能为空.");
+                return;
+            }
+            var lowerReg =/^[a-z]+$/;
+            if(!lowerReg.test(userName)){
+                error("用户名只能是英文小写.");
+                return;
+            }
+            var password = $(form).find('input[name=password]').val();
+            if('' == password){
+                error("密码不能为空.");
+                return;
+            }
+            var userCnName  = $(form).find('input[name=userCnName]').val();
+            if('' == userCnName){
+                error("用户名中文名不能为空.");
+                return;
+            }
+            var email = $(form).find('input[name=email]').val();
+            var emailReg = /^([\.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+            if ('' == email || !emailReg.test(email)) {
+                error("邮箱格式不正确.");
+                return;
+            }
+            var phone = $(form).find('input[name=phone]').val();
+            var phoneReg = /^1[3|4|5|7|8][0-9]\d{4,8}$/;
+            if ('' == phone || !phoneReg.test(phone)) {
+                error("手机格式不正确.");
+                return;
+            }
+            var load = $("#addUserSubmit").ladda();
+            load.ladda('start');
+            $.post("/user/save",form.serialize(), function (result) {
+                load.ladda('stop');
+                if (result.success) {
+                    success("添加成功", refreshWindow());
+                } else {
+                    error("添加失败:" + result.reason);
+                }
+            });
+        });
+    });
+</script>
+#end
+#include("/common/framework.html")

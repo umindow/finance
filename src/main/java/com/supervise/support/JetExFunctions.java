@@ -1,7 +1,9 @@
 package com.supervise.support;
 
 
+import com.alibaba.fastjson.JSON;
 import com.supervise.common.SessionUser;
+import com.supervise.config.role.DataType;
 import com.supervise.config.role.RoleType;
 import com.supervise.dao.mysql.entity.UserEntity;
 import jetbrick.template.JetAnnotations;
@@ -72,8 +74,30 @@ public class JetExFunctions {
     }
 
     public static UserEntity currentUser() {
-        UserEntity userEntity =  SessionUser.INSTANCE.getCurrentUser();
+        UserEntity userEntity = SessionUser.INSTANCE.getCurrentUser();
         return userEntity;
+    }
+
+    public static String userLevelDesc(int level) {
+        RoleType[] roleTypes = RoleType.values();
+        for (final RoleType roleType : roleTypes) {
+            if (roleType.getRoleLevel() == level) {
+                return roleType.getRoleName();
+            }
+        }
+        return "未知角色";
+    }
+
+    public static String userDataRole(String dataRoleJson) {
+        DataType[] dataTypes = DataType.values();
+        List<Integer> dataRoles = JSON.parseArray(dataRoleJson, Integer.class);
+        StringBuilder builder = new StringBuilder();
+        for (final DataType dataType : dataTypes) {
+            if (dataRoles.contains(dataType.getDataLevel())) {
+                builder.append(dataType.getDataName()).append(",");
+            }
+        }
+        return "".equals(builder.toString()) ? "未知" : builder.toString().substring(0, builder.toString().length() - 1);
     }
 
     public static String currentUserLevelDesc() {
