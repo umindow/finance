@@ -13,10 +13,32 @@
        ]
 },
 {
+    "name": "配置管理",
+    "url": "#",
+    "icon": "fa-github-alt",
+    "level": 1,
+    "sub_menus": [
+       {
+         "name": "配置列表",
+          "url": "/config/list",
+          "icon": "fa-user",
+          "level":  1
+          }
+       ]
+},
+{
     "name": "数据管理", 
-    "url": "/data/list",
+    "url": "#",
     "icon": "fa-database",
-    "level": 1
+    "level": 1,
+     "sub_menus": [
+           {
+             "name": "数据管理",
+              "url": "/data/list",
+              "icon": "fa-user",
+              "level":  1
+              }
+           ]
 },
 {
     "name": "日志管理", 

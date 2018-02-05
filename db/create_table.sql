@@ -129,3 +129,15 @@ CREATE TABLE `finance_repayment` (
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `finance_config`;
+CREATE TABLE `finance_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `config_type` int(11) DEFAULT NULL,
+  `create_user_id` bigint(20) DEFAULT NULL,
+  `create_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_user_id` bigint(20) DEFAULT NULL,
+  `config_content` longtext COLLATE utf8_bin,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

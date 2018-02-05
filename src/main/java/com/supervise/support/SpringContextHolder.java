@@ -4,6 +4,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  * 可在任何代码任何地方任何时候取出ApplicaitonContext.
  */
 @Service
+@ConditionalOnClass({ApplicationContext.class})
 public class SpringContextHolder implements ApplicationContextAware,
         DisposableBean {
 

@@ -1,5 +1,6 @@
 package com.supervise.config.role;
 
+import com.supervise.schedule.job.BankTrustSchedule;
 import com.supervise.schedule.job.DataLoadedSchedule;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,7 @@ import lombok.Setter;
  */
 public enum DataType {
     SUPERVISE_BIZ_DATA("系统业务数据", 100, 1, DataLoadedSchedule.class.getSimpleName()),
-    SUPERVISE_BANK_DATA("银行授信数据", 200, 1, null),
+    SUPERVISE_BANK_DATA("银行授信数据", 200, 1, BankTrustSchedule.class.getSimpleName()),
     SUPERVISE_REBACK_DATA("还款数据", 300, 1, null),
     SUPERVISE_FEE_DATA("收费退费数据", 400, 1, null),
     SUPERVISE_REPLACE_DATA("代偿数据", 500, 1, null),

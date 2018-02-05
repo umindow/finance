@@ -13,6 +13,8 @@ import lombok.Data;
  */
 @Data
 public class JobInfo {
+    public static final String DEFAULT_JOB_GROUP = "default.job.group";
+    public static final String DEFAULT_JOB_TRIGGER_GROUP = "default.job.trigger.group";
     private String jobName;
     private String cron;
     private String jobGroup;

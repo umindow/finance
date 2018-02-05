@@ -1,9 +1,13 @@
 package com.supervise;
 
+import com.supervise.schedule.QuartzScheduleInitizing;
+import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Import;
 
 /**
  * Created by xishui on 2018/1/30 上午9:35.
@@ -15,6 +19,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
  * User    |    Time    |    Note
  */
 @SpringBootApplication
+@Import(value = {MybatisAutoConfiguration.class})
 public class SuperviseFinanceApplication extends SpringBootServletInitializer {
 
     /**
@@ -26,7 +31,11 @@ public class SuperviseFinanceApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-
-        SpringApplication.run(SuperviseFinanceApplication.class, args);
+        ConfigurableApplicationContext context =  SpringApplication.run(SuperviseFinanceApplication.class, args);
+        //启动定时任务加载.
+        QuartzScheduleInitizing initizing = context.getBean(QuartzScheduleInitizing.class);
+        if(null != initizing){
+            initizing.initDbSchedule();
+        }
     }
 }

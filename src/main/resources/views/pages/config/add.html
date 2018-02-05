@@ -1,0 +1,101 @@
+#tag layout_block("title")
+Finance  - 配置管理
+#end
+#tag layout_block("breadcrumb")
+<li class="active"><strong style="color:red;">新增配置</strong></li>
+#end
+#tag layout_block("mainContent")
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>新增配置 </h5>
+                </div>
+                <div class="ibox-content">
+                    <form method="post" id="configAddForm" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Job名称</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="jobInfo.jobName" placeholder="Job名称"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Job组</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="jobInfo.jobGroup" placeholder="Job组"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">JobTrigger组</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="jobInfo.jobTriggerGroup" placeholder="JobTrigger组"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Job Cron</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="jobInfo.cron" placeholder="Job Cron(0 0/1 * * * ?)"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">配置类型</label>
+                            <div class="col-sm-9">
+                                <select class="form-control m-b" name="configType">
+                                    #for(configType:configTypes)
+                                    <option value="${configType.type}">${configType.desc}</option>
+                                    #end
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Job数据类型</label>
+                            <div class="col-sm-9">
+                                <select class="form-control m-b" name="jobInfo.jobDataType">
+                                    #for(dataRole:dataRoles)
+                                    <option value="${dataRole.dataName}">${dataRole.dataName}</option>
+                                    #end
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-white" type="button">取消</button>
+                                <button id="addConfigSubmit" class="btn btn-primary" type="button">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+#tag layout_block("js")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#addConfigSubmit").click(function () {
+            var form = $('#configAddForm');
+
+            var load = $("#addUserSubmit").ladda();
+            load.ladda('start');
+            $.post("/config/save",form.serialize(), function (result) {
+                load.ladda('stop');
+                if (result.success) {
+                    success("添加成功", refreshWindow());
+                } else {
+                    error("添加失败:" + result.reason);
+                }
+            });
+        });
+    });
+</script>
+#end
+#include("/common/framework.html")

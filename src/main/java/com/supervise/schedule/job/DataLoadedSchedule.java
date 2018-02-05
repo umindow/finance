@@ -27,6 +27,6 @@ public class DataLoadedSchedule extends AbstractSchedule {
         //doing
         //new DataConfig
         //数据处理
-        logger.info("-------------------------test job doing------------------");
+        logger.info("-------------------------data loaded job doing------------------");
     }
 }

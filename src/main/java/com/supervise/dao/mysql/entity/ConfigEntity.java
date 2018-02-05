@@ -1,5 +1,6 @@
 package com.supervise.dao.mysql.entity;
 
+import com.supervise.config.mysql.base.BaseEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,7 @@ import java.util.Date;
  */
 @Data
 @Table(name = "finance_config")
-public class ConfigEntity {
+public class ConfigEntity extends BaseEntity{
     @Column(name = "config_type")
     private int configType;//配置类型 1:调度任务配置类型
     @Column(name = "create_user_id")
@@ -34,13 +35,24 @@ public class ConfigEntity {
     private String configContent;//json(entity) jobInfo;
 
     public enum ConfigType {
-        JOB_TYPE(1);
+        JOB_TYPE(1,"调度任务配置");
         @Getter
         @Setter
         private int type;
-
-        ConfigType(int type) {
+        @Getter
+        @Setter
+        private String desc;
+        ConfigType(int type,String desc) {
             this.type = type;
+            this.desc = desc;
+        }
+        public static String getConfigTypeDesc(int configType){
+            for(final ConfigType config:values()){
+                if(config.getType() == configType){
+                    return config.getDesc();
+                }
+            }
+            return "未知类型";
         }
     }
 
