@@ -37,6 +37,8 @@ public class UserEntity extends BaseEntity{
     private String dataLevels;//json(List<Integer)
     @Column(name = "user_status")
     private int userStatus;//用户状态，1有效,-1逻辑删除
+    @Column(name = "dep_id")
+    private int depId;//部门ID
 
     public enum UserStatus{
         ALIVE(1,"有效"),NON_LIVE(-1,"删除");

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by xishui.hb on 2018/1/30 下午2:08.
+ * Created by xishui.hb on 2018/2/6 上午9:46.
  *
  * @author xishui
  * Description:
@@ -15,10 +15,17 @@ import java.lang.annotation.Target;
  * User    |    Time    |    Note
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Role {
+@Target({ElementType.FIELD})
+public @interface DepRole {
+    /**
+     * 字段属于哪些部门
+     * @return
+     */
+    DepType[] depTypes() default DepType.ALL;
 
-    RoleType roleType() default RoleType.NOMAL;
-
-
+    /**
+     * 是否有修改权限，默认可以修改
+     * @return
+     */
+    boolean modify() default true;
 }

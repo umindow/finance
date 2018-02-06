@@ -50,4 +50,12 @@ public enum DataType {
         }
         return null;
     }
+    public static DataType typeOfType(int type){
+        for(final DataType dataType : values()){
+            if(dataType.getDataType() == type){
+                return dataType;
+            }
+        }
+        return null;
+    }
 }
