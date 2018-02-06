@@ -30,7 +30,7 @@ CREATE TABLE `finance_user` (
   `phone` varchar(16) COLLATE utf8_bin DEFAULT NULL COMMENT '用户电话',
   `data_levels` varchar(200) COLLATE utf8_bin DEFAULT NULL COMMENT '用户数据权限',
   `user_status` int(11) DEFAULT '1' COMMENT '用户状态',
-  `dep_id` int(11) DEFAULT null COMMENT '部门ID',
+  `dep_id` VARCHAR (200) DEFAULT null COMMENT '部门ID',
   PRIMARY KEY (`id`),
   KEY `login_index` (`user_name`,`password`) COMMENT '组合登录索引'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

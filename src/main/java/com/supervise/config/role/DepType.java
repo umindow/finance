@@ -1,5 +1,8 @@
 package com.supervise.config.role;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by xishui.hb on 2018/2/6 上午9:45.
  * 有哪些部门，会和字段绑定
@@ -15,8 +18,9 @@ public enum DepType {
     COMPREHENSIVE_DEP(2, "综合管理部"),
     RISK_DEP(3, "风险管理部"),
     LAW_DEP(4, "资产管理以及法律事务部");
-
+    @Getter @Setter
     private int depId;
+    @Getter @Setter
     private String depDesc;
 
     DepType(int depId, String depDesc) {

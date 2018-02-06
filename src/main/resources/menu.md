@@ -33,8 +33,8 @@
     "level": 1,
      "sub_menus": [
            {
-             "name": "数据管理",
-              "url": "/data/list",
+             "name": "银行授信数据",
+              "url": "/data/bankCreditList",
               "icon": "fa-user",
               "level":  1
               }

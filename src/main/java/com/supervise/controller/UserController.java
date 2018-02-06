@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.supervise.common.Constants;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
+import com.supervise.config.role.DepType;
 import com.supervise.config.role.RoleType;
 import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.mapper.UserMapper;
@@ -59,6 +60,7 @@ public class UserController {
         ModelAndView view = new ModelAndView("pages/user/add");
         view.addObject("roles", Arrays.asList(RoleType.values()));
         view.addObject("dataRoles", Arrays.asList(DataType.values()));
+        view.addObject("depRoles",Arrays.asList(DepType.values()));
         return view;
     }
 
@@ -83,6 +85,14 @@ public class UserController {
                 dataLeves.add(Integer.valueOf(dataLevel));
             }
             userEntity.setDataLevels(JSON.toJSONString(dataLeves));
+        }
+        if(null != userEntity.getDepId()){
+            List<String> depIdStrs = Arrays.asList(userEntity.getDepId().split(","));
+            List<Integer> depIds = new ArrayList<Integer>();
+            for(final String depId : depIdStrs){
+                depIds.add(Integer.valueOf(depId));
+            }
+            userEntity.setDepId(JSON.toJSONString(depIds));
         }
         userEntity.setUserStatus(UserEntity.UserStatus.ALIVE.getStatus());
         userMapper.insert(userEntity);
