@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
+
 /**
  * Created by xishui.hb on 2018/2/6 上午9:45.
  * 有哪些部门，会和字段绑定
