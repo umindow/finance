@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.supervise.common.Constants;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
+import com.supervise.config.role.DepType;
 import com.supervise.config.role.RoleType;
 import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.mapper.UserMapper;
@@ -39,6 +40,25 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserMapper userMapper;
+    @ResponseBody
+    @RequestMapping(value = "/init")
+    private String initUser(){
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLevel(RoleType.SUPER_MANAGER.getRoleLevel());
+        userEntity.setUserCnName("管理员");
+        userEntity.setUserName("admin");
+        userEntity.setUserStatus(UserEntity.UserStatus.ALIVE.getStatus());
+        List<Integer> dataLevels = Lists.newArrayList();
+        dataLevels.add(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+        dataLevels.add(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
+        dataLevels.add(DataType.SUPERVISE_FEE_DATA.getDataLevel());
+        dataLevels.add(DataType.SUPERVISE_REPLACE_DATA.getDataLevel());
+        dataLevels.add(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
+        userEntity.setDataLevels(JSON.toJSONString(dataLevels));
+        userEntity.setDepId(JSON.toJSONString(DepType.listDepIds()));
+        userMapper.insert(userEntity);
+        return "success";
+    }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "p", required = false) Integer pageNum) {
@@ -59,6 +79,7 @@ public class UserController {
         ModelAndView view = new ModelAndView("pages/user/add");
         view.addObject("roles", Arrays.asList(RoleType.values()));
         view.addObject("dataRoles", Arrays.asList(DataType.values()));
+        view.addObject("depRoles",Arrays.asList(DepType.values()));
         return view;
     }
 
@@ -83,6 +104,14 @@ public class UserController {
                 dataLeves.add(Integer.valueOf(dataLevel));
             }
             userEntity.setDataLevels(JSON.toJSONString(dataLeves));
+        }
+        if(null != userEntity.getDepId()){
+            List<String> depIdStrs = Arrays.asList(userEntity.getDepId().split(","));
+            List<Integer> depIds = new ArrayList<Integer>();
+            for(final String depId : depIdStrs){
+                depIds.add(Integer.valueOf(depId));
+            }
+            userEntity.setDepId(JSON.toJSONString(depIds));
         }
         userEntity.setUserStatus(UserEntity.UserStatus.ALIVE.getStatus());
         userMapper.insert(userEntity);

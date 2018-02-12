@@ -1,6 +1,7 @@
 package com.supervise.controller;
 
 import com.supervise.controller.vo.DataVo;
+import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.mapper.BankCreditMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +28,9 @@ public class DataController {
     @Autowired
     private BankCreditMapper bankCreditMapper;
     @RequestMapping(value = "bankCreditList", method = RequestMethod.GET)
-    public ModelAndView list(int dataType) {
+    public ModelAndView list() {
         ModelAndView view = new ModelAndView();
-        List<DataVo> dataVos = new ArrayList<DataVo>();
+        List<BankCreditEntity> dataVos = bankCreditMapper.selectAll();
         view.setViewName("pages/data/bankCreditList");
         view.addObject("dataVos", dataVos);
         return view;

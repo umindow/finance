@@ -1,0 +1,128 @@
+#tag layout_block("title")
+Finance  - 银行授信数据
+#end
+#tag layout_block("breadcrumb")
+<li class="active"><strong style="color:red;">银行授信数据</strong></li>
+#end
+#tag layout_block("mainContent")
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="row m-b-sm m-t-sm">
+                        <div class="col-md-12">
+                            <a href="/user/add" class="btn btn-primary btn-sm pull-right">数据导入</a>
+                            <a href="/user/add" class="btn btn-primary btn-sm pull-right">数据导出</a>
+                        </div>
+                    </div>
+
+                    <div class="project-list">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <th>机构编码</th>
+                            <th>银行编码</th>
+                            <th>主办行编码</th>
+                            <th>授信额度</th>
+                            <th>授信余额</th>
+                            <th>放大倍数</th>
+                            <th>操作</th>
+                            </thead>
+                            <tbody>
+                            #for(data:dataVos)
+                            <tr>
+                                <td>${data.orgId}
+                                </td>
+                                <td>${data.bankId}
+                                </td>
+                                <td>${data.mainBankId}
+                                </td>
+                                <td>${data.creditTypeId}
+                                </td>
+                                <td>${data.creditMoney}
+                                </td>
+                                <td>${data.leaveMoney}
+                                </td>
+                                <td class="project-actions">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#${data.id}">
+                                        修改
+                                    </button>
+                                    <div class="modal inmodal" id="${data.id}" tabindex="-1" role="dialog"  aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content animated fadeIn">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">银行授信数据</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="ibox-content">
+                                                        <form method="post" id="userAddForm" class="form-horizontal">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label">用户名</label>
+                                                                <div class="col-sm-4">
+                                                                    <input type="text" name="userName" placeholder="用户名(必填)"
+                                                                           class="form-control">
+                                                                </div>
+                                                                <label class="col-sm-2 control-label">密码</label>
+                                                                <div class="col-sm-4">
+                                                                    <input type="password" name="password" placeholder="密码(必填)"
+                                                                           class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label">密码</label>
+                                                                <div class="col-sm-4">
+                                                                    <input type="password" name="password" placeholder="密码(必填)"
+                                                                           class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-3 control-label">中文名</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" name="userCnName" placeholder="中文名(必填)"
+                                                                           class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-3 control-label">邮箱</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" name="email" placeholder="邮箱(必填)"
+                                                                           class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-3 control-label">手机号</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" name="phone" placeholder="手机号(必填)"
+                                                                           class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            #end
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+#tag layout_block("js")
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+</script>
+#end
+#include("/common/framework.html")

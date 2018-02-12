@@ -21,7 +21,7 @@ public @interface DepRole {
      * 字段属于哪些部门
      * @return
      */
-    DepType[] depTypes() default DepType.ALL;
+    DepType[] depTypes();
 
     /**
      * 是否有修改权限，默认可以修改

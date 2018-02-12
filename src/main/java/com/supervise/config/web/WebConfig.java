@@ -33,6 +33,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         interceptor.addNonFilter("/resources/**");
         interceptor.addNonFilter("/static/**");
         interceptor.addNonFilter("/logout");
+        interceptor.addNonFilter("/user/init");
         return interceptor;
     }
 
@@ -42,6 +43,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         interceptor.addNonFilter("/resources/**");
         interceptor.addNonFilter("/static/**");
         interceptor.addNonFilter("/logout");
+        interceptor.addNonFilter("/user/init");
         return interceptor;
     }
 

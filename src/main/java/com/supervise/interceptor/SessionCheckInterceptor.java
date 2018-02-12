@@ -43,14 +43,12 @@ public class SessionCheckInterceptor extends BasicInterceptor{
     }
     private void doLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (HttpUtils.isAjax(request)) {
-            // ajax请求，返回302的重定向结果
             Map<String, Object> result = Maps.newHashMap();
             result.put("success", false);
             result.put("code", 302);
             result.put("message", "/index");
             ResponseUtil.reponse(response, HttpServletResponse.SC_OK, JSON.toJSONString(result));
         } else {
-            // 非ajax请求，直接重定向到authUrl
             ResponseUtil.redirect(response,"/index");
         }
     }
