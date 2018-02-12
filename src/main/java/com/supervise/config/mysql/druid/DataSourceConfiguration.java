@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Configuration
 @MapperScan("com.supervise.dao.mysql.mapper")
-@ComponentScan(value = {"com.supervise.dao.mysql","tk.mybatis.mapper.common.special"})
+@ComponentScan(value = {"com.supervise.dao.mysql"})
 public class DataSourceConfiguration {
 
     @Value("${druid.type}")

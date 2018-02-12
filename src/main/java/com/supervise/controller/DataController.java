@@ -1,12 +1,19 @@
 package com.supervise.controller;
 
 import com.supervise.controller.vo.DataVo;
+import com.supervise.core.data.in.BankCreditDataImport;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.mapper.BankCreditMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -27,6 +34,9 @@ import java.util.List;
 public class DataController {
     @Autowired
     private BankCreditMapper bankCreditMapper;
+    @Autowired
+    private BankCreditDataImport bankCreditDataImport;
+
     @RequestMapping(value = "bankCreditList", method = RequestMethod.GET)
     public ModelAndView list() {
         ModelAndView view = new ModelAndView();
@@ -34,5 +44,41 @@ public class DataController {
         view.setViewName("pages/data/bankCreditList");
         view.addObject("dataVos", dataVos);
         return view;
+    }
+
+    /**
+     * 统一的数据导入入口
+     *
+     * @param file
+     * @param type
+     * @return
+     */
+    @RequestMapping(value = "/import", method = RequestMethod.POST)
+    @Transactional
+    public String dataImport(@RequestParam("file") MultipartFile file, @RequestParam("type") String type) {
+        if (null == file) {
+            return "文件为空";
+        }
+        if (DataImportType.BANKCREDIT.getType().equals(type)) {
+            try {
+                bankCreditDataImport.in(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "导入失败:" + e.getMessage();
+            }
+        }
+        return "导入成功";
+    }
+
+
+    public enum DataImportType {
+        BANKCREDIT("bankCredit");//银行授信数据
+        @Getter
+        @Setter
+        private String type;
+
+        DataImportType(String type) {
+            this.type = type;
+        }
     }
 }

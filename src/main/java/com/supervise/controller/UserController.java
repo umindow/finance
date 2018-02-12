@@ -56,6 +56,7 @@ public class UserController {
         dataLevels.add(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
         userEntity.setDataLevels(JSON.toJSONString(dataLevels));
         userEntity.setDepId(JSON.toJSONString(DepType.listDepIds()));
+        userEntity.setPassword("123456");
         userMapper.insert(userEntity);
         return "success";
     }
