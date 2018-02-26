@@ -1,14 +1,14 @@
 package com.supervise.dao.mysql.viewmapper;
 
-import java.util.List;
-
 import com.supervise.config.mysql.base.BaseMapper;
-import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.entity.RepaymentEntity;
+import com.supervise.dao.mysql.provider.RepaymentProvider;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.SelectProvider;
 
-import org.apache.ibatis.annotations.*;
-
-import com.supervise.dao.mysql.provider.*;
+import java.util.List;
 
 /**
  * Created by xishui.hb on 2018/2/6 上午10:32.
@@ -23,10 +23,9 @@ import com.supervise.dao.mysql.provider.*;
 public interface ViewRepaymentMapper extends BaseMapper<RepaymentEntity>{
 	
 	/**
-     * 按照指定条件查询原始报文信息
-     * @param queryOrgMsgRequest 查询原始报文信息请求参数封装类
-     * @param displayRule 排序条件
-     * @return List<FlightSchInfo>
+     * 按照指定条件查询还款信息
+     * @param batchDate 批次
+     * @return List<RepaymentEntity>
      */
     @Results({
             @Result(column = "org_id", property = "orgId"),
@@ -34,8 +33,6 @@ public interface ViewRepaymentMapper extends BaseMapper<RepaymentEntity>{
             @Result(column = "contract_id", property = "contractId"),
             @Result(column = "repay_date", property = "repayDate"),
             @Result(column = "principal", property = "principal"),
-            @Result(column = "interest", property = "interest"),
-            @Result(column = "punish_money", property = "punishMoney"),
             @Result(column = "batch_date", property = "batchDate")
     })
     @SelectProvider(type = RepaymentProvider.class, method = "queryRepaymentView")

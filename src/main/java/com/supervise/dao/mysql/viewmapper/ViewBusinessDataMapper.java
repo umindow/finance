@@ -1,8 +1,9 @@
-package com.supervise.dao.mysql.mapper;
+package com.supervise.dao.mysql.viewmapper;
 
 import com.supervise.config.mysql.base.BaseMapper;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.provider.BusinessDataProvider;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -18,9 +19,10 @@ import java.util.List;
  * ----------------------------------------
  * User    |    Time    |    Note
  */
-public interface BusinessDataMapper extends BaseMapper<BusinessDataEntity>{
-
-    /**
+@Mapper
+public interface ViewBusinessDataMapper extends BaseMapper<BusinessDataEntity>{
+	
+	/**
      * 按照指定条件查询业务数据信息
      * @param batchDate 批次
      * @return List<BusinessDataEntity>
@@ -43,27 +45,18 @@ public interface BusinessDataMapper extends BaseMapper<BusinessDataEntity>{
             @Result(column = "business_type", property = "businessType"),
             @Result(column = "contract_money", property = "contractMoney"),
             @Result(column = "loan_money", property = "loanMoney"),
-            @Result(column = "loan_rate", property = "loanRate"),
             @Result(column = "assure_rate", property = "assureRate"),
             @Result(column = "loan_date", property = "loanDate"),
-            @Result(column = "contract_end_date", property = "contractEndDate"),
             @Result(column = "repay_type", property = "repayType"),
             @Result(column = "pledge_type", property = "pledgeType"),
-            @Result(column = "approve_option", property = "approveOption"),
-            @Result(column = "bank_credit_primary_id", property = "bankCreditPrimaryId"),
-            @Result(column = "co_bank_id", property = "coBankId"),
             @Result(column = "proj_status", property = "projSatus"),
-            @Result(column = "assure_person", property = "assurePerson"),
-            @Result(column = "pledge_worth", property = "pledgeWorth"),
-            @Result(column = "is_impawn", property = "isImpawn"),
             @Result(column = "accept_date", property = "acceptDate"),
             @Result(column = "contract_id", property = "contractId"),
-            @Result(column = "client_bail_money", property = "clientBailMoney"),
-            @Result(column = "out_bail_money", property = "outBailMoney"),
             @Result(column = "capital_belong", property = "capitalBelong"),
-            @Result(column = "proj_end_date", property = "projEndDate"),
+            @Result(column = "initial_balance", property = "initialBalance"),
+            @Result(column = "first_loan_date", property = "firstLoanDate"),
             @Result(column = "batch_date", property = "batchDate")
     })
-    @SelectProvider(type = BusinessDataProvider.class, method = "queryBusinessDataFormMiddleDB")
-    List<BusinessDataEntity> queryBusinessDataFormMiddleDB(String batchDate);
+    @SelectProvider(type = BusinessDataProvider.class, method = "queryBusinessDataView")
+    List<BusinessDataEntity> queryBusinessDataView(String batchDate);
 }

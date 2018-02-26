@@ -112,7 +112,14 @@ public class BusinessDataEntity extends BaseEntity {
     @Column(name = "company_scale")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true)
     private String companyScale;
-    
+
+    /**
+     * 是否涉农：1 是 2 否
+     */
+    @Column(name = "is_farming")
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true)
+    private String isFarming;
+
     /**
      * 业务类型
      */
@@ -120,12 +127,7 @@ public class BusinessDataEntity extends BaseEntity {
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true)
     private String businessType;
     
-    /**
-     * 是否涉农：1 是 2 否
-     */
-    @Column(name = "is_farming")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true)
-    private String isFarming;
+
     
     /**
      * 合同金额
@@ -283,7 +285,22 @@ public class BusinessDataEntity extends BaseEntity {
     @Column(name = "proj_end_date")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true)
     private Date projEndDate;
-       
+
+    /**
+     * 起初余额
+     **/
+    @Column(name = "initial_balance")
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false)
+    private BigDecimal initialBalance;
+
+    /**
+     * 首次放款时间
+     **/
+    @Column(name = "first_loan_date")
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false)
+    private Date firstLoanDate;
+
+
     /**
      * 批次（当前传输日期，格式yyyyMMdd）
      **/

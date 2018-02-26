@@ -5,6 +5,8 @@ import com.supervise.dao.mysql.mapper.RepaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository("RepaymentDao")
 public class RepaymentDao{
 	
@@ -28,4 +30,16 @@ public class RepaymentDao{
     	}
     	return id;
     }
+
+	/**
+	 * 按照指定条件从中间库中查询还款信息
+	 * @param batchDate 批次 查询条件
+	 * @return 按照指定查询条件返回的查询结果集合
+	 */
+	public List<RepaymentEntity> queryRepaymentFormMiddleDB(
+			String batchDate){
+		List<RepaymentEntity> responseList =
+				this.repaymentMapper.queryRepaymentFormMiddleDB(batchDate);
+		return responseList;
+	}
 }

@@ -220,6 +220,7 @@ public final class Constants {
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     public static final String MYSQL_YYYY_MM_DD_HH_MM_SS = "%Y-%m-%d %H:%i:%s";
+    public static final String MYSQL_YYYY_MM_DD = "%Y-%m-%d";
     public static final String DDMMMYY = "ddMMMyy";
     public static final String OPEN_DATE = "00XXX00";
     public static final String DAY_MIN_DATE = "00:00:00";
@@ -227,14 +228,24 @@ public final class Constants {
     /*****************************时间格式常量 end****************************/
     
     
-	/***************************数据库表以及视图常量 start********************************/
+	/***************************数据库表常量 start********************************/
 	public static final String FINANCE_REPAYMENT_INFO = "finance_repayment_info";
+    public static final String FINANCE_BANK_CREDIT = "finance_bank_credit";
+    public static final String FINANCE_BUSINESS_DATA_INFO = "finance_business_data_info";
+    public static final String FINANCE_COMPENSATORY_INFO = "finance_compensatory_info";
+    public static final String FINANCE_FEE_AND_REFUND_INFO = "finance_fee_and_refund_info";
+    public static final String FINANCE_RECOURSE_INFO = "finance_recourse_info";
+    /***************************数据库表常量 end********************************/
+    /***************************视图常量 start********************************/
 	public static final String REPAYMENT_VIEW = "repayment_info_view";
-	/***************************数据库表以及视图常量 end********************************/
+    public static final String BANKCREDIT_VIEW = "backcredit_view";
+    public static final String BUSINESSDATA_VIEW = "businessdata_view";
+	/***************************视图常量 end********************************/
 	
 	
 	/***************************定时任务常量 start********************************/
 	public static final String SCH_DATA_LOADED_SCHEDULE = "data-loaded-schedule";
+    public static final String SCH_SEND_DATA_SCHEDULE = "send-data-schedule";
 	public static final String SCH_BANK_TRUST_SCH = "bank_trust_sch";
 	/***************************定时任务常量常量 end********************************/
 }

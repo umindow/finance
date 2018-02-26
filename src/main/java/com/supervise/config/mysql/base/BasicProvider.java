@@ -177,6 +177,84 @@ public class BasicProvider {
         }
         return sqlOnOrCondition.toString();
     }
-    
-    
+
+
+    /**
+     * 根据批次从视图中LOAD数据的SQL语句
+     * @param batchDate
+     * @return WhereSql
+     */
+    protected String createWhereSql4batchdate(String batchDate){
+        StringBuffer whereSql = new StringBuffer();
+        if(!StringUtils.isEmpty(batchDate)){
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.CONNECTOR_WHERE);
+            whereSql.append(Constants.SPACE);
+            //大于等于当前天
+            whereSql.append("batch_date");
+            whereSql.append(Constants.SPACE);
+            whereSql.append(QueryOperator.GREATER_EQUAL.getOperator());
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.DATE_FORMATE);
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.LEFT_PARENTHESIS);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(batchDate);
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.DAY_MIN_DATE);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(Constants.COMMA);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(Constants.MYSQL_YYYY_MM_DD_HH_MM_SS);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(Constants.RIGHT_PARENTHESIS);
+            whereSql.append(Constants.SPACE);
+            //小于等于次日
+            whereSql.append(Constants.CONNECTOR_AND);
+            whereSql.append(Constants.SPACE);
+            whereSql.append("batch_date");
+            whereSql.append(Constants.SPACE);
+            whereSql.append(QueryOperator.LESS_EQUAL.getOperator());
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.DATE_FORMATE);
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.LEFT_PARENTHESIS);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(batchDate);
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.DAY_MAX_DATE);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(Constants.COMMA);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(Constants.MYSQL_YYYY_MM_DD_HH_MM_SS);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(Constants.RIGHT_PARENTHESIS);
+            whereSql.append(Constants.SPACE);
+        }
+
+        return whereSql.toString();
+    }
+
+    /**
+     * 根据批次从中间表查询准备发送的SQL语句
+     * @param batchDate
+     * @return WhereSql
+     */
+    protected String createWhereSqlByBatchDate(String batchDate){
+        StringBuffer whereSql = new StringBuffer();
+        if(!StringUtils.isEmpty(batchDate)){
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.CONNECTOR_WHERE);
+            whereSql.append(Constants.SPACE);
+            //等于当前天
+            whereSql.append("batch_date");
+            whereSql.append(Constants.SPACE);
+            whereSql.append(QueryOperator.EQUAL.getOperator());
+            whereSql.append(Constants.SPACE);
+            whereSql.append(Constants.SINGLE_QUOTE);
+            whereSql.append(batchDate);
+            whereSql.append(Constants.SINGLE_QUOTE);
+        }
+        return whereSql.toString();
+    }
 }
