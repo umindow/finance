@@ -72,8 +72,8 @@ CREATE TABLE `finance_bank_credit` (
 -- ----------------------------
 -- Table structure for business_data_info
 -- ----------------------------
-DROP TABLE IF EXISTS `finance_business_data`;
-CREATE TABLE `finance_business_data` (
+DROP TABLE IF EXISTS `finance_business_data_info`;
+CREATE TABLE `finance_business_data_info` (
   `org_id` varchar(40) NOT NULL COMMENT '机构编码',
   `proj_id` varchar(40) NOT NULL COMMENT '项目编码',
   `client_type` varchar(10) NOT NULL COMMENT '客户类型：1 企业客户  2 个人客户',
@@ -88,6 +88,7 @@ CREATE TABLE `finance_business_data` (
   `area_third` varchar(40) NOT NULL COMMENT '所属地区编号（三级）',
   `company_scale` varchar(10) NOT NULL COMMENT '客户规模编码：1 大型企业 2 中型企业 3 小型企业 4 微型企业',
   `is_farming` varchar(10) NOT NULL COMMENT '是否涉农：1 是 2 否',
+  `business_type` varchar(40) NOT NULL COMMENT '业务类型：',
   `contract_money` decimal(14,2) NOT NULL COMMENT '合同金额',
   `loan_money` decimal(14,2) NOT NULL COMMENT '已放款金额',
   `loan_rate` decimal(14,2) NOT NULL COMMENT '贷款年利率（%），传入数字',
@@ -109,16 +110,17 @@ CREATE TABLE `finance_business_data` (
   `out_bail_money` decimal(14,2) DEFAULT NULL COMMENT '存出保证金',
   `capital_belong` varchar(10) NOT NULL COMMENT '资本属性:1 国有控股 2 民营控股 3 外资控股',
   `proj_end_date` date DEFAULT NULL COMMENT '项目结束时间（实际解除时间）',
+    `initial_balance` decimal(14,0) DEFAULT NULL COMMENT '期初余额，页面不展示',
+  `first_loan_date` date DEFAULT NULL COMMENT '首次放款时间，页面不展示',
   `batch_date` varchar(40) NOT NULL COMMENT '批次（为当前传输日期，格式为yyyyMMdd）',
-  `business_type` varchar(40) NOT NULL COMMENT '业务类型：',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- Table structure for repayment_info
 -- ----------------------------
-DROP TABLE IF EXISTS `finance_repayment`;
-CREATE TABLE `finance_repayment` (
+DROP TABLE IF EXISTS `finance_repayment_info`;
+CREATE TABLE `finance_repayment_info` (
   `org_id` varchar(40) NOT NULL COMMENT '机构编码，默认：渝061001L',
   `proj_id` varchar(40) NOT NULL COMMENT '项目编码',
   `contract_id` varchar(40) NOT NULL COMMENT '合同编号',
@@ -130,6 +132,46 @@ CREATE TABLE `finance_repayment` (
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `finance_compensatory_info`;
+CREATE TABLE `finance_compensatory_info` (
+  `org_id` varchar(40) NOT NULL COMMENT '机构编码，默认：渝061001L',
+  `contract_id` varchar(40) DEFAULT NULL COMMENT '合同编号',
+  `replace_date` date DEFAULT NULL COMMENT '代偿日期',
+  `replace_money` decimal(14,2) DEFAULT NULL COMMENT '代偿金额',
+  `batch_date` varchar(40) NOT NULL COMMENT '批次，yyyyMMdd',
+  `proj_id` varchar(40) NOT NULL COMMENT '项目编码',
+  `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=400 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `finance_fee_and_refund_info`;
+CREATE TABLE `finance_fee_and_refund_info` (
+  `org_id` varchar(40) NOT NULL COMMENT '机构编码,有默认值:渝061001L',
+  `proj_id` varchar(40) NOT NULL COMMENT '项目编码',
+  `contract_id` varchar(90) DEFAULT NULL,
+  `charge_way` varchar(10) DEFAULT NULL COMMENT '收退费标示：1 收费 2 退费',
+  `charge_type` varchar(10) DEFAULT NULL COMMENT '费用类型编码：1 担保费 2 保证金 3 其它',
+  `charge_time` date DEFAULT NULL COMMENT '实际缴费时间',
+  `charge_money` decimal(14,2) DEFAULT NULL COMMENT '实际缴费金额',
+  `batch_date` varchar(40) NOT NULL COMMENT '批次（当前传输日期，格式yyyyMMdd）',
+  `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=500 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `finance_recourse_info`;
+CREATE TABLE `finance_recourse_info` (
+  `org_id` varchar(40) NOT NULL,
+  `proj_id` varchar(40) NOT NULL,
+  `contract_id` varchar(40) DEFAULT NULL COMMENT '合同编号',
+  `replevy_type` varchar(10) DEFAULT NULL COMMENT '追偿类型：1 普通追偿 2 挽回损失',
+  `replevy_date` date DEFAULT NULL COMMENT '追偿日期',
+  `replevy_money` decimal(14,2) DEFAULT NULL COMMENT '追偿金额',
+  `batch_date` varchar(40) NOT NULL COMMENT '批次，yyyyMMdd',
+  `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `finance_config`;
 CREATE TABLE `finance_config` (
