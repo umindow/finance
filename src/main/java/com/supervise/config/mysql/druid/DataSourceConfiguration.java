@@ -2,11 +2,15 @@ package com.supervise.config.mysql.druid;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
@@ -14,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@MapperScan("com.supervise.dao.mysql.mapper")
-@ComponentScan(value = {"com.supervise.dao.mysql"})
+@MapperScan(basePackages = {"com.supervise.dao.mysql.mapper"}, sqlSessionFactoryRef = "sqlSessionFactorys")
+//@ComponentScan(value = {"com.supervise.dao.mysql"})
 public class DataSourceConfiguration {
 
     @Value("${druid.type}")
@@ -47,6 +51,7 @@ public class DataSourceConfiguration {
     }
 
     @Bean
+    @Primary
     public SqlSessionFactory sqlSessionFactorys() throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dynamicDataSource());
@@ -55,8 +60,16 @@ public class DataSourceConfiguration {
     }
 
     @Bean
+    @Primary
     DataSourceTransactionManager dataSourceTransactionManager() {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dynamicDataSource());
         return dataSourceTransactionManager;
+    }
+    
+    @Bean
+    @Primary
+    public SqlSessionTemplate sqlSessionTemplate1() throws Exception {
+        SqlSessionTemplate template = new SqlSessionTemplate(sqlSessionFactorys()); // 使用上面配置的Factory
+        return template;
     }
 }
