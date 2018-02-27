@@ -65,7 +65,7 @@ public class BasicProvider {
      */
     protected String createWhereSql(QueryCondition andCondition,
                                     QueryCondition... orCondition){
-        StringBuffer whereSql = new StringBuffer();
+        StringBuffer whereSql = new StringBuffer(" ");
         String sqlOnAndCondition = createWhereSqlByConnector(
         		Constants.CONNECTOR_AND, andCondition);
         String sqlOnOrCondition = createWhereSqlWithOrConditions(orCondition);
@@ -118,7 +118,9 @@ public class BasicProvider {
                         append(Constants.SPACE).
                         append(queryOperatorList.get(i).getOperator()).
                         append(Constants.SPACE).
-                        append(valueList.get(i));
+                        append(Constants.SINGLE_QUOTE).
+                        append(valueList.get(i)).
+                        append(Constants.SINGLE_QUOTE);
             }
         }
         if(!StringUtils.isEmpty(whereSql.toString())) {

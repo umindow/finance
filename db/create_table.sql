@@ -65,8 +65,8 @@ CREATE TABLE `finance_bank_credit` (
   `item_lean` varchar(900) DEFAULT NULL COMMENT '项目偏好',
   `remark` varchar(900) DEFAULT NULL COMMENT '备注',
   `batch_date` varchar(40) DEFAULT NULL COMMENT '批次（当前传输日期，格式yyyyMMdd）',
-  `create_date` datetime  DEFAULT  CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_date` datetime DEFAULT  CURRENT_TIMESTAMP COMMENT'更新时间',
+  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=300 DEFAULT CHARSET=utf8;
@@ -115,6 +115,8 @@ CREATE TABLE `finance_business_data_info` (
     `initial_balance` decimal(14,0) DEFAULT NULL COMMENT '期初余额，页面不展示',
   `first_loan_date` date DEFAULT NULL COMMENT '首次放款时间，页面不展示',
   `batch_date` varchar(40) NOT NULL COMMENT '批次（为当前传输日期，格式为yyyyMMdd）',
+  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
@@ -131,6 +133,8 @@ CREATE TABLE `finance_repayment_info` (
   `interest` decimal(14,2) DEFAULT NULL COMMENT '实际归还利息',
   `punish_money` decimal(14,2) DEFAULT NULL COMMENT '收取罚息',
   `batch_date` varchar(40) NOT NULL COMMENT '批次（当前传输日期，格式：yyyyMMdd）',
+  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8;
@@ -143,6 +147,8 @@ CREATE TABLE `finance_compensatory_info` (
   `replace_money` decimal(14,2) DEFAULT NULL COMMENT '代偿金额',
   `batch_date` varchar(40) NOT NULL COMMENT '批次，yyyyMMdd',
   `proj_id` varchar(40) NOT NULL COMMENT '项目编码',
+  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=400 DEFAULT CHARSET=utf8;
@@ -157,6 +163,8 @@ CREATE TABLE `finance_fee_and_refund_info` (
   `charge_time` date DEFAULT NULL COMMENT '实际缴费时间',
   `charge_money` decimal(14,2) DEFAULT NULL COMMENT '实际缴费金额',
   `batch_date` varchar(40) NOT NULL COMMENT '批次（当前传输日期，格式yyyyMMdd）',
+  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=500 DEFAULT CHARSET=utf8;
@@ -170,6 +178,8 @@ CREATE TABLE `finance_recourse_info` (
   `replevy_date` date DEFAULT NULL COMMENT '追偿日期',
   `replevy_money` decimal(14,2) DEFAULT NULL COMMENT '追偿金额',
   `batch_date` varchar(40) NOT NULL COMMENT '批次，yyyyMMdd',
+  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8;

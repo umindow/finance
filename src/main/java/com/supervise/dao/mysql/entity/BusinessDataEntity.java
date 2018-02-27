@@ -293,6 +293,7 @@ public class BusinessDataEntity extends BaseEntity {
     @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false)
     private BigDecimal initialBalance;
 
+
     /**
      * 首次放款时间
      **/
@@ -300,6 +301,10 @@ public class BusinessDataEntity extends BaseEntity {
     @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false)
     private Date firstLoanDate;
 
+    @Column(name = "create_date")
+    private Date createDate;
+    @Column(name = "update_date")
+    private Date updateDate;
 
     /**
      * 批次（当前传输日期，格式yyyyMMdd）
