@@ -65,7 +65,12 @@ public class RepaymentEntity extends BaseEntity {
     @Column(name = "punish_money")
     @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true)
     private BigDecimal punishMoney;
-    
+
+    @Column(name = "create_date")
+    private Date createDate;
+    @Column(name = "update_date")
+    private Date updateDate;
+
     /**
      * 批次（当前传输日期，格式yyyyMMdd）
      **/

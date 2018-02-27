@@ -1,11 +1,16 @@
 package com.supervise.dao.mysql.middleDao;
 
+import com.supervise.common.Constants;
+import com.supervise.common.DateUtils;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.mapper.BusinessDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Repository("BusinessDataDao")
 public class BusinessDataDao {
@@ -24,9 +29,13 @@ public class BusinessDataDao {
     	//将entity中的batchdate做处理，格式：yyyy-MM-dd HH:mm:ss 转换成yyyy-MM-dd
     	int id = -1;
     	if(null!=businessDataEntity){
-    		 String batchDate = businessDataEntity.getBatchDate().substring(0,10);
+			String batchDate = businessDataEntity.getBatchDate().substring(0,10);
 			businessDataEntity.setBatchDate(batchDate);
-    		 id= this.businessDataMapper.insert(businessDataEntity);
+			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
+			Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
+			businessDataEntity.setCreateDate(newDate);
+			businessDataEntity.setUpdateDate(newDate);
+			id= this.businessDataMapper.insert(businessDataEntity);
     	}
     	return id;
     }

@@ -5,8 +5,8 @@ import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
-import com.supervise.dao.mysql.entity.RepaymentEntity;
-import com.supervise.dao.mysql.middleDao.RepaymentDao;
+import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
+import com.supervise.dao.mysql.middleDao.FeeAndRefundDao;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -32,11 +32,11 @@ import java.util.Locale;
  * User    |    Time    |    Note
  */
 @Service
-public class RepaymentDataImport extends AbstractDataImport {
+public class FeeAndRefundDataImport extends AbstractDataImport {
     @Autowired
-    private RepaymentDao repaymentDao;
+    private FeeAndRefundDao feeAndRefundDao;
 
-    private List<RepaymentEntity> repaymentEntitys = Lists.newArrayList();
+    private List<FeeAndRefundEntity> feeAndRefundEntitys = Lists.newArrayList();
 
     @Override
     public void resolve(Workbook wb) throws Exception {
@@ -44,7 +44,7 @@ public class RepaymentDataImport extends AbstractDataImport {
         if (null == sheet) {
             return;
         }
-        RepaymentEntity repaymentEntity = null;
+        FeeAndRefundEntity feeAndRefundEntity = null;
         for (Row row : sheet) {
             if (null == row) {
                 continue;
@@ -55,89 +55,77 @@ public class RepaymentDataImport extends AbstractDataImport {
             if (org.apache.commons.lang3.StringUtils.isBlank((String)getCellValue(row.getCell(0)))) {
                 break;
             }
-            repaymentEntity = new RepaymentEntity();
+            feeAndRefundEntity = new FeeAndRefundEntity();
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
                 }
                 switch (cell.getColumnIndex()) {
                     case 0://机构编码
-                    	repaymentEntity.setOrgId((String) getCellValue(cell));
+                        feeAndRefundEntity.setOrgId((String) getCellValue(cell));
                         break;
                     case 1://项目编码
-                    	repaymentEntity.setProjId((String) getCellValue(cell));
+                        feeAndRefundEntity.setProjId((String) getCellValue(cell));
                         break;
                     case 2://合同编号
-                    	repaymentEntity.setContractId((String) getCellValue(cell));
+                        feeAndRefundEntity.setContractId((String) getCellValue(cell));
                         break;
-                    case 3://实际还款日期
-                    	repaymentEntity.setRepayDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                    case 3://收退费标示
+                        feeAndRefundEntity.setChargeWay((String) getCellValue(cell));
                         break;
-                    case 4://实际归还本金
-                    	repaymentEntity.setPrincipal(new BigDecimal((Double) getCellValue(cell)));
+                    case 4://费用类型编码
+                        feeAndRefundEntity.setChargeType((String) getCellValue(cell));
                         break;
-                    case 5://实际归还利息
-                    	repaymentEntity.setInterest(new BigDecimal((Double) getCellValue(cell)));
+                    case 5://实际缴费时间
+                        feeAndRefundEntity.setChargeTime(DateUtils.parseStringDate((String) getCellValue(cell), null));
                         break;
-                    case 6://收取罚息
-                    	repaymentEntity.setPunishMoney(new BigDecimal((Double) getCellValue(cell)));
+                    case 6://实际缴费金额
+                        feeAndRefundEntity.setChargeMoney(new BigDecimal((Double) getCellValue(cell)));
                         break;
                     case 7:
-                    	repaymentEntity.setBatchDate((String) getCellValue(cell));
+                        feeAndRefundEntity.setBatchDate((String) getCellValue(cell));
                         break;
                     default:
                         break;
                 }
             }
-            repaymentEntitys.add(repaymentEntity);
+            feeAndRefundEntitys.add(feeAndRefundEntity);
         }
     }
 
     @Override
     public void save() throws Exception {
-        if (CollectionUtils.isEmpty(repaymentEntitys)) {
+        if (CollectionUtils.isEmpty(feeAndRefundEntitys)) {
             return;
         }
         /**
          * 增加判断逻辑
-         * 1、先根据ORIGID PROJID REPAYDATE batchdate作为查询条件，查询是否存在记录
+         * 1、先根据ORIGID PROJID charge_time batchdate作为查询条件，查询是否存在记录
          * 2、如果不存在记录，则直接保存
          * 3、如果存在记录，则更新该条记录
          */
-        for (final RepaymentEntity repaymentEntity : repaymentEntitys) {
+        for (final FeeAndRefundEntity feeAndRefundEntity : feeAndRefundEntitys) {
             //根据ORIGID PROJID REPAYDATE batchdate 作为查询条件
-            String batchDate = repaymentEntity.getBatchDate();
+            String batchDate = feeAndRefundEntity.getBatchDate();
             if (StringUtils.isEmpty(batchDate)) {
                 batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
             }
-            Date repayDate = repaymentEntity.getRepayDate();
-            String proj_id = repaymentEntity.getProjId();
-            String org_id = repaymentEntity.getOrgId();
+            Date chargeDate = feeAndRefundEntity.getChargeTime();
+            String proj_id = feeAndRefundEntity.getProjId();
+            String org_id = feeAndRefundEntity.getOrgId();
             //构建查询条件
-            QueryCondition queryCondition = createQueryCondition(org_id,proj_id,repayDate,batchDate);
+            QueryCondition queryCondition = createQueryCondition(org_id,proj_id,chargeDate,batchDate);
 
             //根据查询条件查询是否存在记录
-            List<RepaymentEntity> resListToDB  = this.repaymentDao.queryRepaymentByCondition(queryCondition);
+            List<FeeAndRefundEntity> resListToDB  = this.feeAndRefundDao.queryFeeAndRefundByCondition(queryCondition);
             //如果没有查询到记录，则保存当前新记录
             if (CollectionUtils.isEmpty(resListToDB)) {
-                this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
+                this.feeAndRefundDao.insertFeeAndRefundToMiddleDB(feeAndRefundEntity);
             }else{
                 //否则更新当前记录
-                for ( RepaymentEntity repayment : resListToDB){
-//                    if(!StringUtils.isEmpty(repaymentEntity.getContractId())){
-//                        repayment.setContractId(repaymentEntity.getContractId());
-//                    }
-//                    if(null!=repaymentEntity.getInterest()){
-//                        repayment.setInterest(repaymentEntity.getInterest());
-//                    }
-//                    if(null!=repaymentEntity.getPunishMoney()){
-//                        repayment.setPunishMoney(repaymentEntity.getPunishMoney());
-//                    }
-//                    if(null!=repaymentEntity.getPrincipal()){
-//                        repayment.setPrincipal(repaymentEntity.getPrincipal());
-//                    }
-                    repaymentEntity.setId(repayment.getId());
-                    this.repaymentDao.updateRepayment(repaymentEntity);
+                for ( FeeAndRefundEntity feeAndRefund : resListToDB){
+                    feeAndRefundEntity.setId(feeAndRefund.getId());
+                    this.feeAndRefundDao.updateFeeAndRefund(feeAndRefundEntity);
                 }
 
             }
@@ -145,13 +133,13 @@ public class RepaymentDataImport extends AbstractDataImport {
         }
     }
 
-        private QueryCondition createQueryCondition(String orgid,String projid,Date repayDate,String batchDate){
-            String repayDateStr = DateUtils.formatDate(repayDate, Constants.YYYY_MM_DD, Locale.ENGLISH);
+        private QueryCondition createQueryCondition(String orgid,String projid,Date chargeTime,String batchDate){
+            String chargetimeStr = DateUtils.formatDate(chargeTime, Constants.YYYY_MM_DD, Locale.ENGLISH);
             QueryCondition queryCondition = new QueryCondition();
             //设置查询条件
             queryCondition.getColumnList().add("org_id");
             queryCondition.getColumnList().add("proj_id");
-            queryCondition.getColumnList().add("repay_date");
+            queryCondition.getColumnList().add("charge_time");
             queryCondition.getColumnList().add("batch_date");
 
             queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
@@ -161,7 +149,7 @@ public class RepaymentDataImport extends AbstractDataImport {
 
             queryCondition.getValueList().add(orgid);
             queryCondition.getValueList().add(projid);
-            queryCondition.getValueList().add(repayDateStr);
+            queryCondition.getValueList().add(chargetimeStr);
             queryCondition.getValueList().add(batchDate);
             return queryCondition;
     }
