@@ -65,6 +65,8 @@ CREATE TABLE `finance_bank_credit` (
   `item_lean` varchar(900) DEFAULT NULL COMMENT '项目偏好',
   `remark` varchar(900) DEFAULT NULL COMMENT '备注',
   `batch_date` varchar(40) DEFAULT NULL COMMENT '批次（当前传输日期，格式yyyyMMdd）',
+  `create_date` datetime  DEFAULT  CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT  CURRENT_TIMESTAMP COMMENT'更新时间',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=300 DEFAULT CHARSET=utf8;

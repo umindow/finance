@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,6 +50,8 @@ public class BankCreditDataImport extends AbstractDataImport {
                 break;
             }
             bankCreditEntity = new BankCreditEntity();
+            bankCreditEntity.setCreateDate(new Date());
+            bankCreditEntity.setUpdateDate(new Date());
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;

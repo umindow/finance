@@ -130,5 +130,9 @@ public class BankCreditEntity extends BaseEntity {
     @Column(name = "batch_date")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true)
     private String batchDate;
+    @Column(name = "create_date")
+    private Date createDate;
+    @Column(name = "update_date")
+    private Date updateDate;
 
 }

@@ -149,5 +149,13 @@ public final class DateUtils {
         c.set(year, month, 0);
         return c.get(5);
     }
-    
+
+
+    public static Date getSimpleDateByAdded(String date,String add){
+        if(null == date || null == add || "".equals(date) || "".equals(add)){
+            return null;
+        }
+        String formatDate = date+" "+add;
+        return parseStringDate(formatDate,DEFAULT_PATTERN);
+    }
 }
