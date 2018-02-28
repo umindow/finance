@@ -1,7 +1,6 @@
 package com.supervise.schedule;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-import com.supervise.common.DateUtils;
 import com.supervise.webservice.JgProjectServiceImpl;
 import com.supervise.webservice.Webservice;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
     @Override
     public void doSchedule(String dupKey) {
         String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        T data = loadSenderData(DateUtils.getSimpleDateByAdded(date, "00:00:00"), DateUtils.getSimpleDateByAdded(date, "23:59:59"));
+        T data = loadSenderData(date);
         if (null == data) {
             logger.error("Load SenderSchedule Data Return is null.dupkey is:" + dupKey);
             return;
@@ -53,7 +52,7 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
         sendDataFailProcessor(dupKey);
     }
 
-    public abstract T loadSenderData(Date fromDate, Date toDate);
+    public abstract T loadSenderData(String batchDate);
 
     public abstract boolean checkData(T t);
 
