@@ -1,14 +1,10 @@
 package com.supervise.schedule.job;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import com.supervise.common.ParserConvert;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.mapper.BankCreditMapper;
-import com.supervise.schedule.AbstractSchedule;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuBankCredit;
-import com.supervise.webservice.JgProjectServiceImpl;
-import com.supervise.webservice.Webservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.xml.ws.Service;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,10 +25,10 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<List<JgBuBan
     private BankCreditMapper bankCreditMapper;
 
     @Override
-    public List<JgBuBankCredit> loadSenderData(Date fromDate, Date toDate) {
+    public List<JgBuBankCredit> loadSenderData(String batchDate) {
         Example example = new Example(BankCreditEntity.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andBetween("createDate", fromDate, toDate);
+        criteria.andEqualTo("batch_date",batchDate);
         List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(example);
         return CollectionUtils.isEmpty(bankCreditEntities) ? null : new BankCreditParserConvert().covert(bankCreditEntities);
     }
@@ -47,7 +41,7 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<List<JgBuBan
     @Override
     public boolean senderData(List<JgBuBankCredit> bankCreditEntities) throws Exception {
         try {
-            webService().saveJgBuBankCreditInfoAry(bankCreditEntities, 1);
+            webService().saveJgBuBankCreditInfoAry(bankCreditEntities, bankCreditEntities.size());
         } catch (Exception e) {
             return false;
         }

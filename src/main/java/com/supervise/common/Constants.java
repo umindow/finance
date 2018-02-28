@@ -248,4 +248,10 @@ public final class Constants {
     public static final String SCH_SEND_DATA_SCHEDULE = "send-data-schedule";
 	public static final String SCH_BANK_TRUST_SCH = "bank_trust_sch";
 	/***************************定时任务常量常量 end********************************/
+
+    /***************************批量发送常量 start********************************/
+    public static final int BACTCH_SEND_MAX_NUM = 500;
+    public static final int RETRY_TIME = 3;
+    public static final Long WEBSERVICE_RESULT = 1l;
+    /***************************批量发送常量 end********************************/
 }

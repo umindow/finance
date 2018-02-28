@@ -3,8 +3,6 @@ package com.supervise.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.supervise.common.Constants;
-import com.supervise.common.DateUtils;
-import com.supervise.controller.vo.DataVo;
 import com.supervise.core.data.in.BankCreditDataImport;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.mapper.BankCreditMapper;
@@ -12,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +46,7 @@ public class DataController {
         Example entityExample = new Example(BankCreditEntity.class);
         Example.Criteria criteria = entityExample.createCriteria();
         if (null != date) {
-            criteria.andBetween("updateDate", DateUtils.getSimpleDateByAdded(date, "00:00:00"), DateUtils.getSimpleDateByAdded(date, "23:59:59"));
+            criteria.andEqualTo("batch_date",date);
         }
         List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(entityExample);
         if (CollectionUtils.isEmpty(bankCreditEntities)) {
