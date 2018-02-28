@@ -35,7 +35,8 @@ public class ConfigEntity extends BaseEntity{
     private String configContent;//json(entity) jobInfo;
 
     public enum ConfigType {
-        JOB_TYPE(1,"调度任务配置");
+        JOB_TYPE(1,"调度任务配置"),
+        SEND_FAIL(2,"发送数据失败配置");
         @Getter
         @Setter
         private int type;
