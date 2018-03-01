@@ -218,6 +218,7 @@ public final class Constants {
     /***************************时间格式常量 start********************************/
     public static final String YYYYMMDDHHMMSSS = "yyyyMMddHHmmss:SSS";
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
+    public static final String YYYY_MM_DD_HH = "yyyy-MM-dd-HH";
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     public static final String MYSQL_YYYY_MM_DD_HH_MM_SS = "%Y-%m-%d %H:%i:%s";
     public static final String MYSQL_YYYY_MM_DD = "%Y-%m-%d";
@@ -254,4 +255,13 @@ public final class Constants {
     public static final int RETRY_TIME = 3;
     public static final Long WEBSERVICE_RESULT = 1l;
     /***************************批量发送常量 end********************************/
+
+    /***************************邮件服务常量 start********************************/
+    public static final String MAIL_TRANSPORT_PROTOCOL = "mail.transport.protocol";
+    public static final String MAIL_SMTP_HOST = "mail.smtp.host";
+    public static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
+    public static final String MAIL_FROM = "mail.from";
+    public static final String MAIL_TO = "mail.to";
+    public static final String MAIL_PASSWORD = "mail.frommAccount.password";
+    /***************************邮件服务常量 end********************************/
 }

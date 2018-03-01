@@ -65,7 +65,7 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
             }
         }
         if (errorCount > 0) {
-            sendDataFailProcessor(dupKey);
+            sendDataFailProcessor(dupKey,scheduleName());
         }
     }
 
@@ -91,14 +91,7 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
         return xmlGregorianCalendar;
     }
 
-    /**
-     * 有发送失败的，发送信息通知
-     *
-     * @param dupKey
-     */
-    private void sendDataFailProcessor(String dupKey) {
-        String scheduleName = scheduleName();
-    }
+
 
 
     public class DataSpliter<T> implements Spliter<T> {
