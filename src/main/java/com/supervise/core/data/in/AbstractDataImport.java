@@ -1,5 +1,8 @@
 package com.supervise.core.data.in;
 
+import com.supervise.common.SessionUser;
+import com.supervise.dao.mysql.entity.UserEntity;
+import lombok.Getter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -30,11 +33,16 @@ public abstract class AbstractDataImport implements DataImport {
     private static final String OFFICE_EXCEL_XLS = ".xls";
     private static final String OFFICE_EXCEL_XLSX = ".xlsx";
     static final String NUMBER_REG = "^\\d*(\\.\\d*|)$";
-
+    @Getter
+    private UserEntity userEntity;
     @Override
     public void in(MultipartFile file) throws Exception {
         checkData(file);
         save();
+        this.userEntity = SessionUser.INSTANCE.getCurrentUser();
+        if(null == this.userEntity){
+            throw new Exception("用户未登录");
+        }
     }
 
     private final void checkData(MultipartFile file) throws Exception {

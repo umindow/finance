@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.supervise.config.role.DataType;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
-import com.supervise.dao.mysql.entity.BankCreditEntity;
+import com.supervise.dao.mysql.entity.*;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +37,16 @@ public final class FiedRoleCache {
     }
 
     static {
-        //SystemBizEntity
-        systemBiz();
-        //BankCreditEntity
-        bankCredit();
+       initRoleCache();
     }
 
-    private static void systemBiz() {
-
-    }
-
-    private static void bankCredit() {
-        commonCache(BankCreditEntity.class, DataType.SUPERVISE_BANK_DATA.getDataType());
+    private static void initRoleCache() {
+        commonCache(BankCreditEntity.class, DataType.SUPERVISE_BANK_DATA.getDataType());//银行授信
+        commonCache(BusinessDataEntity.class,DataType.SUPERVISE_BIZ_DATA.getDataType());//系统业务
+        commonCache(CompensatoryEntity.class,DataType.SUPERVISE_REPLACE_DATA.getDataType());//代偿
+        commonCache(FeeAndRefundEntity.class,DataType.SUPERVISE_FEE_DATA.getDataType());//收费退费数据
+        commonCache(RepaymentEntity.class,DataType.SUPERVISE_REBACK_DATA.getDataType());//退款
+        commonCache(RecourseEntity.class,DataType.SUPERVISE_TRACE_DATA.getDataType());//追偿
     }
 
     private static void commonCache(Class<?> cls, Integer dataType) {
@@ -79,5 +77,22 @@ public final class FiedRoleCache {
             this.depTypes = depTypes;
             this.modify = modify;
         }
+    }
+
+    public static boolean checkFiledRole(int userDepId,DepRoleRef depRoleRef){
+        if(null == depRoleRef){
+            return false;
+        }
+        if(!depRoleRef.isModify()){
+            return false;
+        }
+        if(depRoleRef.depTypes.length > 0){
+            for(final DepType depType : depRoleRef.getDepTypes()){
+                if(depType.getDepId() == userDepId){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

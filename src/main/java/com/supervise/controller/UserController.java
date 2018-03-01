@@ -79,7 +79,7 @@ public class UserController {
     public ModelAndView addView() {
         ModelAndView view = new ModelAndView("pages/user/add");
         view.addObject("roles", Arrays.asList(RoleType.values()));
-        view.addObject("dataRoles", Arrays.asList(DataType.values()));
+        view.addObject("dataRoles", DataType.listHtmlDataType());
         view.addObject("depRoles",Arrays.asList(DepType.values()));
         return view;
     }

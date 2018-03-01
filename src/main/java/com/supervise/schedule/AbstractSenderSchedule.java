@@ -21,10 +21,10 @@ import java.util.List;
  * Created by xishui.hb on 2018/2/28 上午11:06.
  *
  * @author xishui
- * Description:
- * Modify Record
- * ----------------------------------------
- * User    |    Time    |    Note
+ *         Description:
+ *         Modify Record
+ *         ----------------------------------------
+ *         User    |    Time    |    Note
  */
 public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
     private final Logger logger = LoggerFactory.getLogger(AbstractSenderSchedule.class);
@@ -108,7 +108,17 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
             if (CollectionUtils.isEmpty(data) || splitSize >= data.size()) {
                 resDatas.add(data);
             } else {
-                //未完，待续
+                int totalPage = data.size() / splitSize + 1;
+                int startRow = 0;
+                int endRow = splitSize - 1;
+                for (int i = 0; i < totalPage; i++) {
+                    resDatas.add(data.subList(startRow, endRow));
+                    startRow = endRow + 1;
+                    endRow = endRow + splitSize;
+                    if (endRow > data.size()) {
+                        endRow = data.size();
+                    }
+                }
             }
             return resDatas;
         }

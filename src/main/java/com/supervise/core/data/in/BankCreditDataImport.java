@@ -1,11 +1,16 @@
 package com.supervise.core.data.in;
 
+import com.google.common.collect.Interner;
 import com.google.common.collect.Lists;
+import com.supervise.cache.FiedRoleCache;
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
+import com.supervise.common.SessionUser;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
+import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.middleDao.BankCreditDao;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,6 +25,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xishui.hb on 2018/2/12 下午3:59.
@@ -44,6 +50,8 @@ public class BankCreditDataImport extends AbstractDataImport {
             return;
         }
         BankCreditEntity bankCreditEntity = null;
+        Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataType());
+        int userDepId = Integer.valueOf(getUserEntity().getDepId());
         for (Row row : sheet) {
             if (null == row) {
                 continue;
@@ -61,7 +69,9 @@ public class BankCreditDataImport extends AbstractDataImport {
                 }
                 switch (cell.getColumnIndex()) {
                     case 0://结构编码
-                        bankCreditEntity.setPrimaryId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFiledRole(userDepId,filedRoles.get(""))) {
+                            bankCreditEntity.setPrimaryId((String) getCellValue(cell));
+                        }
                         break;
                     case 1://结构编码
                         bankCreditEntity.setOrgId((String) getCellValue(cell));

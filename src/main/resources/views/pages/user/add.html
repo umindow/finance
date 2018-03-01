@@ -65,7 +65,7 @@ Finance  - 用户管理
                             <label class="col-sm-3 control-label">所属部门</label>
                             <div class="col-sm-9">
                                 #for(depRole:depRoles)
-                                <div class="i-checks"><label> <input type="checkbox" name="depId"
+                                <div class="i-checks"><label> <input type="radio" name="depId"
                                                                      value="${depRole.depId}">
                                     <i></i>${depRole.depDesc} </label></div>
                                 #end
