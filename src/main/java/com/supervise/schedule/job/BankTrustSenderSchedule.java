@@ -19,7 +19,7 @@ import java.util.List;
  * Created by ${admin} on 2018/2/3.
  */
 @Component
-public class BankTrustSenderSchedule extends AbstractSenderSchedule<List<JgBuBankCredit>> {
+public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCredit> {
     private final Logger logger = LoggerFactory.getLogger(BankTrustSenderSchedule.class);
     @Autowired
     private BankCreditMapper bankCreditMapper;

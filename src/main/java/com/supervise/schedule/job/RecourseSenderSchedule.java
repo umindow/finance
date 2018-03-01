@@ -23,7 +23,7 @@ import java.util.List;
  * ----------------------------------------
  * User    |    Time    |    Note
  */
-public class RecourseSenderSchedule extends AbstractSenderSchedule<List<JgBuReplevyInfo>> {
+public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyInfo> {
 
     private final Logger logger = LoggerFactory.getLogger(RecourseSenderSchedule.class);
     @Autowired

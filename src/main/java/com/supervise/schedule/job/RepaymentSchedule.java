@@ -23,7 +23,7 @@ import java.util.List;
  * ----------------------------------------
  * User    |    Time    |    Note
  */
-public class RepaymentSchedule extends AbstractSenderSchedule<List<JgBuRepayDetail>> {
+public class RepaymentSchedule extends AbstractSenderSchedule<JgBuRepayDetail> {
 
     private final Logger logger = LoggerFactory.getLogger(RepaymentSchedule.class);
     @Autowired

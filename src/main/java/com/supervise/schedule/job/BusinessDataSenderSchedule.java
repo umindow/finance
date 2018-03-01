@@ -26,7 +26,7 @@ import java.util.List;
  * User    |    Time    |    Note
  */
 @Component
-public class BusinessDataSenderSchedule extends AbstractSenderSchedule<List<JgBuProjectInfo>>{
+public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProjectInfo>{
 
     private final Logger logger = LoggerFactory.getLogger(BusinessDataSenderSchedule.class);
 

@@ -23,7 +23,7 @@ import java.util.List;
  * ----------------------------------------
  * User    |    Time    |    Note
  */
-public class CompensatorySenderSchedule extends AbstractSenderSchedule<List<JgBuReplaceInfo>> {
+public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuReplaceInfo> {
 
     private final Logger logger = LoggerFactory.getLogger(CompensatorySenderSchedule.class);
     @Autowired

@@ -2,7 +2,6 @@ package com.supervise.config.role;
 
 import com.supervise.schedule.job.BankTrustSenderSchedule;
 import com.supervise.schedule.job.DataLoadedSchedule;
-import com.supervise.schedule.job.SendDataSchedule;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,8 +22,7 @@ public enum DataType {
     SUPERVISE_FEE_DATA("收费退费数据", 400, 1, null),
     SUPERVISE_REPLACE_DATA("代偿数据", 500, 1, null),
     SUPERVISE_TRACE_DATA("追偿数据", 600, 1, null),
-    SUPERVISE_LOAD_VIEWDATA("LoadViewData",700, 1, DataLoadedSchedule.class.getSimpleName()),//从中间表LOAD数据的定时进程
-    SUPERVISE_SEND("SendData",800, 1, SendDataSchedule.class.getSimpleName());//给外部系统推送数据的定时进程
+    SUPERVISE_LOAD_VIEWDATA("LoadViewData",700, 1, DataLoadedSchedule.class.getSimpleName());//从中间表LOAD数据的定时进程
 
     @Getter
     @Setter
