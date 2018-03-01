@@ -1,6 +1,8 @@
 package com.supervise.schedule;
 
 import com.supervise.dao.mysql.entity.ScheduleStatusEntity;
+import com.supervise.mail.MailService;
+import com.supervise.message.MessageSender;
 import com.supervise.schedule.job.DataLoadedSchedule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,13 @@ public abstract class AbstractSchedule implements Schedule {
     @Autowired
     private ScheduleChecker scheduleChecker;
 
+
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
+    private MessageSender messageSender;
+
     @Override
     public void schedule() {
         String scheduleName = scheduleName();
@@ -40,6 +49,21 @@ public abstract class AbstractSchedule implements Schedule {
         }
     }
 
+     /**
+     * 有发送失败的，发送信息通知
+     *
+     * @param dupKey
+     */
+    protected  void sendDataFailProcessor(String dupKey,String schName){
+        //构造关键数据信息
+        String dateType = schName;
+        String batchDate ="";
+        batchDate = dupKey.substring(schName.length(), dupKey.length()-3);
+        //发送邮件通知
+        this.mailService.sendEmailData(dateType,batchDate);
+        //发送短信通知
+        this.messageSender.sendSMSData(dateType,batchDate);
+    }
     public abstract String scheduleName();
 
     public abstract void doSchedule(String dupKey);

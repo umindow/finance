@@ -11,4 +11,12 @@ package com.supervise.message;
  */
 public interface MessageSender {
 
+    /**
+     * 发送短信
+     * @param  dataType 数据类型
+     * @param  batchDate 发送批次
+     *    return
+     */
+    public void sendSMSData(String dataType,String batchDate);
+
 }
