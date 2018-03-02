@@ -264,4 +264,10 @@ public final class Constants {
     public static final String MAIL_TO = "mail.to";
     public static final String MAIL_PASSWORD = "mail.frommAccount.password";
     /***************************邮件服务常量 end********************************/
+
+    /***************************短信服务地址常量 start********************************/
+    public static final String MESSAGE_HTTP = "http://";
+    public static final String MESSAGE_HTTP_REPORT = "/inter/getReport";
+    public static final String MESSAGE_HTTP_SENDSINGLESMS = "/inter/sendSingleSMS";
+    /***************************邮件服务常量 end********************************/
 }

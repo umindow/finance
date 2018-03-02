@@ -1,20 +1,23 @@
 package com.supervise.message;
 
+import cn.emay.ResultModel;
+import cn.emay.eucp.inter.http.v1.dto.request.ReportRequest;
+import cn.emay.eucp.inter.http.v1.dto.request.SmsSingleRequest;
+import cn.emay.eucp.inter.http.v1.dto.response.ReportResponse;
+import cn.emay.eucp.inter.http.v1.dto.response.SmsResponse;
+import cn.emay.util.AES;
+import cn.emay.util.GZIPUtils;
+import cn.emay.util.JsonHelper;
+import cn.emay.util.http.*;
 import com.supervise.common.Constants;
-import com.supervise.config.mail.MailConf;
+import com.supervise.config.message.MessageConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by WANGHANG on 2018/2/28.
@@ -23,104 +26,152 @@ import java.util.Properties;
 public class MessageSenderImpl implements MessageSender {
 
     @Autowired
-    private MailConf mailConf;
+    private MessageConf messageConf;
 
     private final Logger logger = LoggerFactory.getLogger(MessageSenderImpl.class);
 
-    // 发件人的 邮箱 和 密码（替换为自己的邮箱和密码）
-    // PS: 某些邮箱服务器为了增加邮箱本身密码的安全性，给 SMTP 客户端设置了独立密码（有的邮箱称为“授权码”）,
-    //     对于开启了独立密码的邮箱, 这里的邮箱密码必需使用这个独立密码（授权码）。
-//    public static String myEmailAccount = "cqforeye@126.com";
-//    public static String myEmailPassword = "wanghang521";
-
-    // 发件人邮箱的 SMTP 服务器地址, 必须准确, 不同邮件服务器地址不同, 一般(只是一般, 绝非绝对)格式为: smtp.xxx.com
-    // 网易163邮箱的 SMTP 服务器地址为: smtp.163.com
-//    public static String myEmailSMTPHost = "smtp.126.com";
-
-    // 收件人邮箱（替换为自己知道的有效邮箱）
-//    public static String receiveMailAccount = "cqforeye@126.com";
-
     @Override
-    public  void sendSMSData(String dataType,String batchDate){
+    public  void sendSMSData(String dataType,String batchDate) {
+        // appId
+        String appId = messageConf.getAppId();
+        // 密钥
+        String secretKey = messageConf.getSecretKey();
+        // 接口地址
+        String host = messageConf.getHost();//bjmtn.b2m.cn,shmtn.b2m.cn
+        // 加密算法
+        String algorithm = messageConf.getAlgorithm();// "AES/ECB/PKCS5Padding"
+        // 编码
+        String encode = messageConf.getEncode();
+        // 是否压缩
+        boolean isGizp = messageConf.isGizp();
+        // 扩展码
+        String extendCode = "";
 
-        // 1. 创建参数配置, 用于连接邮件服务器的参数配置
-        Properties props = new Properties();                    // 参数配置
-        props.setProperty(Constants.MAIL_TRANSPORT_PROTOCOL, mailConf.getProtocol());   // 使用的协议（JavaMail规范要求）
-        props.setProperty(Constants.MAIL_SMTP_HOST, mailConf.getSmtphostFrom());   // 发件人的邮箱的 SMTP 服务器地址
-        // 发送服务器需要身份验证
-        props.setProperty(Constants.MAIL_SMTP_AUTH, mailConf.getAuth());
+        String customSmsId = "";//自定义ID
 
-// 2. 根据配置创建会话对象, 用于和邮件服务器交互
-        Session session = Session.getInstance(props);
-        session.setDebug(false);                                 // 设置为debug模式, 可以查看详细的发送 log
+        String phone = messageConf.getPhone();
 
-        // 3. 创建一封邮件
-        Transport transport = null;
-        try{
-            MimeMessage message = createMimeMessage(session, mailConf.getFromAccount(), mailConf.getToAccount(),dataType,batchDate);
-            //4. 根据 Session 获取邮件传输对象
-            transport = session.getTransport();
-            // 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
-            transport.connect(mailConf.getFromAccount(), mailConf.getPassword());
-            // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
-            transport.sendMessage(message, message.getAllRecipients());
-            logger.error("Mail send success at :"+ new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));
+        String sign ="【"+ messageConf.getSign()+"】";//放到发送内容前，作为签名，不然发送会报“签名错误”
+
+        String content = createSendContent(dataType, batchDate);//构建短信内容
+
+        // 发送单条短信
+        setSingleSms(appId, secretKey, host, algorithm, sign + content, customSmsId, extendCode, phone, isGizp, encode);
+        // 获取状态报告
+        getReport(appId, secretKey, host, algorithm, isGizp, encode);
+    }
+        /**
+         * 发送单条短信
+         * @param isGzip 是否压缩
+         */
+        private  void setSingleSms(String appId,String secretKey,String host,String algorithm,String content, String customSmsId, String extendCode, String mobile,boolean isGzip,String encode) {
+            logger.info("=============begin setSingleSms==================");
+            SmsSingleRequest pamars = new SmsSingleRequest();
+            pamars.setContent(content);
+            pamars.setCustomSmsId(customSmsId);
+            pamars.setExtendedCode(extendCode);
+            pamars.setMobile(mobile);
+            ResultModel result = request(appId,secretKey,algorithm,pamars, Constants.MESSAGE_HTTP + host + Constants.MESSAGE_HTTP_SENDSINGLESMS,isGzip,encode);
+            logger.info("result code :" + result.getCode());
+            if("SUCCESS".equals(result.getCode())){
+                SmsResponse response = JsonHelper.fromJson(SmsResponse.class, result.getResult());
+                if (response != null) {
+                    logger.info("data : " + response.getMobile() + "," + response.getSmsId() + "," + response.getCustomSmsId());
+                }
+            }
+            logger.info("=============end setSingleSms==================");
         }
-        catch (Exception e){
-            logger.error("Mail send fail at :"+ new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));
-            logger.error("Mail exception :"+ e.getMessage());
-        }finally {
-            // 7. 关闭连接
-            if(null!=transport){
-                try{
-                    transport.close();
-                }
-                catch (MessagingException e){
-                    logger.error("Mail connect close fail at :"+ new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));
-                    logger.error("MessagingException :"+ e.getMessage());
-                }
 
+    /**
+     * 获取状态报告
+     * @param isGzip 是否压缩
+     */
+    private  void getReport(String appId,String secretKey,String host,String algorithm,boolean isGzip,String encode) {
+        logger.info("=============begin getReport==================");
+        ReportRequest pamars = new ReportRequest();
+        ResultModel result = request(appId,secretKey,algorithm,pamars, Constants.MESSAGE_HTTP + host + Constants.MESSAGE_HTTP_REPORT,isGzip,encode);
+        logger.info("result code :" + result.getCode());
+        if("SUCCESS".equals(result.getCode())){
+            ReportResponse[] response = JsonHelper.fromJson(ReportResponse[].class, result.getResult());
+            if (response != null) {
+                for (ReportResponse d : response) {
+                    logger.info("result data : " + d.getExtendedCode() + "," + d.getMobile() + "," + d.getCustomSmsId() + "," + d.getSmsId() + "," + d.getState() + "," + d.getDesc()
+                            + "," + d.getSubmitTime() + "," + d.getReceiveTime());
+                    if(!"成功".equalsIgnoreCase(d.getDesc())){
+                        logger.error(d.getMobile()+"：短信发送失败");
+                    }
+                }
             }
         }
+        logger.info("=============end getReport==================");
     }
 
     /**
-     * 创建一封只包含文本的简单邮件
-     *
-     * @param session 和服务器交互的会话
-     * @param sendMail 发件人邮箱
-     * @param receiveMail 收件人邮箱
-     * @return
-     * @throws Exception
+     * 公共请求方法
      */
-    private  MimeMessage createMimeMessage(Session session, String sendMail, String receiveMail,String dateType,String batchDate) throws Exception {
-        // 1. 创建一封邮件
-        MimeMessage message = new MimeMessage(session);
-
-        // 2. From: 发件人（昵称有广告嫌疑，避免被邮件服务器误认为是滥发广告以至返回失败，请修改昵称）
-        message.setFrom(new InternetAddress(sendMail, "", "UTF-8"));
-
-        // 3. To: 收件人（可以增加多个收件人、抄送、密送）
-        message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMail, "", "UTF-8"));
-
-        // 4. Subject: 邮件主题（标题有广告嫌疑，避免被邮件服务器误认为是滥发广告以至返回失败，请修改标题）
-        message.setSubject("Warning Test", "UTF-8");
-
-        // 5. Content: 邮件正文（可以使用html标签）（内容有广告嫌疑，避免被邮件服务器误认为是滥发广告以至返回失败，请修改发送内容）
-       String content = createSendContent(dateType,batchDate);
-        message.setContent(content, "text/html;charset=UTF-8");
-
-        // 6. 设置发件时间
-        message.setSentDate(new Date());
-
-        // 7. 保存设置
-        message.saveChanges();
-
-        return message;
+    public ResultModel request(String appId,String secretKey,String algorithm,Object content, String url,boolean isGzip,String encode) {
+        System.out.println(url);
+        Map<String, String> headers = new HashMap<String, String>();
+        EmayHttpRequestBytes request = null;
+        try {
+            headers.put("appId", appId);
+            headers.put("encode", encode);
+            String requestJson = JsonHelper.toJsonString(content);
+            logger.info("result json: " + requestJson);
+            byte[] bytes = requestJson.getBytes(encode);
+            logger.info("request data size : " + bytes.length);
+            if (isGzip) {
+                headers.put("gzip", "on");
+                bytes = GZIPUtils.compress(bytes);
+                logger.info("request data size [com]: " + bytes.length);
+            }
+            byte[] parambytes = AES.encrypt(bytes, secretKey.getBytes(), algorithm);
+            logger.info("request data size [en] : " + parambytes.length);
+            request = new EmayHttpRequestBytes(url, encode, "POST", headers, null, parambytes);
+        } catch (Exception e) {
+            logger.error("加密异常");
+            e.printStackTrace();
+        }
+        EmayHttpClient client = new EmayHttpClient();
+        String code = null;
+        String result = null;
+        try {
+            EmayHttpResponseBytes res = client.service(request, new EmayHttpResponseBytesPraser());
+            if(res == null){
+                logger.error("请求接口异常");
+                return new ResultModel(code, result);
+            }
+            if (res.getResultCode().equals(EmayHttpResultCode.SUCCESS)) {
+                if (res.getHttpCode() == 200) {
+                    code = res.getHeaders().get("result");
+                    if (code.equals("SUCCESS")) {
+                        byte[] data = res.getResultBytes();
+                        logger.info("response data size [en and com] : " + data.length);
+                        data = AES.decrypt(data, secretKey.getBytes(), algorithm);
+                        if (isGzip) {
+                            data = GZIPUtils.decompress(data);
+                        }
+                        logger.info("response data size : " + data.length);
+                        result = new String(data, encode);
+                        System.out.println("response json: " + result);
+                    }
+                } else {
+                    logger.error("请求接口异常,请求码:" + res.getHttpCode());
+                }
+            } else {
+                logger.error("请求接口网络异常:" + res.getResultCode().getCode());
+            }
+        } catch (Exception e) {
+            logger.error("解析失败");
+            e.printStackTrace();
+        }
+        ResultModel re = new ResultModel(code, result);
+        return re;
     }
 
+
     /**
-     * 构建邮件内容
+     * 构建内容
      * @param dataType
      * @param batchDate
      * @return
@@ -128,15 +179,11 @@ public class MessageSenderImpl implements MessageSender {
     private String createSendContent(String dataType,String batchDate){
         StringBuffer str = new StringBuffer("");
         str.append("用户 您好！");
-        str.append("<br>");
         str.append("数据发送异常！");
-        str.append("<br>");
         str.append("数据类型为： ");
         str.append(dataType);
-        str.append("<br>");
-        str.append("发送批次为： ");
+        str.append(",发送批次为： ");
         str.append(batchDate);
-        str.append("<br>");
         return str.toString();
     }
 
