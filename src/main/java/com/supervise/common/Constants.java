@@ -257,6 +257,7 @@ public final class Constants {
     /***************************批量发送常量 start********************************/
     public static final int BACTCH_SEND_MAX_NUM = 500;
     public static final int RETRY_TIME = 3;
+    public static final long WEBSERV_RES_SUCESS = 1L;
     /***************************批量发送常量 end********************************/
 
     /***************************邮件服务常量 start********************************/
@@ -271,4 +272,10 @@ public final class Constants {
     public static final String MESSAGE_HTTP_SENDSINGLESMS = "/inter/sendSingleSMS";
     public static final String MESSAGE_HTTP_SENDBATCHSMS = "/inter/sendBatchOnlySMS";
     /***************************邮件服务常量 end********************************/
+
+    /***************************发送状态常量 start********************************/
+    public static final String DATA_READY_SEND = "0";
+    public static final String DATA_SEND_SUCESS = "1";
+    public static final String DATA_SEND_FAIL = "-1";
+    /***************************发送状态常量 end********************************/
 }

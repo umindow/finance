@@ -2,6 +2,8 @@ package com.supervise.schedule.job;
 
 import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
+import com.supervise.config.mysql.base.QueryCondition;
+import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.dao.mysql.entity.CompensatoryEntity;
 import com.supervise.dao.mysql.middleDao.CompensatoryDao;
 import com.supervise.schedule.AbstractSenderSchedule;
@@ -31,13 +33,23 @@ public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuRepla
     @Autowired
     private CompensatoryDao compensatoryDao;
 
+    private List<CompensatoryEntity> compensatoryEntitys = new ArrayList<CompensatoryEntity>();
     @Override
     public List<JgBuReplaceInfo> loadSenderData(String batchDate) {
 //        Example example = new Example(CompensatoryEntity.class);
 //        Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("batch_date",batchDate);
-        List<CompensatoryEntity> compensatoryEntities = compensatoryDao.queryCompensatoryFormMiddleDB(batchDate);
-        return CollectionUtils.isEmpty(compensatoryEntities) ? null : new CompensatoryParserConvert().covert(compensatoryEntities);
+        QueryCondition queryCondition = new QueryCondition();
+        queryCondition.getColumnList().add("sendStatus");
+        queryCondition.getColumnList().add("batch_date");
+
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+
+        queryCondition.getValueList().add(Constants.DATA_READY_SEND);
+        queryCondition.getValueList().add(batchDate);
+        compensatoryEntitys = compensatoryDao.queryCompensatoryByCondition(queryCondition);
+        return CollectionUtils.isEmpty(compensatoryEntitys) ? null : new CompensatoryParserConvert().covert(compensatoryEntitys);
     }
 
     @Override
@@ -47,12 +59,26 @@ public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuRepla
 
     @Override
     public boolean senderData(List<JgBuReplaceInfo> compensatoryEntities) throws Exception {
+        long ret = -1;
         try {
-            webService().saveJgBuReplaceInfoAry(compensatoryEntities, compensatoryEntities.size());
+            ret = webService().saveJgBuReplaceInfoAry(compensatoryEntities, compensatoryEntities.size());
         } catch (Exception e) {
             return false;
         }
+        //如果返回值不是1 ，则发送失败。
+        if(Constants.WEBSERV_RES_SUCESS!=ret){
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public void updateDataStatus(String status){
+        //将已发送成的数据状态更新为发送成功
+        for(CompensatoryEntity compensatoryEntity : compensatoryEntitys){
+            compensatoryEntity.setSendStatus(status);
+            compensatoryDao.updateCompensatory(compensatoryEntity);
+        }
     }
 
     @Override

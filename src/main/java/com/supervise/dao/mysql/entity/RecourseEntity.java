@@ -74,4 +74,7 @@ public class RecourseEntity extends BaseEntity {
     @DepRole(depTypes = {DepType.LAW_DEP},modify = true)
     private String batchDate;
 
+    //发送状态，0:待发送 1 发送成功  -1 发送失败
+    @Column(name = "sendStatus")
+    private String sendStatus;
 }

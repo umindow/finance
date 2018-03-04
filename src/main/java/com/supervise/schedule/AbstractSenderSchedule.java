@@ -66,13 +66,20 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
             }
         }
         if (errorCount > 0) {
+            //如果发送失败，则更新信息状态为发送失败，同时发送邮件、短信通知相关人
+            updateDataStatus(Constants.DATA_SEND_FAIL);
             sendDataFailProcessor(dupKey,scheduleName());
+        }else{
+            //发送成功，则更新发送的信息状态为发送成功
+            updateDataStatus(Constants.DATA_SEND_SUCESS);
         }
     }
 
     public abstract List<T> loadSenderData(String batchDate);
 
     public abstract boolean checkData(List<T> t);
+
+    public abstract void updateDataStatus(String status);
 
     public abstract boolean senderData(List<T> t) throws Exception;
 

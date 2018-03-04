@@ -67,6 +67,7 @@ CREATE TABLE `finance_bank_credit` (
   `batch_date` varchar(40) DEFAULT NULL COMMENT '批次（当前传输日期，格式yyyyMMdd）',
   `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `sendStatus` varchar(10) DEFAULT '0' COMMENT '发送状态，0:待发送 1 发送成功  -1 发送失败',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=300 DEFAULT CHARSET=utf8;
@@ -117,6 +118,7 @@ CREATE TABLE `finance_business_data_info` (
   `batch_date` varchar(40) NOT NULL COMMENT '批次（为当前传输日期，格式为yyyyMMdd）',
   `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `sendStatus` varchar(10) DEFAULT '0' COMMENT '发送状态，0:待发送 1 发送成功  -1 发送失败',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
@@ -135,6 +137,7 @@ CREATE TABLE `finance_repayment_info` (
   `batch_date` varchar(40) NOT NULL COMMENT '批次（当前传输日期，格式：yyyyMMdd）',
   `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `sendStatus` varchar(10) DEFAULT '0' COMMENT '发送状态，0:待发送 1 发送成功  -1 发送失败',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8;
@@ -149,6 +152,7 @@ CREATE TABLE `finance_compensatory_info` (
   `proj_id` varchar(40) NOT NULL COMMENT '项目编码',
   `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `sendStatus` varchar(10) DEFAULT '0' COMMENT '发送状态，0:待发送 1 发送成功  -1 发送失败',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=400 DEFAULT CHARSET=utf8;
@@ -165,6 +169,7 @@ CREATE TABLE `finance_fee_and_refund_info` (
   `batch_date` varchar(40) NOT NULL COMMENT '批次（当前传输日期，格式yyyyMMdd）',
   `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `sendStatus` varchar(10) DEFAULT '0' COMMENT '发送状态，0:待发送 1 发送成功  -1 发送失败',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=500 DEFAULT CHARSET=utf8;
@@ -180,6 +185,7 @@ CREATE TABLE `finance_recourse_info` (
   `batch_date` varchar(40) NOT NULL COMMENT '批次，yyyyMMdd',
   `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `sendStatus` varchar(10) DEFAULT '0' COMMENT '发送状态，0:待发送 1 发送成功  -1 发送失败',
   `id` bigint(40) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8;

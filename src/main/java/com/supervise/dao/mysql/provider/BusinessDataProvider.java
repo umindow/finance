@@ -3,6 +3,7 @@ package com.supervise.dao.mysql.provider;
 
 import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BasicProvider;
+import com.supervise.config.mysql.base.QueryCondition;
 
 /**
  * ClassName: RepaymentProvider <br/>
@@ -35,6 +36,20 @@ public class BusinessDataProvider extends BasicProvider {
 		String selectSql = "SELECT * FROM "+Constants.FINANCE_BUSINESS_DATA_INFO;
 
 		String whereSql = createWhereSql4batchdate(batchDate);
+
+		return selectSql+whereSql;
+	}
+
+	/**
+	 * 按照指定条件从中间表中查询银行授信信息
+	 * @param queryCondition 查询条件
+	 * @return SQL
+	 */
+	public String queryBusinessDataByConditions(QueryCondition queryCondition){
+
+		String selectSql = "SELECT * FROM "+Constants.FINANCE_BUSINESS_DATA_INFO;
+
+		String whereSql = createWhereSql(queryCondition, null);
 
 		return selectSql+whereSql;
 	}
