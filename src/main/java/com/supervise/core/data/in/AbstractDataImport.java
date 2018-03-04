@@ -37,12 +37,12 @@ public abstract class AbstractDataImport implements DataImport {
     private UserEntity userEntity;
     @Override
     public void in(MultipartFile file) throws Exception {
-        checkData(file);
-        save();
         this.userEntity = SessionUser.INSTANCE.getCurrentUser();
         if(null == this.userEntity){
             throw new Exception("用户未登录");
         }
+        checkData(file);
+        save();
     }
 
     private final void checkData(MultipartFile file) throws Exception {

@@ -42,7 +42,7 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
                 String methodName = "get" + depRoleRef.getFieldName().replaceFirst(depRoleRef.getFieldName().substring(0, 1), depRoleRef.getFieldName().substring(0, 1)
                         .toUpperCase());
                 try {
-                    fieldValues.add(new FieldValue(t.getClass().getMethod(methodName).invoke(t), depRoleRef.getColumnName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
+                    fieldValues.add(new FieldValue(t.getClass().getMethod(methodName).invoke(t), depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {

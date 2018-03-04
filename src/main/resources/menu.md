@@ -34,42 +34,36 @@
      "sub_menus": [
            {
              "name": "银行授信数据",
-              "url": "/data/bankCreditList",
+              "url": "/data/genericDataList?dataType=200",
               "icon": "fa-user",
               "level":  1
               },
              {"name": "系统业务数据",
-              "url": "/data/businessDataList",
+              "url": "/data/genericDataList?dataType=100",
               "icon": "fa-user",
               "level":  1
               },
              {"name": "还款数据",
-              "url": "/data/repaymentList",
+              "url": "/data/genericDataList?dataType=300",
               "icon": "fa-user",
               "level":  1
               },
              {"name": "收费退费数据",
-              "url": "/data/feeAndRefundList",
+              "url": "/data/genericDataList?dataType=400",
               "icon": "fa-user",
               "level":  1
               },
              {"name": "代偿数据",
-              "url": "/data/compensatoryList",
+              "url": "/data/genericDataList?dataType=500",
               "icon": "fa-user",
               "level":  1
               },
              {"name": "追偿数据",
-              "url": "/data/recourseList",
+              "url": "/data/genericDataList?dataType=600",
               "icon": "fa-user",
               "level":  1
               }                                                                      
            ]
-},
-{
-    "name": "日志管理", 
-    "url": "/ua/list",
-    "icon": "fa-file-word-o",
-    "level": 1
 }
 ]
 

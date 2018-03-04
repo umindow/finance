@@ -1,8 +1,8 @@
 #tag layout_block("title")
-Finance  - ${moduleName}
+Finance  - ${view.moduleName}
 #end
 #tag layout_block("breadcrumb")
-<li class="active">数据管理-<strong style="color:red;">${moduleName}</strong></li>
+<li class="active">数据管理-<strong style="color:red;">${view.moduleName}</strong></li>
 #end
 #tag layout_block("mainContent")
 <div class="row">
@@ -13,14 +13,15 @@ Finance  - ${moduleName}
                     <div class="row m-b-sm m-t-sm">
                         <div class="col-md-9">
                             <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
-                                    data-target="#bankCreditImport">数据导入
+                                    data-target="#genericImport">数据导入
                             </button>
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal">数据导出
                             </button>
                         </div>
                         <div class="col-md-3">
                             <div class="input-group">
-                                <input type="text" id="datepicker" name="datepicker" placeholder="选择日期" value="${date}"
+                                <input type="text" id="datepicker" name="datepicker" placeholder="选择日期"
+                                       value="${view.date}"
                                        class="input-sm form-control">
                                 <div class="input-group-btn">
                                     <button class="btn btn-sm btn-primary" id="searchBtn">
@@ -51,8 +52,8 @@ Finance  - ${moduleName}
                                             data-target="#${data.dataId}">
                                         修改
                                     </button>
-                                    <button type="button" class="btn btn-warning btn-xs" data-toggle="modal"
-                                            data-target="#${data.dataId}">
+                                    <button type="button" class="btn btn-warning btn-xs"
+                                            attr="${data.dataId}" name="deleteBtn">
                                         删除
                                     </button>
                                     <div class="modal inmodal" id="${data.dataId}" tabindex="-1" role="dialog"
@@ -63,7 +64,8 @@ Finance  - ${moduleName}
                                                     <h4 class="modal-title">银行授信数据</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form method="post" class="form-horizontal">
+                                                    <form method="post" class="form-horizontal" id="form${data.dataId}"
+                                                          action="${view.modifyUrl}">
                                                         #for(obj:data.values)
                                                         <div class="form-group">
                                                             <label class="col-sm-4 control-label">${obj.filedCnName}</label>
@@ -79,6 +81,7 @@ Finance  - ${moduleName}
                                                                 #end
                                                             </div>
                                                         </div>
+                                                        <input type="hidden" name="id" value="${data.dataId}">
                                                         #end
                                                     </form>
                                                 </div>
@@ -86,7 +89,9 @@ Finance  - ${moduleName}
                                                     <button type="button" class="btn btn-white" data-dismiss="modal">
                                                         Close
                                                     </button>
-                                                    <button type="button" class="btn btn-primary">修改保存</button>
+                                                    <button type="button" id="modifyBtn" class="btn btn-primary"
+                                                            attr="${data.dataId}">修改保存
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -103,8 +108,8 @@ Finance  - ${moduleName}
         </div>
     </div>
 </div>
-<div class="modal fade" id="bankCreditImport">
-    <form class="form-horizontal" id="bankCreditImportForm"
+<div class="modal fade" id="genericImport">
+    <form class="form-horizontal" id="genericImportForm"
           enctype="multipart/form-data">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -117,7 +122,7 @@ Finance  - ${moduleName}
                 <div class="modal-body">
                     <label class="sr-only">选择导入数据</label>
                     <input type="file" class="file" name="file" id="file">
-                    <input type="hidden" name="type" value="bankCredit">
+                    <input type="hidden" name="type" value="${view.dataType}">
                 </div>
                 <!-- 模态框底部 -->
                 <div class="modal-footer">
@@ -133,6 +138,7 @@ Finance  - ${moduleName}
 #tag layout_block("js")
 <script type="text/javascript">
     $(document).ready(function () {
+        var dataType = '${view.dataType}';
         $('#pagination').twbsPagination({
             first: "首页",
             prev: "上一页",
@@ -140,14 +146,46 @@ Finance  - ${moduleName}
             last: "尾页",
             totalPages: ${list.pages},
             visiblePages: 7,
-            href: 'bankCreditList?p={{pageNumber}}&date=${date}',
+            href: 'genericDataList?p={{pageNumber}}&dataType=${view.dataType}&date=${view.date}',
             hrefVariable: '{{pageNumber}}',
             startPage: ${list.pageNum},
             onPageClick: function (event, page) {
             }
         });
+        $(".project-list").find("button[name=deleteBtn]").each(function () {
+            $(this).on('click', function () {
+                var dataId = $(this).attr("attr");
+                sw_confirm("确认删除吗?", "将永久删除数据", "warning", function () {
+                    $.post("${view.deleteUrl}", {"dataId": dataId, "dataType": dataType}, function (result) {
+                        if (result == "succcess") {
+                            sw_alert("操作成功", "已删除数据", "success", function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            sw_alert("操作失败", "", "error");
+                        }
+                    });
+                });
+            });
+        });
+        $("[id=modifyBtn]").each(function () {
+            $(this).on("click", function () {
+                var dataId = $(this).attr("attr");
+                var form = $("#form" + dataId);
+                $.post("${view.modifyUrl}", form.serialize(), function (result) {
+                    if (result) {
+                        success("修改成功", refreshWindow());
+                    } else {
+                        error("修改失败");
+                    }
+                });
+            });
+        });
         $("#datepicker").datepicker({
-            dateFormat: 'yy-mm-dd'
+            dateFormat: 'yy-mm-dd',
+            dayNamesMin: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+                '七月', '八月', '九月', '十月', '十一月', '十二月']
         });
         $('#searchBtn').on('click', function () {
             var date = $('#datepicker').val();
@@ -155,7 +193,7 @@ Finance  - ${moduleName}
                 error("请选择日期.");
                 return;
             }
-            window.location.href = "/data/bankCreditList?date=" + date;
+            window.location.href = "/data/genericDataList?date=" + date + "&dataType=${view.dataType}";
         });
         $('#importsubmit').on('click', function () {
             if (!validate()) {
@@ -167,7 +205,7 @@ Finance  - ${moduleName}
                 url: '/data/import',
                 type: 'POST',
                 cache: false,
-                data: new FormData($('#bankCreditImportForm')[0]),
+                data: new FormData($('#genericImportForm')[0]),
                 processData: false,
                 contentType: false,
                 success: function (data) {

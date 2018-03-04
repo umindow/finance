@@ -90,7 +90,9 @@ public class JetExFunctions {
         }
         return "未知角色";
     }
-
+    public static String userDepDesc(String depId){
+        return DepType.depDesc(Integer.valueOf(depId));
+    }
     public static String userDataRole(String dataRoleJson) {
         DataType[] dataTypes = DataType.values();
         List<Integer> dataRoles = JSON.parseArray(dataRoleJson, Integer.class);

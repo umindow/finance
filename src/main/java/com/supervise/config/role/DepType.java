@@ -39,4 +39,13 @@ public enum DepType {
         }
         return depIds;
     }
+
+    public static String depDesc(int depId){
+        for(final DepType depType:values()){
+           if(depType.getDepId() == depId){
+               return depType.getDepDesc();
+           }
+        }
+        return "未知";
+    }
 }
