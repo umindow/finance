@@ -13,7 +13,7 @@ public class DataLoadedScheduleTest extends BaseTest{
 	
 	@Test
 	public void doScheduleTest(){
-		String dupKey = Constants.SCH_DATA_LOADED_SCHEDULE +"2018-02-24-11";
+		String dupKey = Constants.SCH_DATA_LOADED_SCHEDULE +"2018-03-04-13";
 		this.dataLoadedSchedule.doSchedule(dupKey);
 	}
 }

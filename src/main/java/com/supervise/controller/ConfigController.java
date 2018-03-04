@@ -1,14 +1,10 @@
 package com.supervise.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
-import com.supervise.config.role.RoleType;
 import com.supervise.controller.vo.ConfigVo;
 import com.supervise.dao.mysql.entity.ConfigEntity;
-import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.mapper.ConfigMapper;
 import com.supervise.schedule.JobInfo;
 import com.supervise.schedule.QuartzScheduleExecutor;
@@ -17,12 +13,12 @@ import com.supervise.support.Result;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,10 +77,10 @@ public class ConfigController {
         if(!isValidExpression(configVo.getJobInfo().getCron())){
             return Result.fail("Cron表达式不符合规范.");
         }
-        if(null == configVo.getJobInfo().getJobGroup()){
+        if(StringUtils.isEmpty(configVo.getJobInfo().getJobGroup())){
             configVo.getJobInfo().setJobGroup(JobInfo.DEFAULT_JOB_GROUP);
         }
-        if(null == configVo.getJobInfo().getJobTriggerGroup()){
+        if(StringUtils.isEmpty(configVo.getJobInfo().getJobTriggerGroup())){
             configVo.getJobInfo().setJobTriggerGroup(JobInfo.DEFAULT_JOB_TRIGGER_GROUP);
         }
         ConfigEntity configEntity = new ConfigEntity();

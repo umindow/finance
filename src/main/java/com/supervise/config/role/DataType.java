@@ -1,7 +1,6 @@
 package com.supervise.config.role;
 
-import com.supervise.schedule.job.BankTrustSenderSchedule;
-import com.supervise.schedule.job.DataLoadedSchedule;
+import com.supervise.schedule.job.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,13 +18,13 @@ import java.util.List;
  * User    |    Time    |    Note
  */
 public enum DataType {
-    SUPERVISE_BIZ_DATA("系统业务数据", 100, 1,1, DataLoadedSchedule.class.getSimpleName()),
+    SUPERVISE_BIZ_DATA("系统业务数据", 100, 1,1, BusinessDataSenderSchedule.class.getSimpleName()),
     SUPERVISE_BANK_DATA("银行授信数据", 200, 1,1, BankTrustSenderSchedule.class.getSimpleName()),
-    SUPERVISE_REBACK_DATA("还款数据", 300, 1,1, null),
-    SUPERVISE_FEE_DATA("收费退费数据", 400, 1,1, null),
-    SUPERVISE_REPLACE_DATA("代偿数据", 500, 1,1, null),
-    SUPERVISE_TRACE_DATA("追偿数据", 600, 1,1, null),
-    SUPERVISE_LOAD_VIEWDATA("LoadViewData",700, 1,0, DataLoadedSchedule.class.getSimpleName());//从中间表LOAD数据的定时进程
+    SUPERVISE_REBACK_DATA("还款数据", 300, 1,1, RepaymentSenderSchedule.class.getSimpleName()),
+    SUPERVISE_FEE_DATA("收费退费数据", 400, 1,1, FeeAndRefundSenderSchedule.class.getSimpleName()),
+    SUPERVISE_REPLACE_DATA("代偿数据", 500, 1,1, CompensatorySenderSchedule.class.getSimpleName()),
+    SUPERVISE_TRACE_DATA("追偿数据", 600, 1,1, RecourseSenderSchedule.class.getSimpleName()),
+    SUPERVISE_LOAD_VIEWDATA("原始数据",700, 1,1, DataLoadedSchedule.class.getSimpleName());//从中间表LOAD数据的定时进程
 
     @Getter
     @Setter
