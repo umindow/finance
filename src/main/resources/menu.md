@@ -37,7 +37,32 @@
               "url": "/data/bankCreditList",
               "icon": "fa-user",
               "level":  1
-              }
+              },
+             {"name": "系统业务数据",
+              "url": "/data/businessDataList",
+              "icon": "fa-user",
+              "level":  1
+              },
+             {"name": "还款数据",
+              "url": "/data/repaymentList",
+              "icon": "fa-user",
+              "level":  1
+              },
+             {"name": "收费退费数据",
+              "url": "/data/feeAndRefundList",
+              "icon": "fa-user",
+              "level":  1
+              },
+             {"name": "代偿数据",
+              "url": "/data/compensatoryList",
+              "icon": "fa-user",
+              "level":  1
+              },
+             {"name": "追偿数据",
+              "url": "/data/recourseList",
+              "icon": "fa-user",
+              "level":  1
+              }                                                                      
            ]
 },
 {

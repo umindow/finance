@@ -55,7 +55,7 @@ public class UserController {
         dataLevels.add(DataType.SUPERVISE_REPLACE_DATA.getDataLevel());
         dataLevels.add(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
         userEntity.setDataLevels(JSON.toJSONString(dataLevels));
-        userEntity.setDepId(JSON.toJSONString(DepType.listDepIds()));
+        userEntity.setDepId(String.valueOf(DepType.COMPREHENSIVE_DEP.getDepId()));
         userEntity.setPassword("123456");
         userMapper.insert(userEntity);
         return "success";
@@ -106,14 +106,14 @@ public class UserController {
             }
             userEntity.setDataLevels(JSON.toJSONString(dataLeves));
         }
-        if(null != userEntity.getDepId()){
-            List<String> depIdStrs = Arrays.asList(userEntity.getDepId().split(","));
-            List<Integer> depIds = new ArrayList<Integer>();
-            for(final String depId : depIdStrs){
-                depIds.add(Integer.valueOf(depId));
-            }
-            userEntity.setDepId(JSON.toJSONString(depIds));
-        }
+//        if(null != userEntity.getDepId()){
+//            List<String> depIdStrs = Arrays.asList(userEntity.getDepId().split(","));
+//            List<Integer> depIds = new ArrayList<Integer>();
+//            for(final String depId : depIdStrs){
+//                depIds.add(Integer.valueOf(depId));
+//            }
+//            userEntity.setDepId(JSON.toJSONString(depIds));
+//        }
         userEntity.setUserStatus(UserEntity.UserStatus.ALIVE.getStatus());
         userMapper.insert(userEntity);
         return Result.success();

@@ -1,10 +1,12 @@
 package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
+import com.supervise.cache.FiedRoleCache;
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.RecourseEntity;
 import com.supervise.dao.mysql.middleDao.RecourseDao;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by xishui.hb on 2018/2/12 下午3:59.
@@ -56,31 +59,47 @@ public class RecourseDataImport extends AbstractDataImport {
                 break;
             }
             recourseEntity = new RecourseEntity();
+            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+            int userDepId = Integer.valueOf(getUserEntity().getDepId());
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
                 }
                 switch (cell.getColumnIndex()) {
                     case 0://机构编码
-                        recourseEntity.setOrgId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("org_id"))) {
+                            recourseEntity.setOrgId((String) getCellValue(cell));
+                        }
                         break;
                     case 1://项目编码
-                        recourseEntity.setProjId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("proj_id"))) {
+                            recourseEntity.setProjId((String) getCellValue(cell));
+                        }
                         break;
                     case 2://合同编号
-                        recourseEntity.setContractId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("contract_id"))) {
+                            recourseEntity.setContractId((String) getCellValue(cell));
+                        }
                         break;
                     case 3://追偿类型
-                        recourseEntity.setReplevyType((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replevy_type"))) {
+                            recourseEntity.setReplevyType((String) getCellValue(cell));
+                        }
                         break;
                     case 4://追偿日期
-                        recourseEntity.setReplevyDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replevy_date"))) {
+                            recourseEntity.setReplevyDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        }
                         break;
                     case 5://追偿金额
-                        recourseEntity.setReplevyMoney(new BigDecimal((Double) getCellValue(cell)));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replevy_money"))) {
+                            recourseEntity.setReplevyMoney(new BigDecimal((Double) getCellValue(cell)));
+                        }
                         break;
                     case 6:
-                        recourseEntity.setBatchDate((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("batch_date"))) {
+                            recourseEntity.setBatchDate((String) getCellValue(cell));
+                        }
                         break;
                     default:
                         break;

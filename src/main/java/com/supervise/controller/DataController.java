@@ -3,6 +3,10 @@ package com.supervise.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.supervise.common.Constants;
+import com.supervise.common.SessionUser;
+import com.supervise.config.role.DataType;
+import com.supervise.controller.translate.GenericDataTranslate;
+import com.supervise.controller.vo.DataSet;
 import com.supervise.core.data.in.BankCreditDataImport;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.mapper.BankCreditMapper;
@@ -42,18 +46,21 @@ public class DataController {
     @RequestMapping(value = "bankCreditList", method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "p", required = false) Integer pageNum, @RequestParam(value = "date", required = false) String date) {
         Page<BankCreditEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
-        ModelAndView view = new ModelAndView("pages/data/bankCreditList", "list", pager);
+        ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
         Example entityExample = new Example(BankCreditEntity.class);
         Example.Criteria criteria = entityExample.createCriteria();
-        if (null != date) {
-            criteria.andEqualTo("batch_date",date);
+        if (null != date && !"".equals(date)) {
+            criteria.andEqualTo("batchDate",date);
         }
         List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(entityExample);
         if (CollectionUtils.isEmpty(bankCreditEntities)) {
             pager.setPageNum(1);
             pager.setPages(1);
         }
+        DataSet dataSet = new GenericDataTranslate<BankCreditEntity>().translate(bankCreditEntities, DataType.SUPERVISE_BANK_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
+        view.addObject("dataSet",dataSet);
         view.addObject("date",date);
+        view.addObject("moduleName",DataType.SUPERVISE_BANK_DATA.getDataName());
         return view;
     }
 

@@ -1,13 +1,12 @@
 package com.supervise.controller.vo;
 
-import com.supervise.config.role.DataType;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * Created by xishui.hb on 2018/2/6 上午10:36.
- * 统一的数据对象
+ * Created by xishui.hb on 2018/3/4 下午3:26.
+ *
  * @author xishui
  * Description:
  * Modify Record
@@ -15,7 +14,13 @@ import java.util.List;
  * User    |    Time    |    Note
  */
 @Data
-public class DataVo{
-    private List<FieldValue> values;
-    private Long dataId;
+public class DataSet {
+
+    private List<String> fields;
+
+    private List<DataVo> dataVos;
+
+    public DataSet(List<String> fields) {
+        this.fields = fields;
+    }
 }

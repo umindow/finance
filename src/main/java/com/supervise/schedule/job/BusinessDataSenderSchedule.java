@@ -73,7 +73,7 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
                 jgBuProjectInfo.setProjectCode(businessDataEntity.getProjId());//2
                 jgBuProjectInfo.setClientType(businessDataEntity.getClientType());//3
                 jgBuProjectInfo.setClientCode(businessDataEntity.getClientId());//4
-                jgBuProjectInfo.setClientName(businessDataEntity.getClienName());//5
+                jgBuProjectInfo.setClientName(businessDataEntity.getClientName());//5
 
                 jgBuProjectInfo.setIdCardType(businessDataEntity.getIDCardType());//6
                 jgBuProjectInfo.setIdCard(businessDataEntity.getIDCard());//7

@@ -37,7 +37,7 @@ public class BusinessDataDaoTest extends BaseTest{
 			entity.setCallingFirst("1");
 			entity.setCallingSecond("2");
 			entity.setCapitalBelong("1");
-			entity.setClienName("she");
+			entity.setClientName("she");
 			entity.setClientBailMoney(new BigDecimal(100000));
 			entity.setCoBankId("1231241");
 			entity.setClientId("123213");

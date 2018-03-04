@@ -1,10 +1,12 @@
 package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
+import com.supervise.cache.FiedRoleCache;
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
 import com.supervise.dao.mysql.middleDao.FeeAndRefundDao;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by xishui.hb on 2018/2/12 下午3:59.
@@ -55,6 +58,8 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
             if (org.apache.commons.lang3.StringUtils.isBlank((String)getCellValue(row.getCell(0)))) {
                 break;
             }
+            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+            int userDepId = Integer.valueOf(getUserEntity().getDepId());
             feeAndRefundEntity = new FeeAndRefundEntity();
             for (Cell cell : row) {
                 if (cell == null) {
@@ -62,28 +67,44 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
                 }
                 switch (cell.getColumnIndex()) {
                     case 0://机构编码
-                        feeAndRefundEntity.setOrgId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("org_id"))) {
+                            feeAndRefundEntity.setOrgId((String) getCellValue(cell));
+                        }
                         break;
                     case 1://项目编码
-                        feeAndRefundEntity.setProjId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("proj_id"))) {
+                            feeAndRefundEntity.setProjId((String) getCellValue(cell));
+                        }
                         break;
                     case 2://合同编号
-                        feeAndRefundEntity.setContractId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("contract_id"))) {
+                            feeAndRefundEntity.setContractId((String) getCellValue(cell));
+                        }
                         break;
                     case 3://收退费标示
-                        feeAndRefundEntity.setChargeWay((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_may"))) {
+                            feeAndRefundEntity.setChargeWay((String) getCellValue(cell));
+                        }
                         break;
                     case 4://费用类型编码
-                        feeAndRefundEntity.setChargeType((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_type"))) {
+                            feeAndRefundEntity.setChargeType((String) getCellValue(cell));
+                        }
                         break;
                     case 5://实际缴费时间
-                        feeAndRefundEntity.setChargeTime(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_time"))) {
+                            feeAndRefundEntity.setChargeTime(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        }
                         break;
                     case 6://实际缴费金额
-                        feeAndRefundEntity.setChargeMoney(new BigDecimal((Double) getCellValue(cell)));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_money"))) {
+                            feeAndRefundEntity.setChargeMoney(new BigDecimal((Double) getCellValue(cell)));
+                        }
                         break;
                     case 7:
-                        feeAndRefundEntity.setBatchDate((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("batch_date"))) {
+                            feeAndRefundEntity.setBatchDate((String) getCellValue(cell));
+                        }
                         break;
                     default:
                         break;

@@ -28,4 +28,8 @@ public @interface DepRole {
      * @return
      */
     boolean modify() default true;
-}
+
+    String fieldCnName() default "未知";
+
+    int index()  default 0;//顺序，方便对应
+ }

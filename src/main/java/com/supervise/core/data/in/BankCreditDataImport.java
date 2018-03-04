@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,7 +51,7 @@ public class BankCreditDataImport extends AbstractDataImport {
             return;
         }
         BankCreditEntity bankCreditEntity = null;
-        Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataType());
+        Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
         int userDepId = Integer.valueOf(getUserEntity().getDepId());
         for (Row row : sheet) {
             if (null == row) {
@@ -69,39 +70,57 @@ public class BankCreditDataImport extends AbstractDataImport {
                 }
                 switch (cell.getColumnIndex()) {
                     case 0://结构编码
-                        if(FiedRoleCache.checkFiledRole(userDepId,filedRoles.get(""))) {
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("primary_id"))) {
                             bankCreditEntity.setPrimaryId((String) getCellValue(cell));
                         }
                         break;
                     case 1://结构编码
-                        bankCreditEntity.setOrgId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("org_id"))) {
+                            bankCreditEntity.setOrgId((String) getCellValue(cell));
+                        }
                         break;
                     case 2:
-                        bankCreditEntity.setBankId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("bank_id"))) {
+                            bankCreditEntity.setBankId((String) getCellValue(cell));
+                        }
                         break;
                     case 3:
-                        bankCreditEntity.setCreditTypeId((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("credit_type_id"))) {
+                            bankCreditEntity.setCreditTypeId((String) getCellValue(cell));
+                        }
                         break;
                     case 4:
-                        bankCreditEntity.setCreditMoney(new BigDecimal((Double) getCellValue(cell)));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("credit_money"))) {
+                            bankCreditEntity.setCreditMoney(new BigDecimal((Double) getCellValue(cell)));
+                        }
                         break;
                     case 5:
-                        bankCreditEntity.setBailScale(new BigDecimal((Double) getCellValue(cell)));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("bail_scale"))) {
+                            bankCreditEntity.setBailScale(new BigDecimal((Double) getCellValue(cell)));
+                        }
                         break;
                     case 6:
-                        bankCreditEntity.setCreditStartDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("credit_start_date"))) {
+                            bankCreditEntity.setCreditStartDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        }
                         break;
                     case 7:
-                        bankCreditEntity.setCreditEndDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("credit_end_date"))) {
+                            bankCreditEntity.setCreditEndDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                        }
                         break;
                     case 8:
                         bankCreditEntity.setSingleMoneyLimit(new BigDecimal((Double) getCellValue(cell)));
                         break;
                     case 9:
-                        bankCreditEntity.setIsForCredit((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("is_for_credit"))) {
+                            bankCreditEntity.setIsForCredit((String) getCellValue(cell));
+                        }
                         break;
                     case 10:
-                        bankCreditEntity.setBatchDate((String) getCellValue(cell));
+                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("batch_date"))) {
+                            bankCreditEntity.setBatchDate((String) getCellValue(cell));
+                        }
                         break;
                     default:
                         break;

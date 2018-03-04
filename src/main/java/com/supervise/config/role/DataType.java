@@ -70,7 +70,7 @@ public enum DataType {
     }
     public static DataType typeOfType(int type){
         for(final DataType dataType : values()){
-            if(dataType.getDataType() == type){
+            if(dataType.getDataLevel() == type){
                 return dataType;
             }
         }

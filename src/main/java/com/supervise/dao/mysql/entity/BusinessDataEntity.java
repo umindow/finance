@@ -55,7 +55,7 @@ public class BusinessDataEntity extends BaseEntity {
      */
     @Column(name = "client_name")
     @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP},modify = true)
-    private String clienName;
+    private String clientName;
     
     /**
      * 证件类型：1 军官证 2 护照 3 身份证 4 其它 

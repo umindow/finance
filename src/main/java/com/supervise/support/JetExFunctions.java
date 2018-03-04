@@ -2,8 +2,10 @@ package com.supervise.support;
 
 
 import com.alibaba.fastjson.JSON;
+import com.supervise.cache.FiedRoleCache;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
+import com.supervise.config.role.DepType;
 import com.supervise.config.role.RoleType;
 import com.supervise.dao.mysql.entity.UserEntity;
 import jetbrick.template.JetAnnotations;
@@ -13,6 +15,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -98,6 +101,33 @@ public class JetExFunctions {
             }
         }
         return "".equals(builder.toString()) ? "未知" : builder.toString().substring(0, builder.toString().length() - 1);
+    }
+
+    /**
+     * 根据数据类型和字段，判断当前用户是否有修改权限(页面)
+     *
+     * @param dataType
+     * @param field
+     * @return
+     */
+    public static boolean isFieldModify(int dataType, String field) {
+        FiedRoleCache.DepRoleRef depRoleRef = FiedRoleCache.depRoleRef(dataType, field);
+        if (null == depRoleRef || null == depRoleRef.getDepTypes() || depRoleRef.getDepTypes().length <= 0) {
+            return true;
+        }
+        if(!depRoleRef.isModify()){
+            return false;
+        }
+        UserEntity userEntity = SessionUser.INSTANCE.getCurrentUser();
+        if (null == userEntity) {
+            return false;
+        }
+        for(final DepType depType : depRoleRef.getDepTypes()){
+            if(depType.getDepId() == Integer.valueOf(userEntity.getDepId())){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String currentUserLevelDesc() {

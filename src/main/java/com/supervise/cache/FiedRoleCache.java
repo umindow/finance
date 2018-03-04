@@ -37,22 +37,22 @@ public final class FiedRoleCache {
     }
 
     static {
-       initRoleCache();
+        initRoleCache();
     }
 
     private static void initRoleCache() {
-        commonCache(BankCreditEntity.class, DataType.SUPERVISE_BANK_DATA.getDataType());//银行授信
-        commonCache(BusinessDataEntity.class,DataType.SUPERVISE_BIZ_DATA.getDataType());//系统业务
-        commonCache(CompensatoryEntity.class,DataType.SUPERVISE_REPLACE_DATA.getDataType());//代偿
-        commonCache(FeeAndRefundEntity.class,DataType.SUPERVISE_FEE_DATA.getDataType());//收费退费数据
-        commonCache(RepaymentEntity.class,DataType.SUPERVISE_REBACK_DATA.getDataType());//退款
-        commonCache(RecourseEntity.class,DataType.SUPERVISE_TRACE_DATA.getDataType());//追偿
+        commonCache(BankCreditEntity.class, DataType.SUPERVISE_BANK_DATA.getDataLevel());//银行授信
+        commonCache(BusinessDataEntity.class, DataType.SUPERVISE_BIZ_DATA.getDataLevel());//系统业务
+        commonCache(CompensatoryEntity.class, DataType.SUPERVISE_REPLACE_DATA.getDataLevel());//代偿
+        commonCache(FeeAndRefundEntity.class, DataType.SUPERVISE_FEE_DATA.getDataLevel());//收费退费数据
+        commonCache(RepaymentEntity.class, DataType.SUPERVISE_REBACK_DATA.getDataLevel());//退款
+        commonCache(RecourseEntity.class, DataType.SUPERVISE_TRACE_DATA.getDataLevel());//追偿
     }
 
     private static void commonCache(Class<?> cls, Integer dataType) {
-        Field[] fields = cls.getFields();
+        Field[] fields = cls.getDeclaredFields();
         if (null == fields || fields.length <= 0) {
-            logger.info("ClassEntity[%s] has non Fields.", cls.getName());
+            logger.info("ClassEntity has non Fields."+cls.getSimpleName());
             return;
         }
         Map<String, DepRoleRef> depRoleRefMap = new HashMap<String, DepRoleRef>();
@@ -62,7 +62,10 @@ public final class FiedRoleCache {
                 continue;
             }
             DepRole depRole = field.getAnnotation(DepRole.class);
-            depRoleRefMap.put(column.name(), (null == depRole) ? null : new DepRoleRef(depRole.depTypes(), depRole.modify()));
+            if(null == depRole){
+                continue;
+            }
+            depRoleRefMap.put(column.name(), (null == depRole) ? null : new DepRoleRef(depRole.depTypes(), depRole.modify(), column.name(), field.getName(), depRole.fieldCnName(), depRole.index()));
         }
         FIED_ROLE_CACHE.put(dataType, depRoleRefMap);
         logger.info("Add Field Role Ref DataType:%s, Refs:%s", DataType.typeOfType(dataType).getDataName(), JSON.toJSON(depRoleRefMap));
@@ -72,23 +75,31 @@ public final class FiedRoleCache {
     public static class DepRoleRef {
         private DepType[] depTypes;
         private boolean modify;
+        private String columnName;
+        private String fieldName;
+        private String fieldCnName;
+        private int index;
 
-        public DepRoleRef(DepType[] depTypes, boolean modify) {
+        public DepRoleRef(DepType[] depTypes, boolean modify, String columnName, String fieldName, String fieldCnName, int index) {
             this.depTypes = depTypes;
             this.modify = modify;
+            this.columnName = columnName;
+            this.fieldName = fieldName;
+            this.fieldCnName = fieldCnName;
+            this.index = index;
         }
     }
 
-    public static boolean checkFiledRole(int userDepId,DepRoleRef depRoleRef){
-        if(null == depRoleRef){
+    public static boolean checkFieldRole(int userDepId, DepRoleRef depRoleRef) {
+        if (null == depRoleRef) {
             return false;
         }
-        if(!depRoleRef.isModify()){
+        if (!depRoleRef.isModify()) {
             return false;
         }
-        if(depRoleRef.depTypes.length > 0){
-            for(final DepType depType : depRoleRef.getDepTypes()){
-                if(depType.getDepId() == userDepId){
+        if (depRoleRef.depTypes.length > 0) {
+            for (final DepType depType : depRoleRef.getDepTypes()) {
+                if (depType.getDepId() == userDepId) {
                     return true;
                 }
             }
