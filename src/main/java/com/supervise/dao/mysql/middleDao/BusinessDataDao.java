@@ -2,6 +2,7 @@ package com.supervise.dao.mysql.middleDao;
 
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
+import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.mapper.BusinessDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +52,59 @@ public class BusinessDataDao {
 				this.businessDataMapper.queryBusinessDataFormMiddleDB(batchDate);
 		return responseList;
 	}
+
+	/**
+	 * 按照指定条件从中间库中查询业务数据信息
+	 * @param queryCondition  查询条件
+	 * @return 按照指定查询条件返回的查询结果集合
+	 */
+	public List<BusinessDataEntity> queryBusinessDataByCondition(
+			QueryCondition queryCondition){
+		List<BusinessDataEntity> responseList =
+				this.businessDataMapper.queryBusinessDataByConditions(queryCondition);
+		return responseList;
+	}
+
+	/**
+	 * 更新业务数据信息
+	 * @param businessDataEntity
+	 * int id
+	 */
+	public  int updateBankCredit(BusinessDataEntity businessDataEntity){
+		int id = -1;
+		if(null!=businessDataEntity){
+			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
+			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
+			businessDataEntity.setUpdateDate(newDate);
+			id = this.businessDataMapper.updateByPrimaryKeySelective(businessDataEntity);
+		}
+		return id;
+	}
+
+	/**
+	 * 删除业务数据
+	 * @param businessDataEntity
+	 * int id
+	 */
+	public  int deleteRepayment(BusinessDataEntity businessDataEntity){
+		int id = -1;
+		if(null!=businessDataEntity){
+			id = this.businessDataMapper.delete(businessDataEntity);
+		}
+		return id;
+	}
+
+	/**
+	 * 根据ID主键删除业务数据信息
+	 * @param key
+	 * int
+	 */
+	public  int deleteRepaymentByID(Long key){
+		int id = -1;
+		if(null!=key){
+			id = this.businessDataMapper.deleteByPrimaryKey(key);
+		}
+		return id;
+	}
+
 }

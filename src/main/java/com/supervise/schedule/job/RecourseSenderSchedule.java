@@ -2,6 +2,8 @@ package com.supervise.schedule.job;
 
 import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
+import com.supervise.config.mysql.base.QueryCondition;
+import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.dao.mysql.entity.RecourseEntity;
 import com.supervise.dao.mysql.middleDao.RecourseDao;
 import com.supervise.schedule.AbstractSenderSchedule;
@@ -31,12 +33,24 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
     @Autowired
     private RecourseDao recourseDao;
 
+    private List<RecourseEntity> recourseEntitys = new ArrayList<RecourseEntity>();
     @Override
     public List<JgBuReplevyInfo> loadSenderData(String batchDate) {
 //        Example example = new Example(RecourseEntity.class);
 //        Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("batch_date",batchDate);
-        List<RecourseEntity> recourseEntitys = recourseDao.queryRecourseFormMiddleDB(batchDate);
+
+        QueryCondition queryCondition = new QueryCondition();
+        queryCondition.getColumnList().add("sendStatus");
+        queryCondition.getColumnList().add("batch_date");
+
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+
+        queryCondition.getValueList().add(Constants.DATA_READY_SEND);
+        queryCondition.getValueList().add(batchDate);
+
+        this.recourseEntitys = recourseDao.queryRecourseByCondition(queryCondition);
         return CollectionUtils.isEmpty(recourseEntitys) ? null : new RecourseParserConvert().covert(recourseEntitys);
     }
 
@@ -47,12 +61,27 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
 
     @Override
     public boolean senderData(List<JgBuReplevyInfo> recourseEntitys) throws Exception {
+        long ret = -1;
         try {
-            webService().saveJgBuReplevyInfoAry(recourseEntitys, recourseEntitys.size());
+            ret = webService().saveJgBuReplevyInfoAry(recourseEntitys, recourseEntitys.size());
         } catch (Exception e) {
             return false;
         }
+        //如果返回值不是1 ，则发送失败。
+        if(Constants.WEBSERV_RES_SUCESS!=ret){
+            return false;
+        }
+
         return true;
+    }
+
+    @Override
+    public void updateDataStatus(String status){
+        //将已发送成的数据状态更新为发送成功
+        for(RecourseEntity recourseEntity : recourseEntitys){
+            recourseEntity.setSendStatus(status);
+            recourseDao.updateRecourse(recourseEntity);
+        }
     }
 
     @Override

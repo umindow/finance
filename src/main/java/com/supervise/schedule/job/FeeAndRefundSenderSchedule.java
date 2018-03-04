@@ -2,6 +2,8 @@ package com.supervise.schedule.job;
 
 import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
+import com.supervise.config.mysql.base.QueryCondition;
+import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
 import com.supervise.dao.mysql.middleDao.FeeAndRefundDao;
 import com.supervise.schedule.AbstractSenderSchedule;
@@ -31,12 +33,24 @@ public class FeeAndRefundSenderSchedule extends AbstractSenderSchedule<JgBuCharg
     @Autowired
     private FeeAndRefundDao feeAndRefundDao;
 
+    private List<FeeAndRefundEntity> feeAndRefundEntitys = new ArrayList<FeeAndRefundEntity>();
+
     @Override
     public List<JgBuChargeRecord> loadSenderData(String batchDate) {
 //        Example example = new Example(FeeAndRefundEntity.class);
 //        Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("batch_date",batchDate);
-        List<FeeAndRefundEntity> feeAndRefundEntitys = feeAndRefundDao.queryFeeAndRefundFormMiddleDB(batchDate);
+
+        QueryCondition queryCondition = new QueryCondition();
+        queryCondition.getColumnList().add("sendStatus");
+        queryCondition.getColumnList().add("batch_date");
+
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+
+        queryCondition.getValueList().add(Constants.DATA_READY_SEND);
+        queryCondition.getValueList().add(batchDate);
+        this.feeAndRefundEntitys = feeAndRefundDao.queryFeeAndRefundByCondition(queryCondition);
         return CollectionUtils.isEmpty(feeAndRefundEntitys) ? null : new FeeAndRefundParserConvert().covert(feeAndRefundEntitys);
     }
 
@@ -48,12 +62,26 @@ public class FeeAndRefundSenderSchedule extends AbstractSenderSchedule<JgBuCharg
 
     @Override
     public boolean senderData(List<JgBuChargeRecord> feeAndRefundEntitys) throws Exception {
+        long ret = -1;
         try {
-            webService().saveJgBuChargeRecordAry(feeAndRefundEntitys, feeAndRefundEntitys.size());
+            ret = webService().saveJgBuChargeRecordAry(feeAndRefundEntitys, feeAndRefundEntitys.size());
         } catch (Exception e) {
             return false;
         }
+        //如果返回值不是1 ，则发送失败。
+        if(Constants.WEBSERV_RES_SUCESS!=ret){
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public void updateDataStatus(String status){
+        //将已发送成的数据状态更新为发送成功
+        for(FeeAndRefundEntity feeAndRefundEntity : feeAndRefundEntitys){
+            feeAndRefundEntity.setSendStatus(status);
+            feeAndRefundDao.updateFeeAndRefund(feeAndRefundEntity);
+        }
     }
 
     @Override
