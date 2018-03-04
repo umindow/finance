@@ -269,5 +269,6 @@ public final class Constants {
     public static final String MESSAGE_HTTP = "http://";
     public static final String MESSAGE_HTTP_REPORT = "/inter/getReport";
     public static final String MESSAGE_HTTP_SENDSINGLESMS = "/inter/sendSingleSMS";
+    public static final String MESSAGE_HTTP_SENDBATCHSMS = "/inter/sendBatchOnlySMS";
     /***************************邮件服务常量 end********************************/
 }
