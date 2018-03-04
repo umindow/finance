@@ -2,6 +2,7 @@ package com.supervise.message;
 
 import cn.emay.ResultModel;
 import cn.emay.eucp.inter.http.v1.dto.request.ReportRequest;
+import cn.emay.eucp.inter.http.v1.dto.request.SmsBatchOnlyRequest;
 import cn.emay.eucp.inter.http.v1.dto.request.SmsSingleRequest;
 import cn.emay.eucp.inter.http.v1.dto.response.ReportResponse;
 import cn.emay.eucp.inter.http.v1.dto.response.SmsResponse;
@@ -45,18 +46,20 @@ public class MessageSenderImpl implements MessageSender {
         // 是否压缩
         boolean isGizp = messageConf.isGizp();
         // 扩展码
-        String extendCode = "";
+       // String extendCode = "";
 
         String customSmsId = "";//自定义ID
 
-        String phone = messageConf.getPhone();
+        String phones = messageConf.getPhone();
 
         String sign ="【"+ messageConf.getSign()+"】";//放到发送内容前，作为签名，不然发送会报“签名错误”
 
         String content = createSendContent(dataType, batchDate);//构建短信内容
 
+        String [] phoneList = phones.split(Constants.COMMA);
+
         // 发送单条短信
-        setSingleSms(appId, secretKey, host, algorithm, sign + content, customSmsId, extendCode, phone, isGizp, encode);
+        setBatchOnlySms(appId, secretKey, host, algorithm, sign + content, customSmsId, phoneList, isGizp, encode);
         // 获取状态报告
         getReport(appId, secretKey, host, algorithm, isGizp, encode);
     }
@@ -109,7 +112,7 @@ public class MessageSenderImpl implements MessageSender {
     /**
      * 公共请求方法
      */
-    public ResultModel request(String appId,String secretKey,String algorithm,Object content, String url,boolean isGzip,String encode) {
+    private ResultModel request(String appId,String secretKey,String algorithm,Object content, String url,boolean isGzip,String encode) {
         System.out.println(url);
         Map<String, String> headers = new HashMap<String, String>();
         EmayHttpRequestBytes request = null;
@@ -169,6 +172,28 @@ public class MessageSenderImpl implements MessageSender {
         return re;
     }
 
+    /**
+     * 发送批次短信
+     * @param isGzip 是否压缩
+     */
+    private void setBatchOnlySms(String appId,String secretKey,String host,String algorithm,String content, String extendCode, String[] mobiles,boolean isGzip,String encode) {
+        System.out.println("=============begin setBatchOnlySms==================");
+        SmsBatchOnlyRequest pamars = new SmsBatchOnlyRequest();
+        pamars.setMobiles(mobiles);
+        pamars.setExtendedCode(extendCode);
+        pamars.setContent(content);
+        ResultModel result = request(appId,secretKey,algorithm,pamars, Constants.MESSAGE_HTTP + host + Constants.MESSAGE_HTTP_SENDBATCHSMS,isGzip,encode);
+        System.out.println("result code :" + result.getCode());
+        if("SUCCESS".equals(result.getCode())){
+            SmsResponse[] response = JsonHelper.fromJson(SmsResponse[].class, result.getResult());
+            if (response != null) {
+                for (SmsResponse d : response) {
+                    System.out.println("data:" + d.getMobile() + "," + d.getSmsId() + "," + d.getCustomSmsId());
+                }
+            }
+        }
+        System.out.println("=============end setBatchOnlySms==================");
+    }
 
     /**
      * 构建内容
