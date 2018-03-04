@@ -28,12 +28,13 @@ import java.util.List;
  */
 public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
     private final Logger logger = LoggerFactory.getLogger(AbstractSenderSchedule.class);
-    private final static int RETRY_TIME = 3;
 
     @Override
     public void doSchedule(String dupKey) {
         String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        List<T> data = loadSenderData(date);
+
+        List<T> data = data = loadSenderData(date);
+
         if (null == data) {
             logger.error("Load SenderSchedule Data Return is null.dupkey is:" + dupKey);
             return;
@@ -52,10 +53,10 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
                 continue;
             }
             int retry = 1;
-            while (retry <= RETRY_TIME) {
+            while (retry <= Constants.RETRY_TIME) {
                 try {
                     if (senderData(t)) {
-                        retry += RETRY_TIME;
+                        retry += Constants.RETRY_TIME;
                         continue;
                     }
                 } catch (Exception e) {

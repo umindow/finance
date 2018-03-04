@@ -1,8 +1,9 @@
 package com.supervise.schedule.job;
 
+import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
-import com.supervise.dao.mysql.mapper.BankCreditMapper;
+import com.supervise.dao.mysql.middleDao.BankCreditDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuBankCredit;
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +22,14 @@ import java.util.List;
 public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCredit> {
     private final Logger logger = LoggerFactory.getLogger(BankTrustSenderSchedule.class);
     @Autowired
-    private BankCreditMapper bankCreditMapper;
+    private BankCreditDao bankCreditDao;
 
     @Override
     public List<JgBuBankCredit> loadSenderData(String batchDate) {
-        Example example = new Example(BankCreditEntity.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("batch_date",batchDate);
-        List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(example);
+//        Example example = new Example(BankCreditEntity.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("batch_date",batchDate);
+        List<BankCreditEntity> bankCreditEntities = bankCreditDao.queryBankCreditFormMiddleDB(batchDate);
         return CollectionUtils.isEmpty(bankCreditEntities) ? null : new BankCreditParserConvert().covert(bankCreditEntities);
     }
 
@@ -50,7 +50,7 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
 
     @Override
     public String scheduleName() {
-        return "BankCredit-Data";
+        return Constants.SCH_SEND_BANKCREDIT_SCHEDULE;
     }
 
     protected class BankCreditParserConvert implements ParserConvert<List<JgBuBankCredit>, List<BankCreditEntity>> {

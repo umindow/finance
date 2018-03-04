@@ -1,15 +1,16 @@
 package com.supervise.schedule.job;
 
+import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.dao.mysql.entity.RepaymentEntity;
-import com.supervise.dao.mysql.mapper.RepaymentMapper;
+import com.supervise.dao.mysql.middleDao.RepaymentDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuRepayDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +24,20 @@ import java.util.List;
  * ----------------------------------------
  * User    |    Time    |    Note
  */
-public class RepaymentSchedule extends AbstractSenderSchedule<JgBuRepayDetail> {
+@Component
+public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDetail> {
 
-    private final Logger logger = LoggerFactory.getLogger(RepaymentSchedule.class);
+    private final Logger logger = LoggerFactory.getLogger(RepaymentSenderSchedule.class);
     @Autowired
-    private RepaymentMapper repaymentMapper;
+    private RepaymentDao repaymentDao;
 
     @Override
     public List<JgBuRepayDetail> loadSenderData(String batchDate) {
-        Example example = new Example(RepaymentEntity.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("batch_date",batchDate);
-        List<RepaymentEntity> repaymentEntitys = repaymentMapper.selectByExample(example);
+//        Example example = new Example(RepaymentEntity.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("batch_date",batchDate);
+//        List<RepaymentEntity> repaymentEntitys = repaymentMapper.selectByExample(example);
+        List<RepaymentEntity> repaymentEntitys = repaymentDao.queryRepaymentFormMiddleDB(batchDate);
         return CollectionUtils.isEmpty(repaymentEntitys) ? null : new RepaymentParserConvert().covert(repaymentEntitys);
     }
 
@@ -55,7 +58,7 @@ public class RepaymentSchedule extends AbstractSenderSchedule<JgBuRepayDetail> {
 
     @Override
     public String scheduleName() {
-        return "Repayment-Data";
+        return Constants.SCH_SEND_REPAYMENT_SCHEDULE;
     }
 
     protected class RepaymentParserConvert implements ParserConvert<List<JgBuRepayDetail>, List<RepaymentEntity>> {

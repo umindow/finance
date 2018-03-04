@@ -1,9 +1,9 @@
 package com.supervise.schedule.job;
 
+import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
-import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
-import com.supervise.dao.mysql.mapper.BusinessDataMapper;
+import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuProjectInfo;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +30,14 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
     private final Logger logger = LoggerFactory.getLogger(BusinessDataSenderSchedule.class);
 
     @Autowired
-    private BusinessDataMapper businessDataMapper;
+    private BusinessDataDao businessDataDao;
 
     @Override
     public List<JgBuProjectInfo> loadSenderData(String batchDate) {
-        Example example = new Example(BankCreditEntity.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("batch_date",batchDate);
-        List<BusinessDataEntity> businessDataEntities = businessDataMapper.selectByExample(example);
+//        Example example = new Example(BankCreditEntity.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("batch_date",batchDate);
+        List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataFormMiddleDB(batchDate);
         return CollectionUtils.isEmpty(businessDataEntities) ? null : new BusinessDataParserConvert().covert(businessDataEntities);
     }
 
@@ -59,7 +58,7 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
 
     @Override
     public String scheduleName() {
-        return "Business-Data";
+        return Constants.SCH_SEND_BUSINESS_SCHEDULE;
     }
 
     protected class BusinessDataParserConvert implements ParserConvert<List<JgBuProjectInfo>, List<BusinessDataEntity>> {

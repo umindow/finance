@@ -246,23 +246,23 @@ public final class Constants {
 	
 	/***************************定时任务常量 start********************************/
 	public static final String SCH_DATA_LOADED_SCHEDULE = "data-loaded-schedule";
-    public static final String SCH_SEND_DATA_SCHEDULE = "send-data-schedule";
-	public static final String SCH_BANK_TRUST_SCH = "bank_trust_sch";
+    public static final String SCH_SEND_BANKCREDIT_SCHEDULE = "BankCredit-Data";
+    public static final String SCH_SEND_REPAYMENT_SCHEDULE = "Repayment-Data";
+	public static final String SCH_SEND_BUSINESS_SCHEDULE = "Business-Data";
+    public static final String SCH_SEND_COMPENSATORY_SCHEDULE = "Compensatory-Data";
+    public static final String SCH_SEND_FEEANDREFUND_SCHEDULE = "FeeAndRefund-Data";
+    public static final String SCH_SEND_RECOURSE_SCHEDULE = "Recourse-Data";
 	/***************************定时任务常量常量 end********************************/
 
     /***************************批量发送常量 start********************************/
     public static final int BACTCH_SEND_MAX_NUM = 500;
     public static final int RETRY_TIME = 3;
-    public static final Long WEBSERVICE_RESULT = 1l;
     /***************************批量发送常量 end********************************/
 
     /***************************邮件服务常量 start********************************/
     public static final String MAIL_TRANSPORT_PROTOCOL = "mail.transport.protocol";
     public static final String MAIL_SMTP_HOST = "mail.smtp.host";
     public static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
-    public static final String MAIL_FROM = "mail.from";
-    public static final String MAIL_TO = "mail.to";
-    public static final String MAIL_PASSWORD = "mail.frommAccount.password";
     /***************************邮件服务常量 end********************************/
 
     /***************************短信服务地址常量 start********************************/
