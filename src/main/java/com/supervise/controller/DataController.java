@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,9 +52,10 @@ public class DataController {
         ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
         Example entityExample = new Example(BankCreditEntity.class);
         Example.Criteria criteria = entityExample.createCriteria();
-        if (null != date && !"".equals(date)) {
-            criteria.andEqualTo("batchDate",date);
+        if (StringUtils.isEmpty(date)) {
+            date = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
         }
+        criteria.andEqualTo("batchDate",date);
         List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(entityExample);
         if (CollectionUtils.isEmpty(bankCreditEntities)) {
             pager.setPageNum(1);

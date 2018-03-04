@@ -2,6 +2,8 @@ package com.supervise.schedule.job;
 
 import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
+import com.supervise.config.mysql.base.QueryCondition;
+import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import com.supervise.schedule.AbstractSenderSchedule;
@@ -32,12 +34,24 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
     @Autowired
     private BusinessDataDao businessDataDao;
 
+    private List<BusinessDataEntity> businessDataEntities = new ArrayList<BusinessDataEntity>();
+
     @Override
     public List<JgBuProjectInfo> loadSenderData(String batchDate) {
 //        Example example = new Example(BankCreditEntity.class);
 //        Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("batch_date",batchDate);
-        List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataFormMiddleDB(batchDate);
+
+        QueryCondition queryCondition = new QueryCondition();
+        queryCondition.getColumnList().add("sendStatus");
+        queryCondition.getColumnList().add("batch_date");
+
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+
+        queryCondition.getValueList().add(Constants.DATA_READY_SEND);//待发送状态的
+        queryCondition.getValueList().add(batchDate);
+        this.businessDataEntities = businessDataDao.queryBusinessDataByCondition(queryCondition);
         return CollectionUtils.isEmpty(businessDataEntities) ? null : new BusinessDataParserConvert().covert(businessDataEntities);
     }
 
@@ -48,12 +62,26 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
 
     @Override
     public boolean senderData(List<JgBuProjectInfo> jgBuProjectInfos) throws Exception {
+        long ret = -1;
         try {
-            webService().saveJgBuProjectInfoAry(jgBuProjectInfos, jgBuProjectInfos.size());
+            ret = webService().saveJgBuProjectInfoAry(jgBuProjectInfos, jgBuProjectInfos.size());
         } catch (Exception e) {
             return false;
         }
+        //如果返回值不是1 ，则发送失败。
+        if(Constants.WEBSERV_RES_SUCESS!=ret){
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public void updateDataStatus(String status){
+        //将已发送成的数据状态更新为发送成功
+        for(BusinessDataEntity businessDataEntity : businessDataEntities){
+            businessDataEntity.setSendStatus(status);
+            businessDataDao.updateBankCredit(businessDataEntity);
+        }
     }
 
     @Override

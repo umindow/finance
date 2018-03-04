@@ -2,6 +2,8 @@ package com.supervise.schedule.job;
 
 import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
+import com.supervise.config.mysql.base.QueryCondition;
+import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.middleDao.BankCreditDao;
 import com.supervise.schedule.AbstractSenderSchedule;
@@ -23,14 +25,25 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
     private final Logger logger = LoggerFactory.getLogger(BankTrustSenderSchedule.class);
     @Autowired
     private BankCreditDao bankCreditDao;
-
+    private List<BankCreditEntity> bankCreditEntitys = new ArrayList<BankCreditEntity>();
     @Override
     public List<JgBuBankCredit> loadSenderData(String batchDate) {
 //        Example example = new Example(BankCreditEntity.class);
 //        Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("batch_date",batchDate);
-        List<BankCreditEntity> bankCreditEntities = bankCreditDao.queryBankCreditFormMiddleDB(batchDate);
-        return CollectionUtils.isEmpty(bankCreditEntities) ? null : new BankCreditParserConvert().covert(bankCreditEntities);
+
+        QueryCondition queryCondition = new QueryCondition();
+        queryCondition.getColumnList().add("sendStatus");
+        queryCondition.getColumnList().add("batch_date");
+
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+
+        queryCondition.getValueList().add(Constants.DATA_READY_SEND);
+        queryCondition.getValueList().add(batchDate);
+
+        this.bankCreditEntitys = bankCreditDao.queryBankCreditByCondition(queryCondition);
+        return CollectionUtils.isEmpty(bankCreditEntitys) ? null : new BankCreditParserConvert().covert(bankCreditEntitys);
     }
 
     @Override
@@ -40,12 +53,26 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
 
     @Override
     public boolean senderData(List<JgBuBankCredit> bankCreditEntities) throws Exception {
+        long ret = -1;
         try {
-            webService().saveJgBuBankCreditInfoAry(bankCreditEntities, bankCreditEntities.size());
+            ret =  webService().saveJgBuBankCreditInfoAry(bankCreditEntities, bankCreditEntities.size());
         } catch (Exception e) {
             return false;
         }
+        //如果返回值不是1 ，则发送失败。
+        if(Constants.WEBSERV_RES_SUCESS!=ret){
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public void updateDataStatus(String status){
+        //将已发送成的数据状态更新为发送成功
+        for(BankCreditEntity bankCreditEntity : bankCreditEntitys){
+            bankCreditEntity.setSendStatus(status);
+            bankCreditDao.updateBankCredit(bankCreditEntity);
+        }
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.supervise.schedule.job;
 
 import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
+import com.supervise.config.mysql.base.QueryCondition;
+import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.dao.mysql.entity.RepaymentEntity;
 import com.supervise.dao.mysql.middleDao.RepaymentDao;
 import com.supervise.schedule.AbstractSenderSchedule;
@@ -31,13 +33,24 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
     @Autowired
     private RepaymentDao repaymentDao;
 
+    private List<RepaymentEntity> repaymentEntitys = new ArrayList<RepaymentEntity>();
+
     @Override
     public List<JgBuRepayDetail> loadSenderData(String batchDate) {
 //        Example example = new Example(RepaymentEntity.class);
 //        Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("batch_date",batchDate);
 //        List<RepaymentEntity> repaymentEntitys = repaymentMapper.selectByExample(example);
-        List<RepaymentEntity> repaymentEntitys = repaymentDao.queryRepaymentFormMiddleDB(batchDate);
+        QueryCondition queryCondition = new QueryCondition();
+        queryCondition.getColumnList().add("sendStatus");
+        queryCondition.getColumnList().add("batch_date");
+
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+        queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+
+        queryCondition.getValueList().add(Constants.DATA_READY_SEND);
+        queryCondition.getValueList().add(batchDate);
+        this.repaymentEntitys = repaymentDao.queryRepaymentByCondition(queryCondition);
         return CollectionUtils.isEmpty(repaymentEntitys) ? null : new RepaymentParserConvert().covert(repaymentEntitys);
     }
 
@@ -48,12 +61,27 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
 
     @Override
     public boolean senderData(List<JgBuRepayDetail> repaymentEntitys) throws Exception {
+        long ret = -1;
         try {
-            webService().saveJgBuRepayDetailAry(repaymentEntitys, repaymentEntitys.size());
+            ret = webService().saveJgBuRepayDetailAry(repaymentEntitys, repaymentEntitys.size());
         } catch (Exception e) {
             return false;
         }
+        //如果返回值不是1 ，则发送失败。
+        if(Constants.WEBSERV_RES_SUCESS!=ret){
+            return false;
+        }
+
         return true;
+    }
+
+    @Override
+    public void updateDataStatus(String status){
+        //将已发送成的数据状态更新为发送成功
+        for(RepaymentEntity repaymentEntity : repaymentEntitys){
+            repaymentEntity.setSendStatus(status);
+            repaymentDao.updateRepayment(repaymentEntity);
+        }
     }
 
     @Override
