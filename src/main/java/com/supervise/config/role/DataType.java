@@ -24,7 +24,7 @@ public enum DataType {
     SUPERVISE_FEE_DATA("收费退费数据", 400, 1,1, FeeAndRefundSenderSchedule.class.getSimpleName()),
     SUPERVISE_REPLACE_DATA("代偿数据", 500, 1,1, CompensatorySenderSchedule.class.getSimpleName()),
     SUPERVISE_TRACE_DATA("追偿数据", 600, 1,1, RecourseSenderSchedule.class.getSimpleName()),
-    SUPERVISE_LOAD_VIEWDATA("原始数据",700, 1,0, DataLoadedSchedule.class.getSimpleName());//从中间表LOAD数据的定时进程
+    SUPERVISE_LOAD_VIEWDATA("原始数据",700, 1,1, DataLoadedSchedule.class.getSimpleName());//从中间表LOAD数据的定时进程
 
     @Getter
     @Setter
