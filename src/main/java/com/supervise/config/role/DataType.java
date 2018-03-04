@@ -18,7 +18,7 @@ import java.util.List;
  * User    |    Time    |    Note
  */
 public enum DataType {
-    SUPERVISE_BIZ_DATA("系统业务数据", 100, 1,1, DataLoadedSchedule.class.getSimpleName()),
+    SUPERVISE_BIZ_DATA("系统业务数据", 100, 1,1, BusinessDataSenderSchedule.class.getSimpleName()),
     SUPERVISE_BANK_DATA("银行授信数据", 200, 1,1, BankTrustSenderSchedule.class.getSimpleName()),
     SUPERVISE_REBACK_DATA("还款数据", 300, 1,1, RepaymentSenderSchedule.class.getSimpleName()),
     SUPERVISE_FEE_DATA("收费退费数据", 400, 1,1, FeeAndRefundSenderSchedule.class.getSimpleName()),
