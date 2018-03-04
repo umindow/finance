@@ -1,15 +1,16 @@
 package com.supervise.schedule.job;
 
+import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.dao.mysql.entity.RecourseEntity;
-import com.supervise.dao.mysql.mapper.RecourseMapper;
+import com.supervise.dao.mysql.middleDao.RecourseDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuReplevyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +24,19 @@ import java.util.List;
  * ----------------------------------------
  * User    |    Time    |    Note
  */
+@Component
 public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyInfo> {
 
     private final Logger logger = LoggerFactory.getLogger(RecourseSenderSchedule.class);
     @Autowired
-    private RecourseMapper recourseMapper;
+    private RecourseDao recourseDao;
 
     @Override
     public List<JgBuReplevyInfo> loadSenderData(String batchDate) {
-        Example example = new Example(RecourseEntity.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("batch_date",batchDate);
-        List<RecourseEntity> recourseEntitys = recourseMapper.selectByExample(example);
+//        Example example = new Example(RecourseEntity.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("batch_date",batchDate);
+        List<RecourseEntity> recourseEntitys = recourseDao.queryRecourseFormMiddleDB(batchDate);
         return CollectionUtils.isEmpty(recourseEntitys) ? null : new RecourseParserConvert().covert(recourseEntitys);
     }
 
@@ -55,7 +57,7 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
 
     @Override
     public String scheduleName() {
-        return "Recourse-Data";
+        return Constants.SCH_SEND_RECOURSE_SCHEDULE;
     }
 
     protected class RecourseParserConvert implements ParserConvert<List<JgBuReplevyInfo>, List<RecourseEntity>> {
