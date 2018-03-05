@@ -27,43 +27,43 @@ public class RepaymentEntity extends BaseEntity {
      * 机构编号（金融办分配的公司编号）,默认为：渝061001L
      **/
     @Column(name = "org_id")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false,fieldCnName = "机构编号",index = 1)
     private String orgId;
     /**
      * 项目编号
      **/
     @Column(name = "proj_id")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false,fieldCnName = "项目编号",index = 2)
     private String projId;
     /**
      * 合同编号
      **/
     @Column(name = "contract_id")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "合同编号",index = 3)
     private String contractId;
     /**
      * 实际还款日期
      **/
     @Column(name = "repay_date")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际还款日期",index = 4)
     private Date repayDate;
     /**
      * 实际归还本金
      **/
     @Column(name = "principal")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际归还本金",index = 5)
     private BigDecimal principal;
     /**
      * 实际归还利息
      **/
     @Column(name = "interest")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际归还利息",index = 6)
     private BigDecimal interest;
     /**
      * 收取罚息
      **/
     @Column(name = "punish_money")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "收取罚息",index = 7)
     private BigDecimal punishMoney;
 
     @Column(name = "create_date")
@@ -75,7 +75,7 @@ public class RepaymentEntity extends BaseEntity {
      * 批次（当前传输日期，格式yyyyMMdd）
      **/
     @Column(name = "batch_date")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "批次",index = 8)
     private String batchDate;
 
     //发送状态，0:待发送 1 发送成功  -1 发送失败

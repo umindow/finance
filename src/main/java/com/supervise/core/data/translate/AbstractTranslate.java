@@ -1,4 +1,4 @@
-package com.supervise.controller.translate;
+package com.supervise.core.data.translate;
 
 import com.supervise.cache.FiedRoleCache;
 

@@ -6,10 +6,11 @@ import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
-import com.supervise.controller.translate.GenericDataTranslate;
 import com.supervise.controller.vo.DataSet;
 import com.supervise.controller.vo.ViewVo;
-import com.supervise.core.data.in.BankCreditDataImport;
+import com.supervise.core.data.in.*;
+import com.supervise.core.data.out.*;
+import com.supervise.core.data.translate.GenericDataTranslate;
 import com.supervise.dao.mysql.entity.*;
 import com.supervise.dao.mysql.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 
@@ -50,11 +54,32 @@ public class DataController {
     private RecourseMapper recourseMapper;
     @Autowired
     private BankCreditDataImport bankCreditDataImport;
-
+    @Autowired
+    private BusinessDataImport businessDataImport;
+    @Autowired
+    private CompensatoryDataImport compensatoryDataImport;
+    @Autowired
+    private FeeAndRefundDataImport feeAndRefundDataImport;
+    @Autowired
+    private RecourseDataImport recourseDataImport;
+    @Autowired
+    private RepaymentDataImport repaymentDataImport;
+    @Autowired
+    private BankCreditOutport bankCreditOutport;
+    @Autowired
+    private BusinessOutport businessOutport;
+    @Autowired
+    private CompensatoryOutport compensatoryOutport;
+    @Autowired
+    private FeeAndRefundOutport feeAndRefundOutport;
+    @Autowired
+    private RecourseOutport recourseOutport;
+    @Autowired
+    private RepaymentOutport repaymentOutport;
 
     @RequestMapping(value = "genericDataList", method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "p", required = false) Integer pageNum, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "dataType", required = true) Integer dataType) {
-        if(date == null || "".equals(date)){
+        if (date == null || "".equals(date)) {
             date = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
         }
         if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == dataType.intValue()) {
@@ -86,7 +111,7 @@ public class DataController {
             Example entityExample = new Example(BankCreditEntity.class);
             Example.Criteria criteria = entityExample.createCriteria();
             if (null != date && !"".equals(date)) {
-                criteria.andBetween("batchDate", date+" 00:00:00",date+" 23:59:59");
+                criteria.andEqualTo("batchDate", date);
             }
             List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(entityExample);
             if (CollectionUtils.isEmpty(bankCreditEntities)) {
@@ -250,10 +275,6 @@ public class DataController {
 
     /**
      * 统一的数据导入入口
-     *
-     * @param file
-     * @param type
-     * @return
      */
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     @Transactional
@@ -261,15 +282,64 @@ public class DataController {
         if (null == file) {
             return "文件为空";
         }
-        if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == type) {
-            try {
-                bankCreditDataImport.in(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "导入失败:" + e.getMessage();
+        try {
+            if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == type) {
+                bankCreditDataImport.in(file);//银行授信
             }
+            if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == type) {
+                recourseDataImport.in(file);//追偿
+            }
+            if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == type) {
+                repaymentDataImport.in(file);//退款
+            }
+            if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == type) {
+                compensatoryDataImport.in(file);//追偿
+            }
+            if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == type) {
+                feeAndRefundDataImport.in(file);//退费
+            }
+            if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == type) {
+                businessDataImport.in(file);//系统业务
+            }
+        } catch (Exception e) {
+            return e.getMessage();
         }
         return "导入成功";
+    }
+
+    @ResponseBody
+    @RequestMapping("/outport")
+    public String dataOutport(@RequestParam(value = "type", required = false) Integer type, @RequestParam(value = "date", required = false) String date, HttpServletResponse response) {
+        response.setHeader("content-type", "application/octet-stream");
+        response.setContentType("application/octet-stream");
+        try {
+            String fileName = DataType.typeOfType(type).getDataEnName() + ".xls";
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            ServletOutputStream servletOutputStream = response.getOutputStream();
+            UserEntity userEntity = SessionUser.INSTANCE.getCurrentUser();
+            if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == type) {
+                bankCreditOutport.export(servletOutputStream, DataType.SUPERVISE_BANK_DATA, date, userEntity);
+            }
+            if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == type) {
+                recourseOutport.export(servletOutputStream, DataType.SUPERVISE_TRACE_DATA, date, userEntity);
+                ;//追偿
+            }
+            if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == type) {
+                repaymentOutport.export(servletOutputStream, DataType.SUPERVISE_REBACK_DATA, date, userEntity);
+            }
+            if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == type) {
+                compensatoryOutport.export(servletOutputStream, DataType.SUPERVISE_REPLACE_DATA, date, userEntity);
+            }
+            if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == type) {
+                feeAndRefundOutport.export(servletOutputStream, DataType.SUPERVISE_FEE_DATA, date, userEntity);
+            }
+            if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == type) {
+                businessOutport.export(servletOutputStream, DataType.SUPERVISE_BIZ_DATA, date, userEntity);
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return "success";
     }
 
     @ResponseBody
@@ -296,15 +366,86 @@ public class DataController {
         }
         return "succcess";
     }
+
     @ResponseBody
-    @RequestMapping(value = "/bankCreditModify",method = RequestMethod.POST)
-    public boolean bankCreditModify(BankCreditEntity bankCreditEntity){
-        try{
-            if(null == bankCreditEntity || bankCreditEntity.getId() == null){
+    @RequestMapping(value = "/bankCreditModify", method = RequestMethod.POST)
+    public boolean bankCreditModify(BankCreditEntity bankCreditEntity) {
+        try {
+            if (null == bankCreditEntity || bankCreditEntity.getId() == null) {
                 return false;
             }
             bankCreditMapper.updateByPrimaryKey(bankCreditEntity);
-        }catch (Exception e){
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/recourseModify", method = RequestMethod.POST)
+    public boolean recourseModify(RecourseEntity recourseEntity) {
+        try {
+            if (null == recourseEntity || recourseEntity.getId() == null) {
+                return false;
+            }
+            recourseMapper.updateByPrimaryKey(recourseEntity);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/componsatoryModify", method = RequestMethod.POST)
+    public boolean componsatoryModify(CompensatoryEntity compensatoryEntity) {
+        try {
+            if (null == compensatoryEntity || compensatoryEntity.getId() == null) {
+                return false;
+            }
+            compensatoryMapper.updateByPrimaryKey(compensatoryEntity);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/feeAndRefundModfiy", method = RequestMethod.POST)
+    public boolean feeAndRefundModfiy(FeeAndRefundEntity feeAndRefundEntity) {
+        try {
+            if (null == feeAndRefundEntity || feeAndRefundEntity.getId() == null) {
+                return false;
+            }
+            feeAndRefundMapper.updateByPrimaryKey(feeAndRefundEntity);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/businessModify", method = RequestMethod.POST)
+    public boolean businessModify(BusinessDataEntity businessDataEntity) {
+        try {
+            if (null == businessDataEntity || businessDataEntity.getId() == null) {
+                return false;
+            }
+            businessDataMapper.updateByPrimaryKey(businessDataEntity);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/repaymentModify", method = RequestMethod.POST)
+    public boolean repaymentModify(RepaymentEntity repaymentEntity) {
+        try {
+            if (null == repaymentEntity || repaymentEntity.getId() == null) {
+                return false;
+            }
+            repaymentMapper.updateByPrimaryKey(repaymentEntity);
+        } catch (Exception e) {
             return false;
         }
         return true;

@@ -1,7 +1,6 @@
-package com.supervise.controller.translate;
+package com.supervise.core.data.translate;
 
 import com.supervise.cache.FiedRoleCache;
-import com.supervise.dao.mysql.entity.UserEntity;
 
 import java.util.List;
 

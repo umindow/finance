@@ -19,8 +19,8 @@ public class DataSet {
     private List<String> fields;
 
     private List<DataVo> dataVos;
-
     public DataSet(List<String> fields) {
         this.fields = fields;
     }
+
 }

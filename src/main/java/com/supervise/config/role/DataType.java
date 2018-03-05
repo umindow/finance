@@ -18,21 +18,22 @@ import java.util.List;
  * User    |    Time    |    Note
  */
 public enum DataType {
-    SUPERVISE_BIZ_DATA("系统业务数据", 100, 1,1, BusinessDataSenderSchedule.class.getSimpleName()),
-    SUPERVISE_BANK_DATA("银行授信数据", 200, 1,1, BankTrustSenderSchedule.class.getSimpleName()),
-    SUPERVISE_REBACK_DATA("还款数据", 300, 1,1, RepaymentSenderSchedule.class.getSimpleName()),
-    SUPERVISE_FEE_DATA("收费退费数据", 400, 1,1, FeeAndRefundSenderSchedule.class.getSimpleName()),
-    SUPERVISE_REPLACE_DATA("代偿数据", 500, 1,1, CompensatorySenderSchedule.class.getSimpleName()),
-    SUPERVISE_TRACE_DATA("追偿数据", 600, 1,1, RecourseSenderSchedule.class.getSimpleName()),
-    SUPERVISE_LOAD_VIEWDATA("原始数据",700, 1,1, DataLoadedSchedule.class.getSimpleName());//从中间表LOAD数据的定时进程
+    SUPERVISE_BIZ_DATA("系统业务数据","business_data", 100, 1,1, BusinessDataSenderSchedule.class.getSimpleName()),
+    SUPERVISE_BANK_DATA("银行授信数据","bank_credit", 200, 1,1, BankTrustSenderSchedule.class.getSimpleName()),
+    SUPERVISE_REBACK_DATA("还款数据","repayment", 300, 1,1, RepaymentSenderSchedule.class.getSimpleName()),
+    SUPERVISE_FEE_DATA("收费退费数据","fee_and_refund", 400, 1,1, FeeAndRefundSenderSchedule.class.getSimpleName()),
+    SUPERVISE_REPLACE_DATA("代偿数据","compensatory", 500, 1,1, CompensatorySenderSchedule.class.getSimpleName()),
+    SUPERVISE_TRACE_DATA("追偿数据","recourse", 600, 1,1, RecourseSenderSchedule.class.getSimpleName()),
+    SUPERVISE_LOAD_VIEWDATA("原始数据","orginal_data",700, 1,1, DataLoadedSchedule.class.getSimpleName());//从中间表LOAD数据的定时进程
 
     @Getter
     @Setter
     private String dataName;
+    @Getter@Setter
+    private String dataEnName;
     @Getter
     @Setter
     private int dataLevel;
-
     @Getter
     @Setter
     private int dataType;//是否是定时任务,1：是，0,不是
@@ -42,8 +43,9 @@ public enum DataType {
     @Getter
     private String schedule;
 
-    DataType(String dataName, int dataLevel, int dataType,int ifHtml, String schedule) {
+    DataType(String dataName,String dataEnName, int dataLevel, int dataType,int ifHtml, String schedule) {
         this.dataName = dataName;
+        this.dataEnName = dataEnName;
         this.dataLevel = dataLevel;
         this.dataType = dataType;
         this.schedule = schedule;

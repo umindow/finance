@@ -1,16 +1,16 @@
-package com.supervise.controller.translate;
+package com.supervise.core.data.translate;
 
 import com.supervise.cache.FiedRoleCache;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.controller.vo.DataSet;
 import com.supervise.controller.vo.DataVo;
 import com.supervise.controller.vo.FieldValue;
-import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.entity.UserEntity;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by xishui.hb on 2018/3/4 下午4:00.
