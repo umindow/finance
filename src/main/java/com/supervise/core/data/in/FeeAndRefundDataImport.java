@@ -16,10 +16,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -66,42 +64,47 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
                     continue;
                 }
                 switch (cell.getColumnIndex()) {
-                    case 0://机构编码
+                    case 0://主键ID号
+                        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
+                            feeAndRefundEntity.setId((Long) getCellValue(cell));
+                        };
+                        break;
+                    case 1://机构编码
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("org_id"))) {
                             feeAndRefundEntity.setOrgId((String) getCellValue(cell));
                         }
                         break;
-                    case 1://项目编码
+                    case 2://项目编码
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("proj_id"))) {
                             feeAndRefundEntity.setProjId((String) getCellValue(cell));
                         }
                         break;
-                    case 2://合同编号
+                    case 3://合同编号
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("contract_id"))) {
                             feeAndRefundEntity.setContractId((String) getCellValue(cell));
                         }
                         break;
-                    case 3://收退费标示
+                    case 4://收退费标示
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_may"))) {
                             feeAndRefundEntity.setChargeWay((String) getCellValue(cell));
                         }
                         break;
-                    case 4://费用类型编码
+                    case 5://费用类型编码
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_type"))) {
                             feeAndRefundEntity.setChargeType((String) getCellValue(cell));
                         }
                         break;
-                    case 5://实际缴费时间
+                    case 6://实际缴费时间
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_time"))) {
                             feeAndRefundEntity.setChargeTime(DateUtils.parseStringDate((String) getCellValue(cell), null));
                         }
                         break;
-                    case 6://实际缴费金额
+                    case 7://实际缴费金额
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("charge_money"))) {
                             feeAndRefundEntity.setChargeMoney(new BigDecimal((Double) getCellValue(cell)));
                         }
                         break;
-                    case 7:
+                    case 8:
                         if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("batch_date"))) {
                             feeAndRefundEntity.setBatchDate((String) getCellValue(cell));
                         }
@@ -126,31 +129,21 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
          * 3、如果存在记录，则更新该条记录
          */
         for (final FeeAndRefundEntity feeAndRefundEntity : feeAndRefundEntitys) {
-            //根据ORIGID PROJID REPAYDATE batchdate 作为查询条件
-            String batchDate = feeAndRefundEntity.getBatchDate();
-            if (StringUtils.isEmpty(batchDate)) {
-                batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
-            }
-            Date chargeDate = feeAndRefundEntity.getChargeTime();
-            String proj_id = feeAndRefundEntity.getProjId();
-            String org_id = feeAndRefundEntity.getOrgId();
-            //构建查询条件
-            QueryCondition queryCondition = createQueryCondition(org_id,proj_id,chargeDate,batchDate);
-
-            //根据查询条件查询是否存在记录
-            List<FeeAndRefundEntity> resListToDB  = this.feeAndRefundDao.queryFeeAndRefundByCondition(queryCondition);
-            //如果没有查询到记录，则保存当前新记录
-            if (CollectionUtils.isEmpty(resListToDB)) {
-                this.feeAndRefundDao.insertFeeAndRefundToMiddleDB(feeAndRefundEntity);
-            }else{
-                //否则更新当前记录
-                for ( FeeAndRefundEntity feeAndRefund : resListToDB){
-                    feeAndRefundEntity.setId(feeAndRefund.getId());
+            Long id  = feeAndRefundEntity.getId();
+            if(id>0){
+                //根据ID查询数据库
+                FeeAndRefundEntity ret = this.feeAndRefundDao.queryFeeAndRefundByKey(id);
+                //如果能查询到记录，则表示更新数据
+                if(null!=ret){
                     this.feeAndRefundDao.updateFeeAndRefund(feeAndRefundEntity);
+                }else {
+                    //否则作为新的数据保存到数据库
+                    this.feeAndRefundDao.insertFeeAndRefundToMiddleDB(feeAndRefundEntity);
                 }
-
+            }else{
+                //ID无效，作为新的数据保存到数据库
+                this.feeAndRefundDao.insertFeeAndRefundToMiddleDB(feeAndRefundEntity);
             }
-
         }
     }
 

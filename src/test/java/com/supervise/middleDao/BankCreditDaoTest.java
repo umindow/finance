@@ -106,4 +106,11 @@ public class BankCreditDaoTest extends BaseTest{
 			Assert.assertNotEquals(-1,id);
 		}
 	}
+
+	@Test
+	public void queryBankCreditByKeyTest(){
+		Long id  = 3L;
+		BankCreditEntity res = this.bankCreditDao.queryBankCreditByKey(id);
+		Assert.assertNotNull(res);
+	}
 }
