@@ -106,4 +106,15 @@ public class RecourseDao {
 		}
 		return id;
 	}
+
+	/**
+	 * 按照指定条件从中间库中查询追偿信息
+	 * @param id  查询条件
+	 * @return 按照指定查询条件返回的查询结果集合
+	 */
+	public RecourseEntity queryRecourseByKey(Long id){
+		RecourseEntity res  =
+				this.recourseMapper.selectByPrimaryKey(id);
+		return res;
+	}
 }

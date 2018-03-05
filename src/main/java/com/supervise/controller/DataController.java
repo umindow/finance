@@ -23,7 +23,6 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 
@@ -322,7 +321,7 @@ public class DataController {
             }
             if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == type) {
                 recourseOutport.export(servletOutputStream, DataType.SUPERVISE_TRACE_DATA, date, userEntity);
-                ;//追偿
+                //追偿
             }
             if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == type) {
                 repaymentOutport.export(servletOutputStream, DataType.SUPERVISE_REBACK_DATA, date, userEntity);

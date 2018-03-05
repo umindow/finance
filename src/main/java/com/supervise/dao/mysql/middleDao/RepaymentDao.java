@@ -106,4 +106,15 @@ public class RepaymentDao{
 		}
 		return id;
 	}
+
+	/**
+	 * 按照指定条件从中间库中查询还款信息
+	 * @param id  查询条件
+	 * @return 按照指定查询条件返回的查询结果集合
+	 */
+	public RepaymentEntity queryRepaymentByKey(Long id){
+		RepaymentEntity res  =
+				this.repaymentMapper.selectByPrimaryKey(id);
+		return res;
+	}
 }
