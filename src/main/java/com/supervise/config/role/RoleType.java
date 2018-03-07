@@ -14,7 +14,8 @@ import lombok.Setter;
  * User    |    Time    |    Note
  */
 public enum RoleType {
-    NOMAL("普通用户", 10), MANAGER("管理员", 20), SUPER_MANAGER("超级管理员", 100);
+    NOMAL("普通用户", 10), MANAGER("管理员", 20);
+    //, SUPER_MANAGER("超级管理员", 100)
     @Getter @Setter
     private String roleName;//角色描述
     @Getter @Setter

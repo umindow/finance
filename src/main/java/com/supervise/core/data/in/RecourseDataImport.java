@@ -16,10 +16,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -60,44 +58,48 @@ public class RecourseDataImport extends AbstractDataImport {
             }
             recourseEntity = new RecourseEntity();
             Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
-            int userDepId = Integer.valueOf(getUserEntity().getDepId());
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
                 }
                 switch (cell.getColumnIndex()) {
-                    case 0://机构编码
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("org_id"))) {
+                    case 0://主键ID号
+                        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
+                            recourseEntity.setId((Long) getCellValue(cell));
+                        };
+                        break;
+                    case 1://机构编码
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
                             recourseEntity.setOrgId((String) getCellValue(cell));
                         }
                         break;
-                    case 1://项目编码
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("proj_id"))) {
+                    case 2://项目编码
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
                             recourseEntity.setProjId((String) getCellValue(cell));
                         }
                         break;
-                    case 2://合同编号
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("contract_id"))) {
+                    case 3://合同编号
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
                             recourseEntity.setContractId((String) getCellValue(cell));
                         }
                         break;
-                    case 3://追偿类型
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replevy_type"))) {
+                    case 4://追偿类型
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevy_type"))) {
                             recourseEntity.setReplevyType((String) getCellValue(cell));
                         }
                         break;
-                    case 4://追偿日期
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replevy_date"))) {
+                    case 5://追偿日期
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevy_date"))) {
                             recourseEntity.setReplevyDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
                         }
                         break;
-                    case 5://追偿金额
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replevy_money"))) {
+                    case 6://追偿金额
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevy_money"))) {
                             recourseEntity.setReplevyMoney(new BigDecimal((Double) getCellValue(cell)));
                         }
                         break;
-                    case 6:
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("batch_date"))) {
+                    case 7:
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
                             recourseEntity.setBatchDate((String) getCellValue(cell));
                         }
                         break;
@@ -121,31 +123,21 @@ public class RecourseDataImport extends AbstractDataImport {
          * 3、如果存在记录，则更新该条记录
          */
         for (final RecourseEntity recourseEntity : recourseEntitys) {
-            //根据ORIGID PROJID DATE batchdate 作为查询条件
-            String batchDate = recourseEntity.getBatchDate();
-            if (StringUtils.isEmpty(batchDate)) {
-                batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
-            }
-            Date date = recourseEntity.getReplevyDate();
-            String proj_id = recourseEntity.getProjId();
-            String org_id = recourseEntity.getOrgId();
-            //构建查询条件
-            QueryCondition queryCondition = createQueryCondition(org_id,proj_id,date,batchDate);
-
-            //根据查询条件查询是否存在记录
-            List<RecourseEntity> resListToDB  = this.recourseDao.queryRecourseByCondition(queryCondition);
-            //如果没有查询到记录，则保存当前新记录
-            if (CollectionUtils.isEmpty(resListToDB)) {
-                this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
-            }else{
-                //否则更新当前记录
-                for ( RecourseEntity recourse : resListToDB){
-                    recourseEntity.setId(recourse.getId());
+            Long id  = recourseEntity.getId();
+            if(id>0){
+                //根据ID查询数据库
+                RecourseEntity ret = this.recourseDao.queryRecourseByKey(id);
+                //如果能查询到记录，则表示更新数据
+                if(null!=ret){
                     this.recourseDao.updateRecourse(recourseEntity);
+                }else {
+                    //否则作为新的数据保存到数据库
+                    this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
                 }
-
+            }else{
+                //ID无效，作为新的数据保存到数据库
+                this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
             }
-
         }
     }
 

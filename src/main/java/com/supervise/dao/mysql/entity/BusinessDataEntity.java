@@ -287,10 +287,16 @@ public class BusinessDataEntity extends BaseEntity {
     private Date projEndDate;
 
     /**
+     * 批次（当前传输日期，格式yyyyMMdd）
+     **/
+    @Column(name = "batch_date")
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "批次",index = 37)
+    private String batchDate;
+
+    /**
      * 起初余额
      **/
     @Column(name = "initial_balance")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false,fieldCnName = "起初余额",index = 37)
     private BigDecimal initialBalance;
 
 
@@ -298,20 +304,14 @@ public class BusinessDataEntity extends BaseEntity {
      * 首次放款时间
      **/
     @Column(name = "first_loan_date")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false,fieldCnName = "首次放款时间",index = 38)
-    private Date firstLoanDate;
+      private Date firstLoanDate;
 
     @Column(name = "create_date")
     private Date createDate;
     @Column(name = "update_date")
     private Date updateDate;
 
-    /**
-     * 批次（当前传输日期，格式yyyyMMdd）
-     **/
-    @Column(name = "batch_date")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "批次",index = 39)
-    private String batchDate;
+
 
     //发送状态，0:待发送 1 发送成功  -1 发送失败
     @Column(name = "sendStatus")

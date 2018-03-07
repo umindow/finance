@@ -16,10 +16,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -59,40 +57,44 @@ public class CompensatoryDataImport extends AbstractDataImport {
                 break;
             }
             Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
-            int userDepId = Integer.valueOf(getUserEntity().getDepId());
             compensatoryEntity = new CompensatoryEntity();
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
                 }
                 switch (cell.getColumnIndex()) {
-                    case 0://机构编码
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("org_id"))) {
+                    case 0://主键ID号
+                        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
+                            compensatoryEntity.setId((Long) getCellValue(cell));
+                        };
+                        break;
+                    case 1://机构编码
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
                             compensatoryEntity.setOrgId((String) getCellValue(cell));
                         }
                         break;
-                    case 1://项目编码
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("proj_id"))) {
+                    case 2://项目编码
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
                             compensatoryEntity.setProjId((String) getCellValue(cell));
                         }
                         break;
-                    case 2://合同编号
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("contract_id"))) {
+                    case 3://合同编号
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
                             compensatoryEntity.setContractId((String) getCellValue(cell));
                         }
                         break;
-                    case 3://代偿日期
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replace_date"))) {
+                    case 4://代偿日期
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replace_date"))) {
                             compensatoryEntity.setReplaceDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
                         }
                         break;
-                    case 4://代偿金额
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("replace_money"))) {
+                    case 5://代偿金额
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replace_money"))) {
                             compensatoryEntity.setReplaceMoney(new BigDecimal((Double) getCellValue(cell)));
                         }
                         break;
-                    case 5:
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("batch_date"))) {
+                    case 6:
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
                             compensatoryEntity.setBatchDate((String) getCellValue(cell));
                         }
                         break;
@@ -116,32 +118,22 @@ public class CompensatoryDataImport extends AbstractDataImport {
          * 3、如果存在记录，则更新该条记录
          */
         for (final CompensatoryEntity compensatoryEntity : compensatoryEntitys) {
-            //根据ORIGID PROJID DATE batchdate 作为查询条件
-            String batchDate = compensatoryEntity.getBatchDate();
-            if (StringUtils.isEmpty(batchDate)) {
-                batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
-            }
-            Date date = compensatoryEntity.getReplaceDate();
-            String proj_id = compensatoryEntity.getProjId();
-            String org_id = compensatoryEntity.getOrgId();
-            //构建查询条件
-            QueryCondition queryCondition = createQueryCondition(org_id,proj_id,date,batchDate);
-
-            //根据查询条件查询是否存在记录
-            List<CompensatoryEntity> resListToDB  = this.compensatoryDao.queryCompensatoryByCondition(queryCondition);
-            //如果没有查询到记录，则保存当前新记录
-            if (CollectionUtils.isEmpty(resListToDB)) {
+            Long id  = compensatoryEntity.getId();
+        if(id>0){
+            //根据ID查询数据库
+            CompensatoryEntity ret = this.compensatoryDao.queryCompensatoryByKey(id);
+            //如果能查询到记录，则表示更新数据
+            if(null!=ret){
+                this.compensatoryDao.updateCompensatory(compensatoryEntity);
+            }else {
+                //否则作为新的数据保存到数据库
                 this.compensatoryDao.insertCompensatoryToMiddleDB(compensatoryEntity);
-            }else{
-                //否则更新当前记录
-                for ( CompensatoryEntity compensatory : resListToDB){
-                    compensatoryEntity.setId(compensatory.getId());
-                    this.compensatoryDao.updateCompensatory(compensatoryEntity);
-                }
-
             }
-
+        }else{
+            //ID无效，作为新的数据保存到数据库
+            this.compensatoryDao.insertCompensatoryToMiddleDB(compensatoryEntity);
         }
+    }
     }
 
         private QueryCondition createQueryCondition(String orgid,String projid,Date date,String batchDate){

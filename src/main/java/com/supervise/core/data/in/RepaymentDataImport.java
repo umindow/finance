@@ -16,10 +16,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -59,50 +57,54 @@ public class RepaymentDataImport extends AbstractDataImport {
                 break;
             }
             Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
-            int userDepId = Integer.valueOf(getUserEntity().getDepId());
             repaymentEntity = new RepaymentEntity();
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
                 }
                 switch (cell.getColumnIndex()) {
-                    case 0://机构编码
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("org_id"))) {
+                    case 0://主键ID号
+                        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
+                            repaymentEntity.setId((Long) getCellValue(cell));
+                        };
+                        break;
+                    case 1://机构编码
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
                             repaymentEntity.setOrgId((String) getCellValue(cell));
                         }
                         break;
-                    case 1://项目编码
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("proj_id"))) {
+                    case 2://项目编码
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
                             repaymentEntity.setProjId((String) getCellValue(cell));
                         }
                         break;
-                    case 2://合同编号
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("contract_id"))) {
+                    case 3://合同编号
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
                             repaymentEntity.setContractId((String) getCellValue(cell));
                         }
                         break;
-                    case 3://实际还款日期
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("repay_date"))) {
+                    case 4://实际还款日期
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repay_date"))) {
                             repaymentEntity.setRepayDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
                         }
                         break;
-                    case 4://实际归还本金
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("principal"))) {
+                    case 5://实际归还本金
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("principal"))) {
                             repaymentEntity.setPrincipal(new BigDecimal((Double) getCellValue(cell)));
                         }
                         break;
-                    case 5://实际归还利息
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("interest"))) {
+                    case 6://实际归还利息
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("interest"))) {
                             repaymentEntity.setInterest(new BigDecimal((Double) getCellValue(cell)));
                         }
                         break;
-                    case 6://收取罚息
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("punish_money"))) {
+                    case 7://收取罚息
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("punish_money"))) {
                             repaymentEntity.setPunishMoney(new BigDecimal((Double) getCellValue(cell)));
                         }
                         break;
-                    case 7:
-                        if(FiedRoleCache.checkFieldRole(userDepId,filedRoles.get("batch_date"))) {
+                    case 8:
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
                             repaymentEntity.setBatchDate((String) getCellValue(cell));
                         }
                         break;
@@ -121,36 +123,26 @@ public class RepaymentDataImport extends AbstractDataImport {
         }
         /**
          * 增加判断逻辑
-         * 1、先根据ORIGID PROJID REPAYDATE batchdate作为查询条件，查询是否存在记录
+         * 1、先根据ID作为查询条件，查询是否存在记录
          * 2、如果不存在记录，则直接保存
          * 3、如果存在记录，则更新该条记录
          */
         for (final RepaymentEntity repaymentEntity : repaymentEntitys) {
-            //根据ORIGID PROJID REPAYDATE batchdate 作为查询条件
-            String batchDate = repaymentEntity.getBatchDate();
-            if (StringUtils.isEmpty(batchDate)) {
-                batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
-            }
-            Date repayDate = repaymentEntity.getRepayDate();
-            String proj_id = repaymentEntity.getProjId();
-            String org_id = repaymentEntity.getOrgId();
-            //构建查询条件
-            QueryCondition queryCondition = createQueryCondition(org_id,proj_id,repayDate,batchDate);
-
-            //根据查询条件查询是否存在记录
-            List<RepaymentEntity> resListToDB  = this.repaymentDao.queryRepaymentByCondition(queryCondition);
-            //如果没有查询到记录，则保存当前新记录
-            if (CollectionUtils.isEmpty(resListToDB)) {
-                this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
-            }else{
-                //否则更新当前记录
-                for ( RepaymentEntity repayment : resListToDB){
-                    repaymentEntity.setId(repayment.getId());
+            Long id  = repaymentEntity.getId();
+            if(id>0){
+                //根据ID查询数据库
+                RepaymentEntity ret = this.repaymentDao.queryRepaymentByKey(id);
+                //如果能查询到记录，则表示更新数据
+                if(null!=ret){
                     this.repaymentDao.updateRepayment(repaymentEntity);
+                }else {
+                    //否则作为新的数据保存到数据库
+                    this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
                 }
-
+            }else{
+                //ID无效，作为新的数据保存到数据库
+                this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
             }
-
         }
     }
 

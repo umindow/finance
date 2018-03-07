@@ -106,4 +106,15 @@ public class CompensatoryDao {
 		}
 		return id;
 	}
+
+	/**
+	 * 按照指定条件从中间库中查询代偿信息
+	 * @param id  查询条件
+	 * @return 按照指定查询条件返回的查询结果集合
+	 */
+	public CompensatoryEntity queryCompensatoryByKey(Long id){
+		CompensatoryEntity res  =
+				this.compensatoryMapper.selectByPrimaryKey(id);
+		return res;
+	}
 }

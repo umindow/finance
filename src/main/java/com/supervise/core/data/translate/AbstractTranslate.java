@@ -1,6 +1,7 @@
 package com.supervise.core.data.translate;
 
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.dao.mysql.entity.UserEntity;
 
 import java.util.*;
 
@@ -14,7 +15,7 @@ import java.util.*;
  * User    |    Time    |    Note
  */
 public abstract class AbstractTranslate {
-    public List<FiedRoleCache.DepRoleRef> depRoleRefs(int dataType,int userDepId){
+    public List<FiedRoleCache.DepRoleRef> depRoleRefs(int dataType,UserEntity userEntity){
         Map<String, FiedRoleCache.DepRoleRef> depRoleRefMap = FiedRoleCache.mapDepRoleRefs(dataType);
         if(null == depRoleRefMap || depRoleRefMap.isEmpty()){
             return null;
@@ -22,7 +23,7 @@ public abstract class AbstractTranslate {
         List<FiedRoleCache.DepRoleRef> depRoleRefs = new ArrayList<FiedRoleCache.DepRoleRef>();
         for (final Map.Entry<String, FiedRoleCache.DepRoleRef> entry : depRoleRefMap.entrySet()) {
             FiedRoleCache.DepRoleRef depRoleRef = entry.getValue();
-            if(FiedRoleCache.checkFieldRole(userDepId,depRoleRef)) {
+            if(FiedRoleCache.checkFieldRole(userEntity,depRoleRef)) {
                 depRoleRefs.add(entry.getValue());
             }
         }

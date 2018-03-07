@@ -27,8 +27,7 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
         if (CollectionUtils.isEmpty(datas) || null == userEntity) {
             return new DataSet(null);
         }
-        int userDepId = Integer.valueOf(userEntity.getDepId());
-        List<FiedRoleCache.DepRoleRef> depRoleRefs = depRoleRefs(dataType, userDepId);
+        List<FiedRoleCache.DepRoleRef> depRoleRefs = depRoleRefs(dataType, userEntity);
         DataSet dataSet = new DataSet(new GenericFieldTranslate().fieldTranslate(depRoleRefs));
 
         List<DataVo> dataVos = new ArrayList<DataVo>();

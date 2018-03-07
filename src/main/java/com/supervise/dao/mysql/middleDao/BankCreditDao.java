@@ -106,4 +106,15 @@ public class BankCreditDao {
 		}
 		return id;
 	}
+
+	/**
+	 * 按照指定条件从中间库中查询银行授信信息
+	 * @param id  查询条件
+	 * @return 按照指定查询条件返回的查询结果集合
+	 */
+	public BankCreditEntity queryBankCreditByKey(Long id){
+		BankCreditEntity res  =
+				this.bankCreditMapper.selectByPrimaryKey(id);
+		return res;
+	}
 }

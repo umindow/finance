@@ -44,7 +44,7 @@ public class UserController {
     @RequestMapping(value = "/init")
     private String initUser(){
         UserEntity userEntity = new UserEntity();
-        userEntity.setLevel(RoleType.SUPER_MANAGER.getRoleLevel());
+        userEntity.setLevel(RoleType.MANAGER.getRoleLevel());
         userEntity.setUserCnName("管理员");
         userEntity.setUserName("admin");
         userEntity.setUserStatus(UserEntity.UserStatus.ALIVE.getStatus());

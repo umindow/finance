@@ -90,7 +90,10 @@ public final class FiedRoleCache {
         }
     }
 
-    public static boolean checkFieldRole(int userDepId, DepRoleRef depRoleRef) {
+    public static boolean checkFieldRole(UserEntity userEntity, DepRoleRef depRoleRef) {
+        if(userEntity.getLevel() > 10){
+            return true;
+        }
         if (null == depRoleRef) {
             return false;
         }
@@ -99,7 +102,7 @@ public final class FiedRoleCache {
         }
         if (depRoleRef.depTypes.length > 0) {
             for (final DepType depType : depRoleRef.getDepTypes()) {
-                if (depType.getDepId() == userDepId) {
+                if (depType.getDepId() == Integer.valueOf(userEntity.getDepId())) {
                     return true;
                 }
             }
