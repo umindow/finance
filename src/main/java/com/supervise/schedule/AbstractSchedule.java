@@ -33,7 +33,7 @@ public abstract class AbstractSchedule implements Schedule {
     @Override
     public void schedule() {
         String scheduleName = scheduleName();
-        String dupKey = scheduleName + (new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));
+        String dupKey = scheduleName + (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
         try {
             if (!scheduleChecker.checker(dupKey, scheduleName)) {
                 //不是本台机器跑这个任务

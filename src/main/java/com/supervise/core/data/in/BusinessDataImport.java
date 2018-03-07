@@ -2,6 +2,7 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
@@ -54,6 +55,7 @@ public class BusinessDataImport extends AbstractDataImport {
                 break;
             }
             businessDataEntity = new BusinessDataEntity();
+            businessDataEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;

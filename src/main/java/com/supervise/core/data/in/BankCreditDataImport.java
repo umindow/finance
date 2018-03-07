@@ -2,6 +2,7 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
@@ -56,6 +57,7 @@ public class BankCreditDataImport extends AbstractDataImport {
                 break;
             }
             bankCreditEntity = new BankCreditEntity();
+            bankCreditEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
