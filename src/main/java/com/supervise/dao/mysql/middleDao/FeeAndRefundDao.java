@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
 import com.supervise.dao.mysql.mapper.FeeAndRefundMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,5 +117,17 @@ public class FeeAndRefundDao {
 		FeeAndRefundEntity res  =
 				this.feeAndRefundMapper.selectByPrimaryKey(id);
 		return res;
+	}
+
+	/**
+	 * 删除收退费信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteFeeAndRefundByBatchDate(String batchDate){
+		Example example = new Example(FeeAndRefundEntity.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("batchDate", batchDate);
+		this.feeAndRefundMapper.deleteByExample(example);
 	}
 }

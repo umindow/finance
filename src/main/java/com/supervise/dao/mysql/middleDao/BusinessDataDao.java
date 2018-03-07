@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.mapper.BusinessDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,7 +87,7 @@ public class BusinessDataDao {
 	 * @param businessDataEntity
 	 * int id
 	 */
-	public  int deleteRepayment(BusinessDataEntity businessDataEntity){
+	public  int deleteBusinessData(BusinessDataEntity businessDataEntity){
 		int id = -1;
 		if(null!=businessDataEntity){
 			id = this.businessDataMapper.delete(businessDataEntity);
@@ -99,7 +100,7 @@ public class BusinessDataDao {
 	 * @param key
 	 * int
 	 */
-	public  int deleteRepaymentByID(Long key){
+	public  int deleteBusinessDataByID(Long key){
 		int id = -1;
 		if(null!=key){
 			id = this.businessDataMapper.deleteByPrimaryKey(key);
@@ -116,5 +117,17 @@ public class BusinessDataDao {
 		BusinessDataEntity res  =
 				this.businessDataMapper.selectByPrimaryKey(id);
 		return res;
+	}
+
+	/**
+	 * 删除业务数据信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteBusinessDataByBatchDate(String batchDate){
+		Example example = new Example(BusinessDataEntity.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("batchDate", batchDate);
+		this.businessDataMapper.deleteByExample(example);
 	}
 }
