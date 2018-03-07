@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.mapper.BankCreditMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,5 +117,16 @@ public class BankCreditDao {
 		BankCreditEntity res  =
 				this.bankCreditMapper.selectByPrimaryKey(id);
 		return res;
+	}
+	/**
+	 * 删除银行授信信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteBankCreditByBatchDate(String batchDate){
+		Example example = new Example(BankCreditEntity.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("batchDate",batchDate);
+		bankCreditMapper.deleteByExample(example);
 	}
 }

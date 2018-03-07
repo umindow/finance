@@ -10,7 +10,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BankCreditDaoTest extends BaseTest{
@@ -112,5 +114,24 @@ public class BankCreditDaoTest extends BaseTest{
 		Long id  = 3L;
 		BankCreditEntity res = this.bankCreditDao.queryBankCreditByKey(id);
 		Assert.assertNotNull(res);
+	}
+
+	@Test
+	public void deleteBankCreditByBatchDateTest(){
+		String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		try{
+			//this.bankCreditDao.deleteBankCreditByBatchDate(batchDate);
+			batchDate = "2017-1-1";
+			String date = batchDate.substring(7);
+			String moth = batchDate.substring(5,6);
+			String year = batchDate.substring(0,4);
+			System.out.println("date"+date);
+			System.out.println("moth"+moth);
+			System.out.println("year"+year);
+		}catch (Exception e){
+			System.out.println(e.getMessage());
+		}
+
+
 	}
 }

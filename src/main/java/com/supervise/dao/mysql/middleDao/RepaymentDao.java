@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.RepaymentEntity;
 import com.supervise.dao.mysql.mapper.RepaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,5 +117,17 @@ public class RepaymentDao{
 		RepaymentEntity res  =
 				this.repaymentMapper.selectByPrimaryKey(id);
 		return res;
+	}
+
+	/**
+	 * 删除还款信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteRepaymentByBatchDate(String batchDate){
+		Example example = new Example(RepaymentEntity.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("batchDate", batchDate);
+		this.repaymentMapper.deleteByExample(example);
 	}
 }

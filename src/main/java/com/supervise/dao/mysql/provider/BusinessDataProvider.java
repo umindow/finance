@@ -35,8 +35,9 @@ public class BusinessDataProvider extends BasicProvider {
 	public String queryBusinessDataFormMiddleDB(String batchDate){
 		String selectSql = "SELECT * FROM "+Constants.FINANCE_BUSINESS_DATA_INFO;
 
-		String whereSql = createWhereSql4batchdate(batchDate);
+		String whereSql = createWhereSqlByBatchDate(batchDate);
 
+		System.out.println("whereSql:"+whereSql);
 		return selectSql+whereSql;
 	}
 

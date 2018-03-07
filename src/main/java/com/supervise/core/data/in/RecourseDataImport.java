@@ -9,6 +9,7 @@ import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.RecourseEntity;
 import com.supervise.dao.mysql.middleDao.RecourseDao;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -46,7 +48,6 @@ public class RecourseDataImport extends AbstractDataImport {
             return;
         }
         RecourseEntity recourseEntity = null;
-        Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
         for (Row row : sheet) {
             if (null == row) {
                 continue;
@@ -54,11 +55,13 @@ public class RecourseDataImport extends AbstractDataImport {
             if (row.getRowNum() == 0) {
                 continue;
             }
-            if (org.apache.commons.lang3.StringUtils.isBlank((String)getCellValue(row.getCell(0)))) {
+            if (StringUtils.isBlank((String) getCellValue(row.getCell(7)))) {
                 break;
             }
-            recourseEntity = new RecourseEntity();
-            recourseEntity.setSendStatus(Constants.DATA_READY_SEND);
+            
+            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+			recourseEntity = new RecourseEntity();
+			recourseEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
@@ -66,7 +69,15 @@ public class RecourseDataImport extends AbstractDataImport {
                 switch (cell.getColumnIndex()) {
                     case 0://主键ID号
                         if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
-                            recourseEntity.setId((Long) getCellValue(cell));
+                            BigDecimal big=new BigDecimal(cell.getNumericCellValue());
+                            String value = big.toString();
+                            if(null != value && !"".equals(value.trim())){
+                                String[] item = value.split("[.]");
+                                if(1<item.length&&"0".equals(item[1])){
+                                    value=item[0];
+                                }
+                            }
+                            recourseEntity.setId(Long.parseLong(value));
                         };
                         break;
                     case 1://机构编码
@@ -101,7 +112,16 @@ public class RecourseDataImport extends AbstractDataImport {
                         break;
                     case 7:
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
-                            recourseEntity.setBatchDate((String) getCellValue(cell));
+                            String batchDate = (String) getCellValue(cell);//YYYY-MM-DD YYYY-M-D
+                            if(batchDate.length()<10&&batchDate.length()==8){
+                                String date = batchDate.substring(7);
+                                String moth = batchDate.substring(5,6);
+                                String year = batchDate.substring(0,4);
+                                date = "0"+date;
+                                moth = "0"+moth;
+                                batchDate = year+"-"+moth+"-"+date;
+                            }
+                            recourseEntity.setBatchDate(batchDate);
                         }
                         break;
                     default:
@@ -118,28 +138,40 @@ public class RecourseDataImport extends AbstractDataImport {
             return;
         }
         /**
+         * 先删除当天批次的所有记录，
+         */
+        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        this.recourseDao.deleteRecourseByBatchDate(batchDate);
+        //然后保存导入的EXCEL记录
+        for (final RecourseEntity recourseEntity : recourseEntitys) {
+            recourseEntity.setId(0L);//重新设置主键，避免主键重复
+            recourseEntity.setSendStatus(Constants.DATA_READY_SEND);
+            this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
+        }
+        recourseEntitys.clear();
+        /**
          * 增加判断逻辑
          * 1、先根据ORIGID PROJID REPAYDATE batchdate作为查询条件，查询是否存在记录
          * 2、如果不存在记录，则直接保存
          * 3、如果存在记录，则更新该条记录
          */
-        for (final RecourseEntity recourseEntity : recourseEntitys) {
-            Long id  = recourseEntity.getId();
-            if(id>0){
-                //根据ID查询数据库
-                RecourseEntity ret = this.recourseDao.queryRecourseByKey(id);
-                //如果能查询到记录，则表示更新数据
-                if(null!=ret){
-                    this.recourseDao.updateRecourse(recourseEntity);
-                }else {
-                    //否则作为新的数据保存到数据库
-                    this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
-                }
-            }else{
-                //ID无效，作为新的数据保存到数据库
-                this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
-            }
-        }
+//        for (final RecourseEntity recourseEntity : recourseEntitys) {
+//            Long id  = recourseEntity.getId();
+//            if(id>0){
+//                //根据ID查询数据库
+//                RecourseEntity ret = this.recourseDao.queryRecourseByKey(id);
+//                //如果能查询到记录，则表示更新数据
+//                if(null!=ret){
+//                    this.recourseDao.updateRecourse(recourseEntity);
+//                }else {
+//                    //否则作为新的数据保存到数据库
+//                    this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
+//                }
+//            }else{
+//                //ID无效，作为新的数据保存到数据库
+//                this.recourseDao.insertRecourseToMiddleDB(recourseEntity);
+//            }
+//        }
     }
 
         private QueryCondition createQueryCondition(String orgid,String projid,Date date,String batchDate){

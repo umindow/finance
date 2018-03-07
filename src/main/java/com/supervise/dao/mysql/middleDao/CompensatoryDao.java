@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.CompensatoryEntity;
 import com.supervise.dao.mysql.mapper.CompensatoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,5 +117,17 @@ public class CompensatoryDao {
 		CompensatoryEntity res  =
 				this.compensatoryMapper.selectByPrimaryKey(id);
 		return res;
+	}
+
+	/**
+	 * 删除代偿信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteCompensatoryByBatchDate(String batchDate){
+		Example example = new Example(CompensatoryEntity.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("batchDate", batchDate);
+		this.compensatoryMapper.deleteByExample(example);
 	}
 }

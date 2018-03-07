@@ -71,4 +71,12 @@ public class BusinessDataDaoTest extends BaseTest{
 			Assert.assertNotNull(id);
 		}
 	}
+
+	@Test
+	public  void queryBusinessDataFormMiddleDBTest(){
+		String batch = "2018-03-07";
+		List<BusinessDataEntity> responseList =
+				this.businessDataDao.queryBusinessDataFormMiddleDB(batch);
+		Assert.assertNotEquals(0,responseList.size());
+	}
 }
