@@ -44,10 +44,10 @@ public class MailServiceImpl implements MailService {
 
         // 1. 创建参数配置, 用于连接邮件服务器的参数配置
         Properties props = new Properties();                    // 参数配置
-        props.setProperty(Constants.MAIL_TRANSPORT_PROTOCOL, mailConf.getProtocol());   // 使用的协议（JavaMail规范要求）
-        props.setProperty(Constants.MAIL_SMTP_HOST, mailConf.getSmtphostFrom());   // 发件人的邮箱的 SMTP 服务器地址
+        props.setProperty(Constants.MAIL_TRANSPORT_PROTOCOL, mailConf.getTransportProtocol());   // 使用的协议（JavaMail规范要求）
+        props.setProperty(Constants.MAIL_SMTP_HOST, mailConf.getSmtpHost());   // 发件人的邮箱的 SMTP 服务器地址
         // 发送服务器需要身份验证
-        props.setProperty(Constants.MAIL_SMTP_AUTH, mailConf.getAuth());
+        props.setProperty(Constants.MAIL_SMTP_AUTH, mailConf.getSmtpAuth());
 
 // 2. 根据配置创建会话对象, 用于和邮件服务器交互
         Session session = Session.getInstance(props);
@@ -56,11 +56,11 @@ public class MailServiceImpl implements MailService {
         // 3. 创建一封邮件
         Transport transport = null;
         try{
-            MimeMessage message = createMimeMessage(session, mailConf.getFromAccount(), mailConf.getToAccount(),dataType,batchDate);
+            MimeMessage message = createMimeMessage(session, mailConf.getFrom(), mailConf.getTo(),dataType,batchDate);
             //4. 根据 Session 获取邮件传输对象
             transport = session.getTransport();
             // 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
-            transport.connect(mailConf.getFromAccount(), mailConf.getPassword());
+            transport.connect(mailConf.getFrom(), mailConf.getFromAccountPassword());
             // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
             transport.sendMessage(message, message.getAllRecipients());
             logger.error("Mail send success at :"+ new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));

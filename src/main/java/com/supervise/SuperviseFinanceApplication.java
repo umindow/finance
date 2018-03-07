@@ -1,6 +1,7 @@
 package com.supervise;
 
 import com.supervise.schedule.QuartzScheduleInitizing;
+import com.supervise.schedule.job.*;
 import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -38,5 +39,7 @@ public class SuperviseFinanceApplication extends SpringBootServletInitializer {
         if(null != initizing){
             initizing.initDbSchedule();
         }
+        RepaymentSenderSchedule businessDataSenderSchedule = context.getBean(RepaymentSenderSchedule.class);
+        businessDataSenderSchedule.schedule();
     }
 }

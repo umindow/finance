@@ -46,6 +46,7 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
             return;
         }
         FeeAndRefundEntity feeAndRefundEntity = null;
+        Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
         for (Row row : sheet) {
             if (null == row) {
                 continue;
@@ -56,8 +57,8 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
             if (org.apache.commons.lang3.StringUtils.isBlank((String)getCellValue(row.getCell(0)))) {
                 break;
             }
-            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
             feeAndRefundEntity = new FeeAndRefundEntity();
+            feeAndRefundEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;

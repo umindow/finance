@@ -63,6 +63,7 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
                     logger.error("Send Data Exception:%s,dupkey:%", e, dupKey);
                 }
                 errorCount++;
+                retry++;
             }
         }
         if (errorCount > 0) {

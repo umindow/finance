@@ -3,8 +3,10 @@ package com.supervise.config.mail;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 /**
  * ClassName: MailConf <br/>
@@ -13,44 +15,34 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Getter
 @Setter
-@Configuration
-@PropertySource(value = "classpath:/mail.properties")
+@ConfigurationProperties(prefix = "mail")
+@Component
 public class MailConf {
-
     /**
      * 使用的协议
      */
-    @Value("${mail.transport.protocol}")
-    private String protocol;
-
+    private String transportProtocol;
     /**
      * 发件人的邮箱的 SMTP 服务器地址
      */
-    @Value("${mail.smtp.host}")
-    private String smtphostFrom;
-
+    private String smtpHost;
     /**
      * 需要请求认证
      */
-    @Value("${mail.smtp.auth}")
-    private String auth;
-
+    private String smtpAuth;
     /**
      * 发送方账号
      */
-    @Value("${mail.from}")
-    private String fromAccount;
+    private String from;
 
     /**
      * 接收方账号
      */
-    @Value("${mail.to}")
-    private String toAccount;
+    private String to;
 
     /**
      * 发送方账号密码
      */
-    @Value("${mail.frommAccount.password}")
-    private String password;
+    private String fromAccountPassword;
 
 }

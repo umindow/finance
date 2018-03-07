@@ -2,6 +2,7 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
@@ -54,6 +55,7 @@ public class BusinessDataImport extends AbstractDataImport {
                 break;
             }
             businessDataEntity = new BusinessDataEntity();
+            businessDataEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
@@ -170,12 +172,12 @@ public class BusinessDataImport extends AbstractDataImport {
                         }
                         break;
                     case 22://还款方式
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repay_type"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repay_type_id"))) {
                             businessDataEntity.setRepayType((String) getCellValue(cell));
                         }
                         break;
                     case 23://反担保措施
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("pledge_type"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("pledge_type_id"))) {
                             businessDataEntity.setPledgeType((String) getCellValue(cell));
                         }
                         break;

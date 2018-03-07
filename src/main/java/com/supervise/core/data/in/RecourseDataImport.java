@@ -46,6 +46,7 @@ public class RecourseDataImport extends AbstractDataImport {
             return;
         }
         RecourseEntity recourseEntity = null;
+        Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
         for (Row row : sheet) {
             if (null == row) {
                 continue;
@@ -57,7 +58,7 @@ public class RecourseDataImport extends AbstractDataImport {
                 break;
             }
             recourseEntity = new RecourseEntity();
-            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+            recourseEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;

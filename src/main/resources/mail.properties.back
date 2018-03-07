@@ -8,7 +8,7 @@ mail.smtp.host = smtp.126.com
 mail.smtp.auth = true
 
 #发送方账号密码
-mail.frommAccount.password = wanghang521
+mail.fromAccount.password = wanghang521
 
 #发送方账号
 mail.from = cqforeye@126.com
