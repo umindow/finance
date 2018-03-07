@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 /**
  * ClassName: MailConf <br/>
@@ -15,23 +16,20 @@ import org.springframework.context.annotation.PropertySource;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "mail")
+@Component
 public class MailConf {
-
     /**
      * 使用的协议
      */
     private String transportProtocol;
-
     /**
      * 发件人的邮箱的 SMTP 服务器地址
      */
     private String smtpHost;
-
     /**
      * 需要请求认证
      */
     private String smtpAuth;
-
     /**
      * 发送方账号
      */
