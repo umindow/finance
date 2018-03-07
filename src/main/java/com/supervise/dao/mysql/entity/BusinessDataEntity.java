@@ -183,7 +183,7 @@ public class BusinessDataEntity extends BaseEntity {
      * 8 其它
      * 
      **/
-    @Column(name = "repay_type")
+    @Column(name = "repay_type_id")
     @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "还款方式",index = 22)
     private String repayType;
     
@@ -191,7 +191,7 @@ public class BusinessDataEntity extends BaseEntity {
     /**
      * 反担保措施（如存在多项请加，分隔符）：9 抵押 4 质押 5 保证 10 信用 11 其它 
      **/
-    @Column(name = "pledge_type")
+    @Column(name = "pledge_type_id")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "反担保措施",index = 23)
     private String pledgeType;
 

@@ -170,12 +170,12 @@ public class BusinessDataImport extends AbstractDataImport {
                         }
                         break;
                     case 22://还款方式
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repay_type"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repay_type_id"))) {
                             businessDataEntity.setRepayType((String) getCellValue(cell));
                         }
                         break;
                     case 23://反担保措施
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("pledge_type"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("pledge_type_id"))) {
                             businessDataEntity.setPledgeType((String) getCellValue(cell));
                         }
                         break;
