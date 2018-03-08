@@ -18,18 +18,21 @@ import java.util.List;
  * User    |    Time    |    Note
  */
 public enum DepType {
-    FINANCE_DEP(1, "财务部"),
-    COMPREHENSIVE_DEP(2, "综合管理部"),
-    RISK_DEP(3, "风险管理部"),
-    LAW_DEP(4, "资产管理以及法律事务部");
+    FINANCE_DEP(1, "财务部",new DataType[]{DataType.SUPERVISE_REPLACE_DATA,DataType.SUPERVISE_REBACK_DATA}),
+    COMPREHENSIVE_DEP(2, "综合管理部",new DataType[]{DataType.SUPERVISE_REPLACE_DATA,DataType.SUPERVISE_REBACK_DATA}),
+    RISK_DEP(3, "风险管理部",new DataType[]{DataType.SUPERVISE_REPLACE_DATA,DataType.SUPERVISE_REBACK_DATA}),
+    LAW_DEP(4, "资产管理以及法律事务部",new DataType[]{DataType.SUPERVISE_REPLACE_DATA,DataType.SUPERVISE_REBACK_DATA});
     @Getter @Setter
     private int depId;
     @Getter @Setter
     private String depDesc;
+    @Getter @Setter
+    private DataType[] dataTypes;
 
-    DepType(int depId, String depDesc) {
+    DepType(int depId, String depDesc,DataType[] dataTypes) {
         this.depId = depId;
         this.depDesc = depDesc;
+        this.dataTypes = dataTypes;
     }
 
     public static List<Integer>  listDepIds(){
@@ -40,6 +43,14 @@ public enum DepType {
         return depIds;
     }
 
+    public static DepType depType(int depId){
+        for(final DepType depType:values()){
+            if(depType.getDepId() == depId){
+                return depType;
+            }
+        }
+        return null;
+    }
     public static String depDesc(int depId){
         for(final DepType depType:values()){
            if(depType.getDepId() == depId){

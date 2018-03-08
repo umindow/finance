@@ -14,11 +14,13 @@ import jetbrick.template.web.JetWebContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +67,39 @@ public class JetExFunctions {
      */
     public static List<Menu> menu() {
         MenuRepository r = SpringContextHolder.getBean(MenuRepository.class);
-        return r.loadAllMenus();
+        List<Menu> menus = r.loadAllMenus();
+        List<Menu> resMenus = new ArrayList<Menu>();
+        if (CollectionUtils.isEmpty(menus)) {
+            return null;
+        }
+        UserEntity userEntity = SessionUser.INSTANCE.getCurrentUser();
+        DepType depType = DepType.depType(Integer.valueOf(userEntity.getDepId()));
+        DataType[] dataTypes = depType.getDataTypes();
+        if(null ==dataTypes || dataTypes.length <= 0 || userEntity.getLevel() == RoleType.MANAGER.getRoleLevel()){
+            return menus;
+        }
+        for (final Menu menu : menus) {
+            if (!menu.isCheckDep() || CollectionUtils.isEmpty(menu.getSub_menus())) {
+                resMenus.add(menu);
+                continue;
+            }
+            List<Menu> subMenus = new ArrayList<Menu>();
+            for (Menu subMenu : menu.getSub_menus()) {
+                if (!subMenu.isCheckDep()) {
+                    subMenus.add(subMenu);
+                    continue;
+                }
+                for(final DataType dataType : dataTypes){
+                    if(dataType.getDataName().equals(subMenu.getName())){
+                        subMenus.add(subMenu);
+                        break;
+                    }
+                }
+            }
+            menu.setSub_menus(subMenus);
+            resMenus.add(menu);
+        }
+        return resMenus;
     }
 
     public static int currentLevel() {
@@ -90,9 +124,11 @@ public class JetExFunctions {
         }
         return "未知角色";
     }
-    public static String userDepDesc(String depId){
+
+    public static String userDepDesc(String depId) {
         return DepType.depDesc(Integer.valueOf(depId));
     }
+
     public static String userDataRole(String dataRoleJson) {
         DataType[] dataTypes = DataType.values();
         List<Integer> dataRoles = JSON.parseArray(dataRoleJson, Integer.class);
@@ -117,15 +153,15 @@ public class JetExFunctions {
         if (null == depRoleRef || null == depRoleRef.getDepTypes() || depRoleRef.getDepTypes().length <= 0) {
             return true;
         }
-        if(!depRoleRef.isModify()){
+        if (!depRoleRef.isModify()) {
             return false;
         }
         UserEntity userEntity = SessionUser.INSTANCE.getCurrentUser();
         if (null == userEntity) {
             return false;
         }
-        for(final DepType depType : depRoleRef.getDepTypes()){
-            if(depType.getDepId() == Integer.valueOf(userEntity.getDepId())){
+        for (final DepType depType : depRoleRef.getDepTypes()) {
+            if (depType.getDepId() == Integer.valueOf(userEntity.getDepId())) {
                 return true;
             }
         }

@@ -39,7 +39,5 @@ public class SuperviseFinanceApplication extends SpringBootServletInitializer {
         if(null != initizing){
             initizing.initDbSchedule();
         }
-        RepaymentSenderSchedule businessDataSenderSchedule = context.getBean(RepaymentSenderSchedule.class);
-        businessDataSenderSchedule.schedule();
     }
 }
