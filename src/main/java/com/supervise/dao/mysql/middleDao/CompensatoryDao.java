@@ -37,6 +37,7 @@ public class CompensatoryDao {
 			Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			compensatoryEntity.setCreateDate(newDate);
 			compensatoryEntity.setUpdateDate(newDate);
+			compensatoryEntity.setSendStatus(Constants.DATA_READY_SEND);
 			id= this.compensatoryMapper.insert(compensatoryEntity);
     	}
     	return id;

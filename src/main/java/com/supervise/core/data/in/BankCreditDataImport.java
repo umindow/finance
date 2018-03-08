@@ -2,7 +2,6 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
-import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
@@ -55,11 +54,10 @@ public class BankCreditDataImport extends AbstractDataImport {
             if (row.getRowNum() == 0) {
                 continue;
             }
-            if (StringUtils.isBlank((String) getCellValue(row.getCell(18)))) {
+            if (StringUtils.isBlank((String) getCellValue(row.getCell(1)))) {
                 break;
             }
             bankCreditEntity = new BankCreditEntity();
-			bankCreditEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
@@ -199,7 +197,6 @@ public class BankCreditDataImport extends AbstractDataImport {
         //然后保存导入的EXCEL记录
         for (final BankCreditEntity bankCreditEntity : bankCreditEntities) {
             bankCreditEntity.setId(0L);//重新设置主键，避免主键重复
-            bankCreditEntity.setSendStatus(Constants.DATA_READY_SEND);
             this.bankCreditDao.insertBankCreditToMiddleDB(bankCreditEntity);
         }
         bankCreditEntities.clear();

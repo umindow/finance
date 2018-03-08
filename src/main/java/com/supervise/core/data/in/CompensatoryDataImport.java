@@ -2,18 +2,21 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
-import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.config.role.DataType;
+import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.entity.CompensatoryEntity;
+import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import com.supervise.dao.mysql.middleDao.CompensatoryDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,7 +25,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -36,6 +38,10 @@ import java.util.Map;
  */
 @Service
 public class CompensatoryDataImport extends AbstractDataImport {
+    private final Logger logger = LoggerFactory.getLogger(CompensatoryDataImport.class);
+    @Autowired
+    private BusinessDataDao businessDataDao;
+
     @Autowired
     private CompensatoryDao compensatoryDao;
 
@@ -55,12 +61,11 @@ public class CompensatoryDataImport extends AbstractDataImport {
             if (row.getRowNum() == 0) {
                 continue;
             }
-            if (StringUtils.isBlank((String) getCellValue(row.getCell(6)))) {
+            if (StringUtils.isBlank((String) getCellValue(row.getCell(1)))) {
                 break;
             }
-            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_REPLACE_DATA.getDataLevel());
             compensatoryEntity = new CompensatoryEntity();
-			compensatoryEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
@@ -139,10 +144,20 @@ public class CompensatoryDataImport extends AbstractDataImport {
         //然后保存导入的EXCEL记录
         for (final CompensatoryEntity compensatoryEntity : compensatoryEntitys) {
             compensatoryEntity.setId(0L);//重新设置主键，避免主键重复
-            compensatoryEntity.setSendStatus(Constants.DATA_READY_SEND);
-            this.compensatoryDao.insertCompensatoryToMiddleDB(compensatoryEntity);
+            String orgid = compensatoryEntity.getOrgId();
+            String projid = compensatoryEntity.getProjId();
+            String batchdate = compensatoryEntity.getBatchDate();
+            QueryCondition queryCondition = createQueryCondition(orgid,projid,batchdate);
+            List<BusinessDataEntity> resList  = this.businessDataDao.queryBusinessDataByCondition(queryCondition);
+            if(!CollectionUtils.isEmpty(resList)){
+                this.compensatoryDao.insertCompensatoryToMiddleDB(compensatoryEntity);
+            }else{
+                logger.info("orgid :"+orgid +" projid:"+projid +" batchdate:"+batchdate);
+                logger.info("Not Exist in BusinessData!");
+                logger.info("Can not save compensatory with new projid in this batchdate!");
+            }
         }
-        compensatoryEntitys.clear();
+
         /**
          * 增加判断逻辑
          * 1、先根据ORIGID PROJID REPAYDATE batchdate作为查询条件，查询是否存在记录
@@ -166,25 +181,23 @@ public class CompensatoryDataImport extends AbstractDataImport {
 //            this.compensatoryDao.insertCompensatoryToMiddleDB(compensatoryEntity);
 //        }
 //    }
+
+        compensatoryEntitys.clear();
     }
 
-        private QueryCondition createQueryCondition(String orgid,String projid,Date date,String batchDate){
-            String dateStr = DateUtils.formatDate(date, Constants.YYYY_MM_DD, Locale.ENGLISH);
+        private QueryCondition createQueryCondition(String orgid,String projid,String batchDate){
             QueryCondition queryCondition = new QueryCondition();
             //设置查询条件
             queryCondition.getColumnList().add("org_id");
             queryCondition.getColumnList().add("proj_id");
-            queryCondition.getColumnList().add("replace_date");
             queryCondition.getColumnList().add("batch_date");
 
-            queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
             queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
             queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
             queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
 
             queryCondition.getValueList().add(orgid);
             queryCondition.getValueList().add(projid);
-            queryCondition.getValueList().add(dateStr);
             queryCondition.getValueList().add(batchDate);
             return queryCondition;
     }
