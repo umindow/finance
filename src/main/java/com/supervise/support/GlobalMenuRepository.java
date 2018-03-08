@@ -35,6 +35,7 @@ public class GlobalMenuRepository implements MenuRepository {
 
 	@Override
 	public List<Menu> loadAllMenus() {
+//		initMenus();
 		return repositories;
 	}
 

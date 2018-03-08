@@ -15,6 +15,10 @@ public class Menu {
 	private String icon;
 	private boolean checkDep;
 	private List<Menu> sub_menus;
+
+	public Menu() {
+	}
+
 	@Override
 	public String toString() {
 		return "Menu [name=" + name + ", url=" + url + ", level=" + level

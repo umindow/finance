@@ -45,28 +45,28 @@ public class FeeAndRefundEntity extends BaseEntity {
      * 收退费标示：1 收费 2 退费
      **/
     @Column(name = "charge_way")
-    @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "收退费标示",index = 4)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "收退费标示",index = 4)
     private String chargeWay;
 
     /**
      * 费用类型编码：1 担保费 2 保证金 3 其它
      **/
     @Column(name = "charge_type")
-    @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "费用类型编码",index = 5)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "费用类型编码",index = 5)
     private String chargeType;
 
     /**
      * 实际缴费时间
      **/
     @Column(name = "charge_time")
-    @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "实际缴费时间",index = 6)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际缴费时间",index = 6)
     private Date chargeTime;
 
     /**
      * 实际缴费金额
      **/
     @Column(name = "charge_money")
-    @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "实际缴费金额",index = 7)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际缴费金额",index = 7)
     private BigDecimal chargeMoney;
 
     @Column(name = "create_date")
@@ -78,7 +78,7 @@ public class FeeAndRefundEntity extends BaseEntity {
      * 批次（当前传输日期，格式yyyyMMdd）
      **/
     @Column(name = "batch_date")
-    @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "批次",index = 8)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "批次",index = 8)
     private String batchDate;
 
     //发送状态，0:待发送 1 发送成功  -1 发送失败

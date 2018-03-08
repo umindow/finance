@@ -2,6 +2,7 @@ package com.supervise.support;
 
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.BeanProperty;
 import com.supervise.cache.FiedRoleCache;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.ss.usermodel.Row;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.CollectionUtils;
 
@@ -84,6 +86,8 @@ public class JetExFunctions {
                 continue;
             }
             List<Menu> subMenus = new ArrayList<Menu>();
+            Menu newMenu =new Menu();
+            BeanUtils.copyProperties(menu,newMenu);
             for (Menu subMenu : menu.getSub_menus()) {
                 if (!subMenu.isCheckDep()) {
                     subMenus.add(subMenu);
@@ -96,8 +100,8 @@ public class JetExFunctions {
                     }
                 }
             }
-            menu.setSub_menus(subMenus);
-            resMenus.add(menu);
+            newMenu.setSub_menus(subMenus);
+            resMenus.add(newMenu);
         }
         return resMenus;
     }
