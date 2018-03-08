@@ -37,6 +37,7 @@ public class RepaymentDao{
 			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			repaymentEntity.setCreateDate(newDate);
 			repaymentEntity.setUpdateDate(newDate);
+			repaymentEntity.setSendStatus(Constants.DATA_READY_SEND);
 			id= this.repaymentMapper.insert(repaymentEntity);
     	}
     	return id;
