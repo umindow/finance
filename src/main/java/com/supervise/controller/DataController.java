@@ -364,20 +364,25 @@ public class DataController {
                 bankCreditMapper.deleteByPrimaryKey(dataId);
             } else if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
-                RecourseEntity recourseEntity = recourseMapper.selectByPrimaryKey(dataId);
-                recourseReset(recourseEntity);
-                recourseMapper.updateByPrimaryKeySelective(recourseEntity);
+//                RecourseEntity recourseEntity = recourseMapper.selectByPrimaryKey(dataId);
+//                recourseReset(recourseEntity);
+//                recourseMapper.updateByPrimaryKeySelective(recourseEntity);
+                //直接删除
+                recourseMapper.deleteByPrimaryKey(dataId);
             } else if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
-                CompensatoryEntity compensatoryEntity = compensatoryMapper.selectByPrimaryKey(dataId);
-                compensatoryReset(compensatoryEntity);
-                compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
+//                CompensatoryEntity compensatoryEntity = compensatoryMapper.selectByPrimaryKey(dataId);
+//                compensatoryReset(compensatoryEntity);
+//                compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
+                //直接删除
+                compensatoryMapper.deleteByPrimaryKey(dataId);
             } else if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
-                FeeAndRefundEntity feeAndRefundEntity = feeAndRefundMapper.selectByPrimaryKey(dataId);
-                feeAndRefundReset(feeAndRefundEntity);
-                feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
-                //feeAndRefundMapper.deleteByPrimaryKey(dataId);
+//                FeeAndRefundEntity feeAndRefundEntity = feeAndRefundMapper.selectByPrimaryKey(dataId);
+//                feeAndRefundReset(feeAndRefundEntity);
+//                feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
+                //直接删除
+                feeAndRefundMapper.deleteByPrimaryKey(dataId);
             } else if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
                 BusinessDataEntity businessDataEntity = businessDataMapper.selectByPrimaryKey(dataId);
                 userEntity = SessionUser.INSTANCE.getCurrentUser();
@@ -437,10 +442,11 @@ public class DataController {
                 }
             } else if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
-                RepaymentEntity repaymentEntity = repaymentMapper.selectByPrimaryKey(dataId);
-                repaymentReset(repaymentEntity);
-                repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
-                //repaymentMapper.deleteByPrimaryKey(dataId);
+//                RepaymentEntity repaymentEntity = repaymentMapper.selectByPrimaryKey(dataId);
+//                repaymentReset(repaymentEntity);
+//                repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
+                //直接删除
+                repaymentMapper.deleteByPrimaryKey(dataId);
             } else {
                 return "数据类型不存在";
             }
