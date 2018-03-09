@@ -27,13 +27,13 @@ public class BusinessDataEntity extends BaseEntity {
      * 机构编号（金融办分配的公司编号）,默认为：渝061001L
      **/
     @Column(name = "org_id")
-    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP},modify = false,fieldCnName = "机构编号",index = 1)
+    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP,DepType.LAW_DEP},modify = false,fieldCnName = "机构编号",index = 1)
     private String orgId;
     /**
      * 项目编号
      **/
     @Column(name = "proj_id")
-    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP},modify = false,fieldCnName = "项目编号",index = 2)
+    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP,DepType.LAW_DEP},modify = false,fieldCnName = "项目编号",index = 2)
     private String projId;
     
     /**
@@ -54,7 +54,7 @@ public class BusinessDataEntity extends BaseEntity {
      * 客户名称
      */
     @Column(name = "client_name")
-    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP},modify = true,fieldCnName = "客户名称",index = 5)
+    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP,DepType.LAW_DEP},modify = true,fieldCnName = "客户名称",index = 5)
     private String clientName;
     
     /**
