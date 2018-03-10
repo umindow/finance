@@ -37,7 +37,7 @@ public class BusinessDataProvider extends BasicProvider {
 
 		String whereSql = createWhereSqlByBatchDate(batchDate);
 
-		System.out.println("whereSql:"+whereSql);
+//		System.out.println("whereSql:"+whereSql);
 		return selectSql+whereSql;
 	}
 
@@ -51,6 +51,8 @@ public class BusinessDataProvider extends BasicProvider {
 		String selectSql = "SELECT * FROM "+Constants.FINANCE_BUSINESS_DATA_INFO;
 
 		String whereSql = createWhereSql(queryCondition, null);
+
+//		System.out.println("whereSql:"+whereSql);
 
 		return selectSql+whereSql;
 	}

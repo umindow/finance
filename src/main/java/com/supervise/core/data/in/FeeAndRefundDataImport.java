@@ -2,6 +2,8 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.common.CellUtil;
+import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
@@ -10,7 +12,6 @@ import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
 import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import com.supervise.dao.mysql.middleDao.FeeAndRefundDao;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -60,7 +61,7 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
             if (row.getRowNum() == 0) {
                 continue;
             }
-            if (StringUtils.isBlank((String) getCellValue(row.getCell(1)))) {
+            if (null==row.getCell(1)) {
                 break;
             }
             Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_FEE_DATA.getDataLevel());
@@ -69,66 +70,56 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
                 if (cell == null) {
                     continue;
                 }
+                String value = getValue(cell);
                 switch (cell.getColumnIndex()) {
                     case 0://主键ID号
-                        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
-                            BigDecimal big=new BigDecimal(cell.getNumericCellValue());
-                            String value = big.toString();
-                            if(null != value && !"".equals(value.trim())){
-                                String[] item = value.split("[.]");
-                                if(1<item.length&&"0".equals(item[1])){
-                                    value=item[0];
-                                }
-                            }
-                            feeAndRefundEntity.setId(Long.parseLong(value));
-                        };
+                        value = CellUtil.trimValue(value);
+                        feeAndRefundEntity.setId(Long.parseLong(value));
                         break;
                     case 1://机构编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
-                            feeAndRefundEntity.setOrgId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            feeAndRefundEntity.setOrgId(value);
                         }
                         break;
                     case 2://项目编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
-                            feeAndRefundEntity.setProjId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            feeAndRefundEntity.setProjId(value);
                         }
                         break;
                     case 3://合同编号
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
-                            feeAndRefundEntity.setContractId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            feeAndRefundEntity.setContractId(value);
                         }
                         break;
                     case 4://收退费标示
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_may"))) {
-                            feeAndRefundEntity.setChargeWay((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            feeAndRefundEntity.setChargeWay(value);
                         }
                         break;
                     case 5://费用类型编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_type"))) {
-                            feeAndRefundEntity.setChargeType((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            feeAndRefundEntity.setChargeType(value);
                         }
                         break;
                     case 6://实际缴费时间
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_time"))) {
-                            feeAndRefundEntity.setChargeTime(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                            feeAndRefundEntity.setChargeTime(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 7://实际缴费金额
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_money"))) {
-                            feeAndRefundEntity.setChargeMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            feeAndRefundEntity.setChargeMoney(new BigDecimal(money));
                         }
                         break;
                     case 8:
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
-                            String batchDate = (String) getCellValue(cell);//YYYY-MM-DD YYYY-M-D
-                            if(batchDate.length()<10&&batchDate.length()==8){
-                                String date = batchDate.substring(7);
-                                String moth = batchDate.substring(5,6);
-                                String year = batchDate.substring(0,4);
-                                date = "0"+date;
-                                moth = "0"+moth;
-                                batchDate = year+"-"+moth+"-"+date;
-                            }
+                            String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
                             feeAndRefundEntity.setBatchDate(batchDate);
                         }
                         break;
@@ -149,8 +140,8 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
         /**
          * 先删除当天批次的所有记录，
          */
-        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        this.feeAndRefundDao.deleteFeeAndRefundByBatchDate(batchDate);
+//        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+//        this.feeAndRefundDao.deleteFeeAndRefundByBatchDate(batchDate);
         //然后保存导入的EXCEL记录
         for (final FeeAndRefundEntity feeAndRefundEntity : feeAndRefundEntitys) {
             feeAndRefundEntity.setId(0L);//重新设置主键，避免主键重复
@@ -158,14 +149,27 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
             String projid = feeAndRefundEntity.getProjId();
             String batchdate = feeAndRefundEntity.getBatchDate();
             QueryCondition queryCondition = createQueryCondition(orgid,projid,batchdate);
-            List<BusinessDataEntity> resList  = this.businessDataDao.queryBusinessDataByCondition(queryCondition);
-            if(!CollectionUtils.isEmpty(resList)){
-                this.feeAndRefundDao.insertFeeAndRefundToMiddleDB(feeAndRefundEntity);
+            List<FeeAndRefundEntity> feeEntityList = this.feeAndRefundDao.queryFeeAndRefundByCondition(queryCondition);
+            if (!CollectionUtils.isEmpty(feeEntityList)) {
+                //不为空，则表示做更新
+                for(FeeAndRefundEntity fee :feeEntityList){
+                    fee.setId(feeAndRefundEntity.getId());
+                    this.feeAndRefundDao.updateFeeAndRefund(fee);
+                }
             }else{
-                logger.info("orgid :"+orgid +" projid:"+projid +" batchdate:"+batchdate);
-                logger.info("Not Exist in BusinessData!");
-                logger.info("Can not save feeAndRefund with new projid in this batchdate!");
+                //否则表示新增，同时查询业务数据，查看是否立项，如果有立项则新增，否则丢弃
+                List<BusinessDataEntity> resList  = this.businessDataDao.queryBusinessDataByCondition(queryCondition);
+                if(!CollectionUtils.isEmpty(resList)){
+                    this.feeAndRefundDao.insertFeeAndRefundToMiddleDB(feeAndRefundEntity);
+                }else{
+                    logger.info("orgid :"+orgid +" projid:"+projid +" batchdate:"+batchdate);
+                    logger.info("Not Exist in BusinessData!");
+                    logger.info("Can not save feeAndRefund with new projid in this batchdate!");
+                }
             }
+
+
+
         }
         feeAndRefundEntitys.clear();
         /**
