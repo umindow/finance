@@ -30,10 +30,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by xishui.hb on 2018/1/30 下午5:30.
@@ -392,7 +389,7 @@ public class DataController {
                     dep = Long.parseLong(depId);
                 }
                 //如果是综合营运部，则可以直接删除该条记录；否则只能清除该部门所有权限字段的内容,并更新数据
-                if(DepType.COMPREHENSIVE_DEP.getDepId()==dep){
+                if(DepType.COMPREHENSIVE_DEP.getDepId()==dep||-1==dep){
                     businessDataMapper.deleteByPrimaryKey(dataId);
                     //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
                     String batchDate = businessDataEntity.getBatchDate();
@@ -998,5 +995,45 @@ public class DataController {
         repaymentEntity.setRepayDate(null);
     }
 
+//    private List<BankCreditVo> transfEntity2Vo(List<BankCreditEntity> entitis ){
+//        List<BankCreditVo> vos = new ArrayList<BankCreditVo>();
+//        if(!CollectionUtils.isEmpty(entitis)){
+//            for(BankCreditEntity bankCreditEntity:entitis){
+//                BankCreditVo bankCreditVo = new BankCreditVo();
+//                bankCreditVo.setId(bankCreditEntity.getId());
+//                bankCreditVo.setPage(bankCreditEntity.getPage());
+//                bankCreditVo.setRows(bankCreditEntity.getRows());
+//
+//                bankCreditVo.setRemark(bankCreditEntity.getRemark());
+//                bankCreditVo.setPrimaryId(bankCreditEntity.getPrimaryId());
+//                bankCreditVo.setBailMoney(bankCreditEntity.getBailMoney());
+//                bankCreditVo.setBailScale(bankCreditEntity.getBailScale());
+//                bankCreditVo.setBankId(bankCreditEntity.getBankId());
+//                bankCreditVo.setBatchDate(bankCreditEntity.getBatchDate());
+//                bankCreditVo.setBlowupMulpitle(bankCreditEntity.getBlowupMulpitle());
+//                bankCreditVo.setCreditMoney(bankCreditEntity.getCreditMoney());
+//                bankCreditVo.setCreditTypeId(bankCreditEntity.getCreditTypeId());
+//                bankCreditVo.setIsForCredit(bankCreditEntity.getIsForCredit());
+//                bankCreditVo.setCreditStatus(bankCreditEntity.getCreditStatus());
+//                bankCreditVo.setItemLean(bankCreditEntity.getItemLean());
+//                bankCreditVo.setMainBankId(bankCreditEntity.getMainBankId());
+//                bankCreditVo.setLeaveMoney(bankCreditEntity.getLeaveMoney());
+//                bankCreditVo.setOrgId(bankCreditEntity.getOrgId());
+//                bankCreditVo.setSingleMoneyLimit(bankCreditEntity.getSingleMoneyLimit());
+//
+//                Date startDate = bankCreditEntity.getCreditStartDate();
+//                Date endDate = bankCreditEntity.getCreditEndDate();
+//                String startStr = new SimpleDateFormat(Constants.YYYY_MM_DD).format(startDate);
+//                String endStr = new SimpleDateFormat(Constants.YYYY_MM_DD).format(endDate);
+//
+//                bankCreditVo.setCreditStartDate(startStr);
+//                bankCreditVo.setCreditEndDate(endStr);
+//
+//                vos.add(bankCreditVo);
+//            }
+//
+//        }
+//        return vos;
+//    }
 
 }

@@ -2,11 +2,11 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.common.CellUtil;
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.role.DataType;
 import com.supervise.config.role.DepType;
-import com.supervise.controller.DataController;
 import com.supervise.dao.mysql.entity.*;
 import com.supervise.dao.mysql.mapper.CompensatoryMapper;
 import com.supervise.dao.mysql.mapper.FeeAndRefundMapper;
@@ -74,7 +74,7 @@ public class BusinessDataImport extends AbstractDataImport {
             if (row.getRowNum() == 0) {
                 continue;
             }
-            if (StringUtils.isBlank((String) getCellValue(row.getCell(1)))) {
+            if (null==row.getCell(1)) {
                 break;
             }
             businessDataEntity = new BusinessDataEntity();
@@ -82,211 +82,227 @@ public class BusinessDataImport extends AbstractDataImport {
                 if (cell == null) {
                     continue;
                 }
+                String value = getValue(cell);
                 switch (cell.getColumnIndex()) {
                     case 0://主键ID号
-                        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
-                            BigDecimal big=new BigDecimal(cell.getNumericCellValue());
-                            String value = big.toString();
-                            if(null != value && !"".equals(value.trim())){
-                                String[] item = value.split("[.]");
-                                if(1<item.length&&"0".equals(item[1])){
-                                    value=item[0];
-                                }
-                            }
-                            businessDataEntity.setId(Long.parseLong(value));
-                        };
+                        value = CellUtil.trimValue(value);
+                        businessDataEntity.setId(Long.parseLong(value));
                         break;
                     case 1://机构编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
-                            businessDataEntity.setOrgId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setOrgId(value);
                         }
                         break;
                     case 2://项目编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
-                            businessDataEntity.setProjId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setProjId(value);
                         }
                         break;
                     case 3://客户类型
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("client_type"))) {
-                            businessDataEntity.setClientType((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setClientType(value);
                         }
                         break;
                     case 4://客户编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("client_id"))) {
-                            businessDataEntity.setClientId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setClientId(value);
                         }
                         break;
                     case 5://客户名称
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("client_name"))) {
-                            businessDataEntity.setClientName((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setClientName(value);
                         }
                         break;
                     case 6://证件类型
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("id_card_type"))) {
-                            businessDataEntity.setIDCardType((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setIDCardType(value);
                         }
                         break;
                     case 7://证件编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("id_card"))) {
-                            businessDataEntity.setIDCard((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setIDCard(value);
                         }
                         break;
                     case 8://所属行业编号（一级）
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("calling_first"))) {
-                            businessDataEntity.setCallingFirst((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setCallingFirst(value);
                         }
                         break;
                     case 9://所属行业编号（二级）
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("calling_second"))) {
-                            businessDataEntity.setCallingSecond((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setCallingSecond(value);
                         }
                         break;
                     case 10://所属地区编号（一级）
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("area_first"))) {
-                            businessDataEntity.setAreaFirst((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setAreaFirst(value);
                         }
                         break;
                     case 11://所属地区编号（二级）
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("area_second"))) {
-                            businessDataEntity.setAreaSecond((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setAreaSecond(value);
                         }
                         break;
                     case 12://所属地区编号（三级）
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("area_third"))) {
-                            businessDataEntity.setAreaThird((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setAreaThird(value);
                         }
                         break;
                     case 13://客户规模编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("company_scale"))) {
-                            businessDataEntity.setCompanyScale((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setCompanyScale(value);
                         }
                         break;
                     case 14://是否涉农
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("is_farming"))) {
-                            businessDataEntity.setIsFarming((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setIsFarming(value);
                         }
                         break;
                     case 15://业务类型
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("business_type"))) {
-                            businessDataEntity.setBusinessType((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setBusinessType(value);
                         }
                         break;
                     case 16://合同金额
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_money"))) {
-                            businessDataEntity.setContractMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            businessDataEntity.setContractMoney(new BigDecimal(money));
                         }
                         break;
                     case 17://已放款金额
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("loan_money"))) {
-                            businessDataEntity.setLoanMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            businessDataEntity.setLoanMoney(new BigDecimal(money));
                         }
                         break;
                     case 18://贷款年利率
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("loan_rate"))) {
-                            businessDataEntity.setLoanRate(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            businessDataEntity.setLoanRate(new BigDecimal(money));
                         }
                         break;
                     case 19://担保综合费率
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("assure_rate"))) {
-                            businessDataEntity.setAssureRate(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            businessDataEntity.setAssureRate(new BigDecimal(money));
                         }
                         break;
                     case 20://放款日期
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("loan_date"))) {
-                            businessDataEntity.setLoanDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                            businessDataEntity.setLoanDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 21://合同截止日期
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_end_date"))) {
-                            businessDataEntity.setContractEndDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                            businessDataEntity.setContractEndDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 22://还款方式
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repay_type_id"))) {
-                            businessDataEntity.setRepayType((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setRepayType(value);
                         }
                         break;
                     case 23://反担保措施
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("pledge_type"))) {
-                            businessDataEntity.setPledgeType((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setPledgeType(value);
                         }
                         break;
                     case 24://反担保备注
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("approve_option"))) {
-                            businessDataEntity.setApproveOption((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setApproveOption(value);
                         }
                         break;
                     case 25://银行授信记录标示ID
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("bank_credit_primary_id"))) {
-                            businessDataEntity.setBankCreditPrimaryId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setBankCreditPrimaryId(value);
                         }
                         break;
                     case 26://合作银行ID
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("co_bank_id"))) {
-                            businessDataEntity.setCoBankId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setCoBankId(value);
                         }
                         break;
                     case 27://项目状态
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_status"))) {
-                            businessDataEntity.setProjSatus((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setProjSatus(value);
                         }
                         break;
                     case 28://担保权人
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("assure_person"))) {
-                            businessDataEntity.setAssurePerson((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setAssurePerson(value);
                         }
                         break;
                     case 29://反担保物价值
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("pledge_worth"))) {
-                            businessDataEntity.setPledgeWorth(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            businessDataEntity.setPledgeWorth(new BigDecimal(money));
                         }
                         break;
                     case 30://存单质押
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("is_impawn"))) {
-                            businessDataEntity.setIsImpawn((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setIsImpawn(value);
                         }
                         break;
                     case 31://受理时间
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("accept_date"))) {
-                            businessDataEntity.setAcceptDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                            businessDataEntity.setAcceptDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 32://合同编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
-                            businessDataEntity.setContractId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setContractId(value);
                         }
                         break;
                     case 33://客户存入保证金
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("client_bail_money"))) {
-                            businessDataEntity.setClientBailMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            businessDataEntity.setClientBailMoney(new BigDecimal(money));
                         }
                         break;
                     case 34://存出保证金
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("out_bail_money"))) {
-                            businessDataEntity.setOutBailMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            businessDataEntity.setOutBailMoney(new BigDecimal(money));
                         }
                         break;
                     case 35://资本属性
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("capital_belong"))) {
-                            businessDataEntity.setCapitalBelong((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            businessDataEntity.setCapitalBelong(value);
                         }
                         break;
                     case 36://项目结束时间
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_end_date"))) {
-                            businessDataEntity.setProjEndDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                            businessDataEntity.setProjEndDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 37://批次
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
-                            String batchDate = (String) getCellValue(cell);//YYYY-MM-DD YYYY-M-D
-                            if(batchDate.length()<10&&batchDate.length()==8){
-                                String date = batchDate.substring(7);
-                                String moth = batchDate.substring(5,6);
-                                String year = batchDate.substring(0,4);
-                                date = "0"+date;
-                                moth = "0"+moth;
-                                batchDate = year+"-"+moth+"-"+date;
-                            }
+                            String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
                             businessDataEntity.setBatchDate(batchDate);
                         }
                         break;
