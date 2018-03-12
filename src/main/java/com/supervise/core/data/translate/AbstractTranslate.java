@@ -23,7 +23,7 @@ public abstract class AbstractTranslate {
         List<FiedRoleCache.DepRoleRef> depRoleRefs = new ArrayList<FiedRoleCache.DepRoleRef>();
         for (final Map.Entry<String, FiedRoleCache.DepRoleRef> entry : depRoleRefMap.entrySet()) {
             FiedRoleCache.DepRoleRef depRoleRef = entry.getValue();
-            if(FiedRoleCache.checkFieldRole(userEntity,depRoleRef)) {
+            if(FiedRoleCache.checkFieldRoleNoModify(userEntity,depRoleRef,false)) {
                 depRoleRefs.add(entry.getValue());
             }
         }

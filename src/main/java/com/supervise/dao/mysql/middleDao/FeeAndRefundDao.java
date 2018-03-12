@@ -37,6 +37,7 @@ public class FeeAndRefundDao {
 			Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			feeAndRefundEntity.setCreateDate(newDate);
 			feeAndRefundEntity.setUpdateDate(newDate);
+			feeAndRefundEntity.setSendStatus(Constants.DATA_READY_SEND);
 			id= this.feeAndRefundMapper.insert(feeAndRefundEntity);
     	}
     	return id;

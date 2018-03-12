@@ -101,7 +101,26 @@ public final class FiedRoleCache {
         if (null == depRoleRef) {
             return false;
         }
-        if (!depRoleRef.isModify()) {
+        if(!depRoleRef.isModify()){
+            return false;
+        }
+        if (depRoleRef.depTypes.length > 0) {
+            for (final DepType depType : depRoleRef.getDepTypes()) {
+                if (depType.getDepId() == Integer.valueOf(userEntity.getDepId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public static boolean checkFieldRoleNoModify(UserEntity userEntity, DepRoleRef depRoleRef,boolean checkModify) {
+        if(userEntity.getLevel() > 10){
+            return true;
+        }
+        if (null == depRoleRef) {
+            return false;
+        }
+        if(checkModify && !depRoleRef.isModify()){
             return false;
         }
         if (depRoleRef.depTypes.length > 0) {

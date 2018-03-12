@@ -37,6 +37,7 @@ public class BankCreditDao {
 			Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			bankCreditEntity.setCreateDate(newDate);
 			bankCreditEntity.setUpdateDate(newDate);
+			bankCreditEntity.setSendStatus(Constants.DATA_READY_SEND);
 			id= this.bankCreditMapper.insert(bankCreditEntity);
     	}
     	return id;

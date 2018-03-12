@@ -80,7 +80,7 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
         //将已发送成的数据状态更新为发送成功
         for(BusinessDataEntity businessDataEntity : businessDataEntities){
             businessDataEntity.setSendStatus(status);
-            businessDataDao.updateBankCredit(businessDataEntity);
+            businessDataDao.updateBusinessData(businessDataEntity);
         }
     }
 

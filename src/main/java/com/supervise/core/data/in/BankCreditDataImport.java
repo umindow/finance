@@ -2,6 +2,7 @@ package com.supervise.core.data.in;
 
 import com.google.common.collect.Lists;
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.common.CellUtil;
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
@@ -9,7 +10,6 @@ import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.middleDao.BankCreditDao;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -55,125 +55,123 @@ public class BankCreditDataImport extends AbstractDataImport {
             if (row.getRowNum() == 0) {
                 continue;
             }
-            if (StringUtils.isBlank((String) getCellValue(row.getCell(18)))) {
+            if (null==row.getCell(1)) {
                 break;
             }
             bankCreditEntity = new BankCreditEntity();
-			bankCreditEntity.setSendStatus(Constants.DATA_READY_SEND);
             for (Cell cell : row) {
                 if (cell == null) {
                     continue;
                 }
+                String value = getValue(cell);
                 switch (cell.getColumnIndex()) {
                     case 0://主键ID号
-                        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
-                            BigDecimal big=new BigDecimal(cell.getNumericCellValue());
-                            String value = big.toString();
-                            if(null != value && !"".equals(value.trim())){
-                                String[] item = value.split("[.]");
-                                if(1<item.length&&"0".equals(item[1])){
-                                    value=item[0];
-                                }
-                            }
+                            value = CellUtil.trimValue(value);
                             bankCreditEntity.setId(Long.parseLong(value));
-                        };
                         break;
                     case 1://银行授信记录ID
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("primary_id"))) {
-                            bankCreditEntity.setPrimaryId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setPrimaryId(value);
                         }
                         break;
                     case 2://机构编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
-                            bankCreditEntity.setOrgId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setOrgId(value);
                         }
                         break;
                     case 3://银行编号
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("bank_id"))) {
-                            bankCreditEntity.setBankId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setBankId(value);
                         }
                         break;
                     case 4://主办行编码
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("main_bank_id"))) {
-                            bankCreditEntity.setMainBankId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setMainBankId(value);
                         }
                         break;
                     case 5://授信类型
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("credit_type_id"))) {
-                            bankCreditEntity.setCreditTypeId((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setCreditTypeId(value);
                         }
                         break;
                     case 6://授信额度
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("credit_money"))) {
-                            bankCreditEntity.setCreditMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            bankCreditEntity.setCreditMoney(new BigDecimal(money));
                         }
                         break;
                     case 7://授信余额
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("leave_money"))) {
-                            bankCreditEntity.setLeaveMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            bankCreditEntity.setLeaveMoney(new BigDecimal(money));
                         }
                         break;
                     case 8://放大倍数
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("blowup_mulpitle"))) {
-                            bankCreditEntity.setLeaveMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            bankCreditEntity.setLeaveMoney(new BigDecimal(money));
                         }
                         break;
                     case 9://初始保证金额
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("bail_money"))) {
-                            bankCreditEntity.setLeaveMoney(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            bankCreditEntity.setLeaveMoney(new BigDecimal(money));
                         }
                         break;
                     case 10://保证金比例（%）
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("bail_scale"))) {
-                            bankCreditEntity.setBailScale(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            bankCreditEntity.setBailScale(new BigDecimal(money));
                         }
                         break;
                     case 11://授信开始日期
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("credit_start_date"))) {
-                            bankCreditEntity.setCreditStartDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                            bankCreditEntity.setCreditStartDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 12://授信结束日期
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("credit_end_date"))) {
-                            bankCreditEntity.setCreditEndDate(DateUtils.parseStringDate((String) getCellValue(cell), null));
+                            bankCreditEntity.setCreditEndDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 13://单笔限额
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("single_money_limit"))) {
-                            bankCreditEntity.setSingleMoneyLimit(new BigDecimal((Double) getCellValue(cell)));
+                            Double money = CellUtil.transfValuetoDouble(value);
+                            bankCreditEntity.setSingleMoneyLimit(new BigDecimal(money));
                         }
                         break;
                     case 14://是否循环授信:1 是 2 否
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("is_for_credit"))) {
-                            bankCreditEntity.setIsForCredit((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setIsForCredit(value);
                         }
                         break;
                     case 15://状态：1 使用 2 解除
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("credit_status"))) {
-                            bankCreditEntity.setCreditStatus((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setCreditStatus(value);
                         }
                         break;
                     case 16://项目偏好
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("item_lean"))) {
-                            bankCreditEntity.setItemLean((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setItemLean(value);
                         }
                         break;
                     case 17://备注
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("remark"))) {
-                            bankCreditEntity.setRemark((String) getCellValue(cell));
+                            value = CellUtil.trimValue(value);
+                            bankCreditEntity.setRemark(value);
                         }
                         break;
                     case 18://批次
                         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
-                            String batchDate = (String) getCellValue(cell);//YYYY-MM-DD YYYY-M-D
-                            if(batchDate.length()<10&&batchDate.length()==8){
-                                String date = batchDate.substring(7);
-                                String moth = batchDate.substring(5,6);
-                                String year = batchDate.substring(0,4);
-                                date = "0"+date;
-                                moth = "0"+moth;
-                                batchDate = year+"-"+moth+"-"+date;
-                            }
+                            String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
                             bankCreditEntity.setBatchDate(batchDate);
                         }
                         break;
@@ -199,7 +197,6 @@ public class BankCreditDataImport extends AbstractDataImport {
         //然后保存导入的EXCEL记录
         for (final BankCreditEntity bankCreditEntity : bankCreditEntities) {
             bankCreditEntity.setId(0L);//重新设置主键，避免主键重复
-            bankCreditEntity.setSendStatus(Constants.DATA_READY_SEND);
             this.bankCreditDao.insertBankCreditToMiddleDB(bankCreditEntity);
         }
         bankCreditEntities.clear();

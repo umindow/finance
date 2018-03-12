@@ -106,7 +106,7 @@ public abstract class AbstractDataImport implements DataImport {
 
     public abstract void save() throws Exception;
 
-    public final Object getCellValue(Cell cell) {
+    private  Object getCellValue(Cell cell) {
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_STRING:
                 return cell.getStringCellValue();
@@ -131,4 +131,23 @@ public abstract class AbstractDataImport implements DataImport {
         return null;
     }
 
+    /**
+     * 获取单元数值
+     * @param cell
+     * @return
+     */
+    protected final String getValue(Cell cell){
+        String value = "";
+        if(Cell.CELL_TYPE_NUMERIC==cell.getCellType()){
+            if (DateUtil.isCellDateFormatted(cell)){
+                return new SimpleDateFormat(DATE_FULL_STR).format(DateUtil.getJavaDate(cell.getNumericCellValue()));
+            }else{
+                Double big  = (Double)getCellValue(cell);
+                value = big.toString();
+            }
+        }else if(Cell.CELL_TYPE_STRING==cell.getCellType()){
+            value = (String) getCellValue(cell);
+        }
+        return value;
+    }
 }

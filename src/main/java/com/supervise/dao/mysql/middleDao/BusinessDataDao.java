@@ -37,6 +37,7 @@ public class BusinessDataDao {
 			Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			businessDataEntity.setCreateDate(newDate);
 			businessDataEntity.setUpdateDate(newDate);
+			businessDataEntity.setSendStatus(Constants.DATA_READY_SEND);
 			id= this.businessDataMapper.insert(businessDataEntity);
     	}
     	return id;
@@ -71,7 +72,7 @@ public class BusinessDataDao {
 	 * @param businessDataEntity
 	 * int id
 	 */
-	public  int updateBankCredit(BusinessDataEntity businessDataEntity){
+	public  int updateBusinessData(BusinessDataEntity businessDataEntity){
 		int id = -1;
 		if(null!=businessDataEntity){
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());

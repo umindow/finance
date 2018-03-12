@@ -45,7 +45,12 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
                 try {
                     Object value = t.getClass().getMethod(methodName).invoke(t);
                     if (depRoleRef.isDate() && (value instanceof Date)) {
-                        fieldValues.add(new FieldValue(DateUtils.formatDate((Date) value, depRoleRef.getDateFormat()), depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
+                        if(depRoleRef.getDateFormat().length() >10){
+                            fieldValues.add(new FieldValue(DateUtils.formatDate((Date) value, depRoleRef.getDateFormat()), depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify(), depRoleRef.isDate(), "yyyy-mm-dd",true,"hh:mm:ss"
+                                    ));
+                        }else {
+                            fieldValues.add(new FieldValue(DateUtils.formatDate((Date) value, depRoleRef.getDateFormat()), depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify(), depRoleRef.isDate(), depRoleRef.getDateFormat()));
+                        }
                     } else {
                         fieldValues.add(new FieldValue(value, depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
                     }

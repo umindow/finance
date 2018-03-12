@@ -37,6 +37,7 @@ public class RecourseDao {
 			Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			recourseEntity.setCreateDate(newDate);
 			recourseEntity.setUpdateDate(newDate);
+			recourseEntity.setSendStatus(Constants.DATA_READY_SEND);
 			id= this.recourseMapper.insert(recourseEntity);
     	}
     	return id;
