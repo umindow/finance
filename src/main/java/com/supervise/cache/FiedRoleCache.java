@@ -65,7 +65,7 @@ public final class FiedRoleCache {
             if(null == depRole){
                 continue;
             }
-            depRoleRefMap.put(column.name(), (null == depRole) ? null : new DepRoleRef(depRole.depTypes(), depRole.modify(), column.name(), field.getName(), depRole.fieldCnName(), depRole.index()));
+            depRoleRefMap.put(column.name(), (null == depRole) ? null : new DepRoleRef(depRole.depTypes(), depRole.modify(), column.name(), field.getName(), depRole.fieldCnName(), depRole.index(),depRole.isDate(),depRole.dateFormat()));
         }
         FIED_ROLE_CACHE.put(dataType, depRoleRefMap);
         logger.info("Add Field Role Ref DataType:%s, Refs:%s", DataType.typeOfType(dataType).getDataName(), JSON.toJSON(depRoleRefMap));
@@ -79,14 +79,18 @@ public final class FiedRoleCache {
         private String fieldName;
         private String fieldCnName;
         private int index;
+        private boolean isDate;
+        private String dateFormat;
 
-        public DepRoleRef(DepType[] depTypes, boolean modify, String columnName, String fieldName, String fieldCnName, int index) {
+        public DepRoleRef(DepType[] depTypes, boolean modify, String columnName, String fieldName, String fieldCnName, int index,boolean isDate,String dateFormat) {
             this.depTypes = depTypes;
             this.modify = modify;
             this.columnName = columnName;
             this.fieldName = fieldName;
             this.fieldCnName = fieldCnName;
             this.index = index;
+            this.isDate = isDate;
+            this.dateFormat = dateFormat;
         }
     }
 

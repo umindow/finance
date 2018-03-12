@@ -1,6 +1,7 @@
 package com.supervise.core.data.translate;
 
 import com.supervise.cache.FiedRoleCache;
+import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.controller.vo.DataSet;
 import com.supervise.controller.vo.DataVo;
@@ -10,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,7 +43,12 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
                 String methodName = "get" + depRoleRef.getFieldName().replaceFirst(depRoleRef.getFieldName().substring(0, 1), depRoleRef.getFieldName().substring(0, 1)
                         .toUpperCase());
                 try {
-                    fieldValues.add(new FieldValue(t.getClass().getMethod(methodName).invoke(t), depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
+                    Object value = t.getClass().getMethod(methodName).invoke(t);
+                    if (depRoleRef.isDate() && (value instanceof Date)) {
+                        fieldValues.add(new FieldValue(DateUtils.formatDate((Date) value, depRoleRef.getDateFormat()), depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
+                    } else {
+                        fieldValues.add(new FieldValue(value, depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {

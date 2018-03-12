@@ -278,4 +278,5 @@ public final class Constants {
     public static final String DATA_SEND_SUCESS = "1";
     public static final String DATA_SEND_FAIL = "-1";
     /***************************发送状态常量 end********************************/
+
 }

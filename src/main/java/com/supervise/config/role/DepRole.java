@@ -19,17 +19,23 @@ import java.lang.annotation.Target;
 public @interface DepRole {
     /**
      * 字段属于哪些部门
+     *
      * @return
      */
     DepType[] depTypes();
 
     /**
      * 是否有修改权限，默认可以修改
+     *
      * @return
      */
     boolean modify() default true;
 
     String fieldCnName() default "未知";
 
-    int index()  default 0;//顺序，方便对应
- }
+    int index() default 0;//顺序，方便对应
+
+    boolean isDate() default false;
+
+    String dateFormat() default "yyyy-MM-dd HH:mm:ss";
+}

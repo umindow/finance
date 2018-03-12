@@ -1,5 +1,6 @@
 package com.supervise.dao.mysql.entity;
 
+import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
@@ -161,14 +162,14 @@ public class BusinessDataEntity extends BaseEntity {
      * 实际放款日期
      **/
     @Column(name = "loan_date")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际放款日期",index = 20)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际放款日期",index = 20,isDate = true,dateFormat = Constants.YYYY_MM_DD_HH_MM_SS)
     private Date loanDate;
     
     /**
      * 合同截止日期，合同登记时的结束时间
      **/
     @Column(name = "contract_end_date")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "合同截止日期",index = 21)
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "合同截止日期",index = 21,isDate = true,dateFormat = Constants.YYYY_MM_DD_HH_MM_SS)
     private Date contractEndDate;
     
     /**
