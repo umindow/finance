@@ -1,6 +1,7 @@
 package com.supervise.schedule.job;
 
 import com.supervise.common.Constants;
+import com.supervise.common.DateUtils;
 import com.supervise.core.data.loadProces.BankCreditLoader;
 import com.supervise.core.data.loadProces.BusinessDataLoader;
 import com.supervise.core.data.loadProces.RepaymentLoader;
@@ -9,6 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by xishui.hb on 2018/1/31 上午10:59.
@@ -45,6 +50,10 @@ public class DataLoadedSchedule extends AbstractSchedule {
     	//从dupkey中获取当前批次作为查询条件
     	int lenth = Constants.SCH_DATA_LOADED_SCHEDULE.length();
     	String batchDate = dupKey.substring(lenth,dupKey.length()).substring(0,10);
+        Date date = DateUtils.String2Date(batchDate,Constants.YYYY_MM_DD, Locale.ENGLISH);
+        date  = DateUtils.previousDay(date);
+        batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(date);
+
         logger.info("data Loader job Start,batchDate is :"+batchDate);
         try {
             //2、从VIEW中LOAD businessData当期那天批次的数据，并将LOAD的数据持久化到中间表

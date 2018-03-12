@@ -64,7 +64,9 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
         long ret = -1;
         try {
             ret = webService().saveJgBuReplevyInfoAry(recourseEntitys, recourseEntitys.size());
+            logger.info("Recourse webSer Ret:"+ret);
         } catch (Exception e) {
+            logger.error("Recourse webSer Exception:"+e.getMessage());
             return false;
         }
         //如果返回值不是1 ，则发送失败。

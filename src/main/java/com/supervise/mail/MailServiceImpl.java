@@ -42,13 +42,14 @@ public class MailServiceImpl implements MailService {
     @Override
     public  void sendEmailData(String dataType,String batchDate){
 
+        logger.info("Mail send Start ");
         // 1. 创建参数配置, 用于连接邮件服务器的参数配置
         Properties props = new Properties();                    // 参数配置
         props.setProperty(Constants.MAIL_TRANSPORT_PROTOCOL, mailConf.getTransportProtocol());   // 使用的协议（JavaMail规范要求）
         props.setProperty(Constants.MAIL_SMTP_HOST, mailConf.getSmtpHost());   // 发件人的邮箱的 SMTP 服务器地址
         // 发送服务器需要身份验证
         props.setProperty(Constants.MAIL_SMTP_AUTH, mailConf.getSmtpAuth());
-
+        logger.info("create seesion! ");
 // 2. 根据配置创建会话对象, 用于和邮件服务器交互
         Session session = Session.getInstance(props);
         session.setDebug(false);                                 // 设置为debug模式, 可以查看详细的发送 log
@@ -56,14 +57,18 @@ public class MailServiceImpl implements MailService {
         // 3. 创建一封邮件
         Transport transport = null;
         try{
+            logger.info("createMimeMessage! ");
             MimeMessage message = createMimeMessage(session, mailConf.getFrom(), mailConf.getTo(),dataType,batchDate);
             //4. 根据 Session 获取邮件传输对象
+            logger.info("session Transport! ");
             transport = session.getTransport();
             // 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
+            logger.info("transport Connect ");
             transport.connect(mailConf.getFrom(), mailConf.getFromAccountPassword());
             // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
+            logger.info("transport sendMessage ");
             transport.sendMessage(message, message.getAllRecipients());
-            logger.error("Mail send success at :"+ new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));
+            logger.info("Mail send success at :" + new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));
         }
         catch (Exception e){
             logger.error("Mail send fail at :"+ new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date()));

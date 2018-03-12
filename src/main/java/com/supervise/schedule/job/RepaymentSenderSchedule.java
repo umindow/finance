@@ -64,7 +64,9 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
         long ret = -1;
         try {
             ret = webService().saveJgBuRepayDetailAry(repaymentEntitys, repaymentEntitys.size());
+            logger.info("Repayment webSer Ret:"+ret);
         } catch (Exception e) {
+            logger.error("Repayment webSer Exception:"+e.getMessage());
             return false;
         }
         //如果返回值不是1 ，则发送失败。

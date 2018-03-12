@@ -1,5 +1,6 @@
 package com.supervise.dao.mysql.entity;
 
+import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
@@ -52,7 +53,7 @@ public class RecourseEntity extends BaseEntity {
      * 追偿日期
      **/
     @Column(name = "replevy_date")
-    @DepRole(depTypes = {DepType.LAW_DEP},modify = true,fieldCnName = "追偿日期",index = 5)
+    @DepRole(depTypes = {DepType.LAW_DEP},modify = true,fieldCnName = "追偿日期",index = 5,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date replevyDate;
 
     /**

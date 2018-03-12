@@ -1,5 +1,6 @@
 package com.supervise.dao.mysql.entity;
 
+import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
@@ -59,7 +60,7 @@ public class FeeAndRefundEntity extends BaseEntity {
      * 实际缴费时间
      **/
     @Column(name = "charge_time")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际缴费时间",index = 6)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际缴费时间",index = 6,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date chargeTime;
 
     /**

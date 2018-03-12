@@ -65,7 +65,9 @@ public class FeeAndRefundSenderSchedule extends AbstractSenderSchedule<JgBuCharg
         long ret = -1;
         try {
             ret = webService().saveJgBuChargeRecordAry(feeAndRefundEntitys, feeAndRefundEntitys.size());
+            logger.info("FeeAndRefund webSer Ret:"+ret);
         } catch (Exception e) {
+            logger.error("FeeAndRefund webSer Exception:"+e.getMessage());
             return false;
         }
         //如果返回值不是1 ，则发送失败。

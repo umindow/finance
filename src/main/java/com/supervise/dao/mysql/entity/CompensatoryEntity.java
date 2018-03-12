@@ -1,5 +1,6 @@
 package com.supervise.dao.mysql.entity;
 
+import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
@@ -45,7 +46,7 @@ public class CompensatoryEntity extends BaseEntity {
      * 代偿日期
      **/
     @Column(name = "replace_date")
-    @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "代偿日期",index = 4)
+    @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "代偿日期",index = 4,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date replaceDate;
     /**
      * 代偿金额

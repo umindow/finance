@@ -1,5 +1,6 @@
 package com.supervise.dao.mysql.entity;
 
+import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
@@ -45,7 +46,7 @@ public class RepaymentEntity extends BaseEntity {
      * 实际还款日期
      **/
     @Column(name = "repay_date")
-    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际还款日期",index = 4)
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际还款日期",index = 4,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date repayDate;
     /**
      * 实际归还本金

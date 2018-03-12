@@ -169,7 +169,7 @@ public class BusinessDataEntity extends BaseEntity {
      * 合同截止日期，合同登记时的结束时间
      **/
     @Column(name = "contract_end_date")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "合同截止日期",index = 21,isDate = true,dateFormat = Constants.YYYY_MM_DD_HH_MM_SS)
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "合同截止日期",index = 21,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date contractEndDate;
     
     /**
@@ -249,7 +249,7 @@ public class BusinessDataEntity extends BaseEntity {
      * 受理时间
      **/
     @Column(name = "accept_date")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "受理时间",index = 31)
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "受理时间",index = 31,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date acceptDate;
     
     /**
@@ -284,7 +284,7 @@ public class BusinessDataEntity extends BaseEntity {
      * 项目结束时间（实际解除时间）
      **/
     @Column(name = "proj_end_date")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "项目结束时间",index = 36)
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "项目结束时间",index = 36,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date projEndDate;
 
     /**

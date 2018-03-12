@@ -56,7 +56,9 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
         long ret = -1;
         try {
             ret =  webService().saveJgBuBankCreditInfoAry(bankCreditEntities, bankCreditEntities.size());
+            logger.info("BankCredit webSer Ret:"+ret);
         } catch (Exception e) {
+            logger.error("BankCredit webSer Exception:"+e.getMessage());
             return false;
         }
         //如果返回值不是1 ，则发送失败。

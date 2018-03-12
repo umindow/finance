@@ -65,7 +65,9 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
         long ret = -1;
         try {
             ret = webService().saveJgBuProjectInfoAry(jgBuProjectInfos, jgBuProjectInfos.size());
+            logger.info("Business webSer Ret:"+ret);
         } catch (Exception e) {
+            logger.error("Business webSer Exception:" + e.getMessage());
             return false;
         }
         //如果返回值不是1 ，则发送失败。
