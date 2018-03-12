@@ -1,5 +1,6 @@
 package com.supervise.dao.mysql.entity;
 
+import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
@@ -86,13 +87,13 @@ public class BankCreditEntity extends BaseEntity {
      * 授信开始日期
      **/
     @Column(name = "credit_start_date")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "授信开始日期",index = 11)
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "授信开始日期",index = 11,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date creditStartDate;
     /**
      * 授信结束日期
      **/
     @Column(name = "credit_end_date")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "授信结束日期",index = 12)
+    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "授信结束日期",index = 12,isDate = true,dateFormat = Constants.YYYY_MM_DD)
     private Date creditEndDate;
     /**
      * 单笔限额

@@ -62,7 +62,9 @@ public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuRepla
         long ret = -1;
         try {
             ret = webService().saveJgBuReplaceInfoAry(compensatoryEntities, compensatoryEntities.size());
+            logger.info("Compesatory webSer Ret:"+ret);
         } catch (Exception e) {
+            logger.error("Compesatory webSer Exception:"+e.getMessage());
             return false;
         }
         //如果返回值不是1 ，则发送失败。

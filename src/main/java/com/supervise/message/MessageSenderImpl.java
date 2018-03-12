@@ -33,6 +33,7 @@ public class MessageSenderImpl implements MessageSender {
 
     @Override
     public  void sendSMSData(String dataType,String batchDate) {
+        logger.info("Message send Start ");
         // appId
         String appId = messageConf.getAppId();
         // 密钥

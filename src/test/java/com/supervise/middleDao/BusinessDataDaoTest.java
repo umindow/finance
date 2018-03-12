@@ -1,6 +1,8 @@
 package com.supervise.middleDao;
 
 import com.supervise.BaseTest;
+import com.supervise.config.mysql.base.QueryCondition;
+import com.supervise.config.mysql.base.QueryOperator;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import org.junit.Assert;
@@ -78,5 +80,30 @@ public class BusinessDataDaoTest extends BaseTest{
 		List<BusinessDataEntity> responseList =
 				this.businessDataDao.queryBusinessDataFormMiddleDB(batch);
 		Assert.assertNotEquals(0,responseList.size());
+	}
+
+	@Test
+	public void queryBankCreditByConditionTest(){
+		String batchDate = "2018-03-10";
+		String org_id = "1";
+		String proj_id = "3";
+
+		QueryCondition queryCondition = new QueryCondition();
+		queryCondition.getColumnList().add("org_id");
+		queryCondition.getColumnList().add("proj_id");
+		queryCondition.getColumnList().add("batch_date");
+
+		queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+		queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+		queryCondition.getQueryOperatorList().add(QueryOperator.EQUAL);
+
+		queryCondition.getValueList().add(org_id);
+		queryCondition.getValueList().add(proj_id);
+		queryCondition.getValueList().add(batchDate);
+
+
+		List<BusinessDataEntity> resListToDB = this.businessDataDao.queryBusinessDataByCondition(queryCondition);
+
+		Assert.assertEquals(2,resListToDB.size());
 	}
 }

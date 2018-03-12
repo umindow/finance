@@ -94,7 +94,7 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         xmlGregorianCalendar.setYear(calendar.get(Calendar.YEAR));
-        xmlGregorianCalendar.setMonth(calendar.get(Calendar.MONTH));
+        xmlGregorianCalendar.setMonth(calendar.get(Calendar.MONTH)+1);
         xmlGregorianCalendar.setDay(calendar.get(Calendar.DAY_OF_MONTH));
         xmlGregorianCalendar.setTime(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND), calendar.get(Calendar.MILLISECOND));
         return xmlGregorianCalendar;
