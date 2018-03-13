@@ -236,13 +236,18 @@ public final class Constants {
     public static final String FINANCE_COMPENSATORY_INFO = "finance_compensatory_info";
     public static final String FINANCE_FEE_AND_REFUND_INFO = "finance_fee_and_refund_info";
     public static final String FINANCE_RECOURSE_INFO = "finance_recourse_info";
+    public static final String FCS_RM_BATCHDATE = "批次";
     /***************************数据库表常量 end********************************/
     /***************************视图常量 start********************************/
-	public static final String REPAYMENT_VIEW = "repayment_info_view";
-    public static final String BANKCREDIT_VIEW = "backcredit_view";
-    public static final String BUSINESSDATA_VIEW = "businessdata_view";
+//	public static final String REPAYMENT_VIEW = "repayment_info_view";
+//    public static final String BANKCREDIT_VIEW = "backcredit_view";
+//    public static final String BUSINESSDATA_VIEW = "businessdata_view";
 	/***************************视图常量 end********************************/
-	
+    /***************************视图常量 生产配置start********************************/
+    public static final String REPAYMENT_VIEW = "view_jrb_project_repay_info";
+    public static final String BANKCREDIT_VIEW = "view_jrb_bank_credit_info";
+    public static final String BUSINESSDATA_VIEW = "view_jrb_business_data_info";
+    /***************************视图常量 end********************************/
 	
 	/***************************定时任务常量 start********************************/
 	public static final String SCH_DATA_LOADED_SCHEDULE = "data-loaded-schedule";

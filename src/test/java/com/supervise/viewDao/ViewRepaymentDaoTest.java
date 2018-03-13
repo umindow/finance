@@ -1,14 +1,13 @@
 package com.supervise.viewDao;
 
-import java.util.List;
-
+import com.supervise.BaseTest;
+import com.supervise.dao.mysql.entity.ViewRepaymentEntity;
+import com.supervise.dao.mysql.viewDao.ViewRepaymentDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.supervise.BaseTest;
-import com.supervise.dao.mysql.entity.RepaymentEntity;
-import com.supervise.dao.mysql.viewDao.ViewRepaymentDao;
+import java.util.List;
 
 public class ViewRepaymentDaoTest  extends BaseTest{
 	
@@ -19,7 +18,7 @@ public class ViewRepaymentDaoTest  extends BaseTest{
 	@Test
 	public void queryRepaymentFromViewTest(){
 		String batchDate = "2018-02-24";
-		List<RepaymentEntity> resList = this.repaymentDao.queryRepaymentFromView(batchDate);
+		List<ViewRepaymentEntity> resList = this.repaymentDao.queryRepaymentFromView(batchDate);
 		Assert.assertEquals(3, resList.size());
 	}
 

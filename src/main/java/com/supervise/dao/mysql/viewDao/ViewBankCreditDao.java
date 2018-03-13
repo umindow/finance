@@ -1,6 +1,6 @@
 package com.supervise.dao.mysql.viewDao;
 
-import com.supervise.dao.mysql.entity.BankCreditEntity;
+import com.supervise.dao.mysql.entity.ViewBankCreditEntity;
 import com.supervise.dao.mysql.viewmapper.ViewBankCreditMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,9 +19,9 @@ public class ViewBankCreditDao {
      * @param batchDate 批次 查询条件
      * @return 按照指定查询条件返回的查询结果集合
      */
-    public List<BankCreditEntity> queryBankCreditFromView(
+    public List<ViewBankCreditEntity> queryBankCreditFromView(
             String batchDate){
-        List<BankCreditEntity> responseList =
+        List<ViewBankCreditEntity> responseList =
                 this.viewBankCreditMapper.queryBankCreditView(batchDate);
         return responseList;
     }

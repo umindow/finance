@@ -1,12 +1,11 @@
 package com.supervise.dao.mysql.viewDao;
 
-import java.util.List;
-
+import com.supervise.dao.mysql.entity.ViewRepaymentEntity;
+import com.supervise.dao.mysql.viewmapper.ViewRepaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.supervise.dao.mysql.entity.RepaymentEntity;
-import com.supervise.dao.mysql.viewmapper.ViewRepaymentMapper;
+import java.util.List;
 
 @Repository("ViewRepaymentDao")
 public class ViewRepaymentDao{
@@ -20,9 +19,9 @@ public class ViewRepaymentDao{
      * @param batchDate 批次 查询条件
      * @return 按照指定查询条件返回的查询结果集合
      */
-    public List<RepaymentEntity> queryRepaymentFromView(
+    public List<ViewRepaymentEntity> queryRepaymentFromView(
             String batchDate){
-        List<RepaymentEntity> responseList =
+        List<ViewRepaymentEntity> responseList =
                 this.viewrepaymentMapper.queryRepaymentView(batchDate);
         return responseList;
     }

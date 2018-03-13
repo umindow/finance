@@ -193,7 +193,7 @@ public class BasicProvider {
             whereSql.append(Constants.CONNECTOR_WHERE);
             whereSql.append(Constants.SPACE);
             //大于等于当前天
-            whereSql.append("batch_date");
+            whereSql.append(Constants.FCS_RM_BATCHDATE);
             whereSql.append(Constants.SPACE);
             whereSql.append(QueryOperator.GREATER_EQUAL.getOperator());
             whereSql.append(Constants.SPACE);
@@ -214,7 +214,7 @@ public class BasicProvider {
             //小于等于次日
             whereSql.append(Constants.CONNECTOR_AND);
             whereSql.append(Constants.SPACE);
-            whereSql.append("batch_date");
+            whereSql.append(Constants.FCS_RM_BATCHDATE);
             whereSql.append(Constants.SPACE);
             whereSql.append(QueryOperator.LESS_EQUAL.getOperator());
             whereSql.append(Constants.SPACE);

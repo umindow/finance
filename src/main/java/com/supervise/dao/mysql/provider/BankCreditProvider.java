@@ -4,6 +4,8 @@ package com.supervise.dao.mysql.provider;
 import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BasicProvider;
 import com.supervise.config.mysql.base.QueryCondition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ClassName: RepaymentProvider <br/>
@@ -12,7 +14,7 @@ import com.supervise.config.mysql.base.QueryCondition;
  * @version 1.0 <br/>
  */
 public class BankCreditProvider extends BasicProvider {
-
+	private final Logger logger = LoggerFactory.getLogger(BankCreditProvider.class);
 
 	/**
 	 * 按照指定条件从VIEW中查询银行授信信息
@@ -23,7 +25,7 @@ public class BankCreditProvider extends BasicProvider {
 		String selectSql = "SELECT * FROM "+Constants.BANKCREDIT_VIEW;
 
 		String whereSql = createWhereSql4batchdate(batchDate);
-
+		logger.info("queryBankCreditView whereSql :"+whereSql);
 		return selectSql+whereSql;
 	}
 

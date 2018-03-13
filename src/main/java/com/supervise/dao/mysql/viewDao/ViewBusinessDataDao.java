@@ -1,6 +1,6 @@
 package com.supervise.dao.mysql.viewDao;
 
-import com.supervise.dao.mysql.entity.BusinessDataEntity;
+import com.supervise.dao.mysql.entity.ViewBusinessDataEntity;
 import com.supervise.dao.mysql.viewmapper.ViewBusinessDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,9 +19,9 @@ public class ViewBusinessDataDao {
      * @param batchDate 批次 查询条件
      * @return 按照指定查询条件返回的查询结果集合
      */
-    public List<BusinessDataEntity> queryBusinessDataFromView(
+    public List<ViewBusinessDataEntity> queryBusinessDataFromView(
             String batchDate){
-        List<BusinessDataEntity> responseList =
+        List<ViewBusinessDataEntity> responseList =
                 this.viewBusinessDataMapper.queryBusinessDataView(batchDate);
         return responseList;
     }
