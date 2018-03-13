@@ -30,7 +30,10 @@ import tk.mybatis.mapper.entity.Example;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by xishui.hb on 2018/1/30 下午5:30.
@@ -385,11 +388,11 @@ public class DataController {
                 userEntity = SessionUser.INSTANCE.getCurrentUser();
                 String depId = userEntity.getDepId();
                 Long dep = -1L;
-                if(StringUtils.isEmpty(depId)){
+                if (StringUtils.isEmpty(depId)) {
                     dep = Long.parseLong(depId);
                 }
                 //如果是综合营运部，则可以直接删除该条记录；否则只能清除该部门所有权限字段的内容,并更新数据
-                if(DepType.COMPREHENSIVE_DEP.getDepId()==dep||-1==dep){
+                if (DepType.COMPREHENSIVE_DEP.getDepId() == dep || -1 == dep) {
                     businessDataMapper.deleteByPrimaryKey(dataId);
                     //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
                     String batchDate = businessDataEntity.getBatchDate();
@@ -428,12 +431,12 @@ public class DataController {
                     ccriteria.andEqualTo("projId", projId);
                     compensatoryMapper.deleteByExample(example);
                     example.clear();
-                }else{
+                } else {
                     //否则清除有权限部分的字段，并更新数据库
-                    Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
+                    Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
                     deleteBusinessDataEntity4Role(businessDataEntity, filedRoles, userEntity);
                     String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
-                    Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
+                    Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
                     businessDataEntity.setUpdateDate(newDate);
                     businessDataMapper.updateByPrimaryKeySelective(businessDataEntity);
                 }
@@ -487,13 +490,13 @@ public class DataController {
             List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
 
             //如果没有查询到数据，则说明项目不存在
-            if(CollectionUtils.isEmpty(resList)){
+            if (CollectionUtils.isEmpty(resList)) {
                 recourseMapper.delete(recourseEntity);
-                logger.info("delete recourse record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("delete recourse record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
-            }else{
+            } else {
                 recourseMapper.updateByPrimaryKeySelective(recourseEntity);
-                logger.info("update recourse record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("update recourse record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
         } catch (Exception e) {
             return false;
@@ -521,13 +524,13 @@ public class DataController {
             List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
 
             //如果没有查询到数据，则说明项目不存在
-            if(CollectionUtils.isEmpty(resList)){
+            if (CollectionUtils.isEmpty(resList)) {
                 compensatoryMapper.delete(compensatoryEntity);
-                logger.info("delete compensatory record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("delete compensatory record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
-            }else{
+            } else {
                 compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
-                logger.info("update compensatory record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("update compensatory record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
         } catch (Exception e) {
             return false;
@@ -555,13 +558,13 @@ public class DataController {
             List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
 
             //如果没有查询到数据，则说明项目不存在
-            if(CollectionUtils.isEmpty(resList)){
+            if (CollectionUtils.isEmpty(resList)) {
                 feeAndRefundMapper.delete(feeAndRefundEntity);
-                logger.info("delete feeAndRefund record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("delete feeAndRefund record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
-            }else{
+            } else {
                 feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
-                logger.info("update feeAndRefund record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("update feeAndRefund record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
 
         } catch (Exception e) {
@@ -579,13 +582,14 @@ public class DataController {
             }
             //根据ID号查询全量的业务数据
             Long dataId = businessDataEntity.getId();
+
             BusinessDataEntity businessDataExist = businessDataMapper.selectByPrimaryKey(dataId);
             userEntity = SessionUser.INSTANCE.getCurrentUser();
             //根据权限设置更新的字段
-            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
-            businessDataExist = updateBusinessDataEntity4Role(businessDataExist,businessDataEntity,filedRoles,userEntity);
+            Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
+            businessDataExist = updateBusinessDataEntity4Role(businessDataExist, businessDataEntity, filedRoles, userEntity);
             String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
-            Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
+            Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
             businessDataExist.setUpdateDate(newDate);
             businessDataMapper.updateByPrimaryKeySelective(businessDataExist);
         } catch (Exception e) {
@@ -614,13 +618,13 @@ public class DataController {
             List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
 
             //如果没有查询到数据，则说明项目不存在
-            if(CollectionUtils.isEmpty(resList)){
+            if (CollectionUtils.isEmpty(resList)) {
                 repaymentMapper.delete(repaymentEntity);
-                logger.info("delete repayment record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("delete repayment record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
-            }else{
+            } else {
                 repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
-                logger.info("update repayment record : orgId:"+ orgId+" projId:"+projId+" batchDate:"+batchDate);
+                logger.info("update repayment record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
 
         } catch (Exception e) {
@@ -631,295 +635,297 @@ public class DataController {
 
     /**
      * 构建新的业务信息对象，把权限范围内的字段删除
+     *
      * @param businessDataEntity
      * @param filedRoles
      * @param userEntity
      * @return BusinessDataEntity
      */
-    private void  deleteBusinessDataEntity4Role(BusinessDataEntity businessDataEntity,Map<String,FiedRoleCache.DepRoleRef> filedRoles,UserEntity userEntity){
+    private void deleteBusinessDataEntity4Role(BusinessDataEntity businessDataEntity, Map<String, FiedRoleCache.DepRoleRef> filedRoles, UserEntity userEntity) {
         //如果有该字段的权限，则清除
         //客户类型
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_type"))) {
             businessDataEntity.setClientType(Constants.NULLSTR);
         }
         //客户编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_id"))) {
             businessDataEntity.setClientId(Constants.NULLSTR);
         }
         //客户名称
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_name"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_name"))) {
             businessDataEntity.setClientName(Constants.NULLSTR);
         }
         //证件类型
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("id_card_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("id_card_type"))) {
             businessDataEntity.setIDCardType(Constants.NULLSTR);
         }
         //证件编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("id_card"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("id_card"))) {
             businessDataEntity.setIDCard(Constants.NULLSTR);
         }
         //所属行业编号（一级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("calling_first"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("calling_first"))) {
             businessDataEntity.setCallingFirst(Constants.NULLSTR);
         }
         //所属行业编号（二级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("calling_second"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("calling_second"))) {
             businessDataEntity.setCallingSecond(Constants.NULLSTR);
         }
         //所属地区编号（一级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("area_first"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("area_first"))) {
             businessDataEntity.setAreaFirst(Constants.NULLSTR);
         }
         //所属地区编号（二级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("area_second"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("area_second"))) {
             businessDataEntity.setAreaSecond(Constants.NULLSTR);
         }
         //所属地区编号（三级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("area_third"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("area_third"))) {
             businessDataEntity.setAreaThird(Constants.NULLSTR);
         }
         //客户规模编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("company_scale"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("company_scale"))) {
             businessDataEntity.setCompanyScale(Constants.NULLSTR);
         }
         //是否涉农
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("is_farming"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("is_farming"))) {
             businessDataEntity.setIsFarming(Constants.NULLSTR);
         }
         //业务类型
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("business_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("business_type"))) {
             businessDataEntity.setBusinessType(Constants.NULLSTR);
         }
         //合同金额
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("contract_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("contract_money"))) {
             businessDataEntity.setContractMoney(null);
         }
         //已放款金额
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("loan_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("loan_money"))) {
             businessDataEntity.setLoanMoney(null);
         }
         //贷款年利率
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("loan_rate"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("loan_rate"))) {
             businessDataEntity.setLoanRate(null);
         }
         //担保综合费率
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("assure_rate"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("assure_rate"))) {
             businessDataEntity.setAssureRate(null);
         }
         //放款日期
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("loan_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("loan_date"))) {
             businessDataEntity.setLoanDate(null);
         }
         //合同截止日期
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("contract_end_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("contract_end_date"))) {
             businessDataEntity.setContractEndDate(null);
         }
         //还款方式
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("repay_type_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("repay_type_id"))) {
             businessDataEntity.setRepayType(Constants.NULLSTR);
         }
         //反担保措施
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("pledge_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("pledge_type"))) {
             businessDataEntity.setPledgeType(Constants.NULLSTR);
         }
         //反担保备注
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("approve_option"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("approve_option"))) {
             businessDataEntity.setApproveOption(Constants.NULLSTR);
         }
         //银行授信记录标示ID
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("bank_credit_primary_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("bank_credit_primary_id"))) {
             businessDataEntity.setBankCreditPrimaryId(Constants.NULLSTR);
         }
         //合作银行ID
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("co_bank_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("co_bank_id"))) {
             businessDataEntity.setCoBankId(Constants.NULLSTR);
         }
         //项目状态
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("proj_status"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("proj_status"))) {
             businessDataEntity.setProjSatus(Constants.NULLSTR);
         }
         //担保权人
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("assure_person"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("assure_person"))) {
             businessDataEntity.setAssurePerson(Constants.NULLSTR);
         }
         //反担保物价值
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("pledge_worth"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("pledge_worth"))) {
             businessDataEntity.setPledgeWorth(null);
         }
         //存单质押
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("is_impawn"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("is_impawn"))) {
             businessDataEntity.setIsImpawn(Constants.NULLSTR);
         }
         //受理时间
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("accept_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("accept_date"))) {
             businessDataEntity.setAcceptDate(null);
         }
         //合同编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("contract_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("contract_id"))) {
             businessDataEntity.setContractId(Constants.NULLSTR);
         }
         //客户存入保证金
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_bail_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_bail_money"))) {
             businessDataEntity.setClientBailMoney(null);
         }
         //存出保证金
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("out_bail_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("out_bail_money"))) {
             businessDataEntity.setOutBailMoney(null);
         }
         //资本属性
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("capital_belong"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("capital_belong"))) {
             businessDataEntity.setCapitalBelong(Constants.NULLSTR);
         }
         //项目结束时间
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("proj_end_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("proj_end_date"))) {
             businessDataEntity.setProjEndDate(null);
         }
     }
 
     /**
      * 构建新的业务信息对象，把权限范围内的字段删除
+     *
      * @param businessDataExist
      * @param businessDataUpdate
      * @param filedRoles
      * @param userEntity
      * @return BusinessDataEntity
      */
-    private BusinessDataEntity  updateBusinessDataEntity4Role(BusinessDataEntity businessDataExist,BusinessDataEntity businessDataUpdate,Map<String,FiedRoleCache.DepRoleRef> filedRoles,UserEntity userEntity){
+    private BusinessDataEntity updateBusinessDataEntity4Role(BusinessDataEntity businessDataExist, BusinessDataEntity businessDataUpdate, Map<String, FiedRoleCache.DepRoleRef> filedRoles, UserEntity userEntity) {
         //如果有该字段的权限，则清除
         //客户类型
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_type"))) {
             businessDataExist.setClientType(businessDataUpdate.getClientType());
         }
         //客户编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_id"))) {
             businessDataExist.setClientId(businessDataUpdate.getClientId());
         }
         //客户名称
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_name"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_name"))) {
             businessDataExist.setClientName(businessDataUpdate.getClientName());
         }
         //证件类型
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("id_card_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("id_card_type"))) {
             businessDataExist.setIDCardType(businessDataUpdate.getIDCardType());
         }
         //证件编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("id_card"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("id_card"))) {
             businessDataExist.setIDCard(businessDataUpdate.getIDCard());
         }
         //所属行业编号（一级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("calling_first"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("calling_first"))) {
             businessDataExist.setCallingFirst(businessDataUpdate.getCallingFirst());
         }
         //所属行业编号（二级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("calling_second"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("calling_second"))) {
             businessDataExist.setCallingSecond(businessDataUpdate.getCallingSecond());
         }
         //所属地区编号（一级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("area_first"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("area_first"))) {
             businessDataExist.setAreaFirst(businessDataUpdate.getAreaFirst());
         }
         //所属地区编号（二级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("area_second"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("area_second"))) {
             businessDataExist.setAreaSecond(businessDataUpdate.getAreaSecond());
         }
         //所属地区编号（三级）
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("area_third"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("area_third"))) {
             businessDataExist.setAreaThird(businessDataUpdate.getAreaThird());
         }
         //客户规模编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("company_scale"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("company_scale"))) {
             businessDataExist.setCompanyScale(businessDataUpdate.getCompanyScale());
         }
         //是否涉农
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("is_farming"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("is_farming"))) {
             businessDataExist.setIsFarming(businessDataUpdate.getIsFarming());
         }
         //业务类型
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("business_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("business_type"))) {
             businessDataExist.setBusinessType(businessDataUpdate.getBusinessType());
         }
         //合同金额
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("contract_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("contract_money"))) {
             businessDataExist.setContractMoney(businessDataUpdate.getContractMoney());
         }
         //已放款金额
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("loan_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("loan_money"))) {
             businessDataExist.setLoanMoney(businessDataUpdate.getLoanMoney());
         }
         //贷款年利率
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("loan_rate"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("loan_rate"))) {
             businessDataExist.setLoanRate(businessDataUpdate.getLoanRate());
         }
         //担保综合费率
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("assure_rate"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("assure_rate"))) {
             businessDataExist.setAssureRate(businessDataUpdate.getAssureRate());
         }
         //放款日期
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("loan_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("loan_date"))) {
             businessDataExist.setLoanDate(businessDataUpdate.getLoanDate());
         }
         //合同截止日期
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("contract_end_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("contract_end_date"))) {
             businessDataExist.setContractEndDate(businessDataUpdate.getContractEndDate());
         }
         //还款方式
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("repay_type_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("repay_type_id"))) {
             businessDataExist.setRepayType(businessDataUpdate.getRepayType());
         }
         //反担保措施
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("pledge_type"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("pledge_type"))) {
             businessDataExist.setPledgeType(businessDataUpdate.getPledgeType());
         }
         //反担保备注
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("approve_option"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("approve_option"))) {
             businessDataExist.setApproveOption(businessDataUpdate.getApproveOption());
         }
         //银行授信记录标示ID
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("bank_credit_primary_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("bank_credit_primary_id"))) {
             businessDataExist.setBankCreditPrimaryId(businessDataUpdate.getBankCreditPrimaryId());
         }
         //合作银行ID
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("co_bank_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("co_bank_id"))) {
             businessDataExist.setCoBankId(businessDataUpdate.getCoBankId());
         }
         //项目状态
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("proj_status"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("proj_status"))) {
             businessDataExist.setProjSatus(businessDataUpdate.getProjSatus());
         }
         //担保权人
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("assure_person"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("assure_person"))) {
             businessDataExist.setAssurePerson(businessDataUpdate.getAssurePerson());
         }
         //反担保物价值
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("pledge_worth"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("pledge_worth"))) {
             businessDataExist.setPledgeWorth(businessDataUpdate.getPledgeWorth());
         }
         //存单质押
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("is_impawn"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("is_impawn"))) {
             businessDataExist.setIsImpawn(businessDataUpdate.getIsImpawn());
         }
         //受理时间
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("accept_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("accept_date"))) {
             businessDataExist.setAcceptDate(businessDataUpdate.getAcceptDate());
         }
         //合同编码
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("contract_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("contract_id"))) {
             businessDataExist.setContractId(businessDataUpdate.getContractId());
         }
         //客户存入保证金
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("client_bail_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_bail_money"))) {
             businessDataExist.setClientBailMoney(businessDataUpdate.getClientBailMoney());
         }
         //存出保证金
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("out_bail_money"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("out_bail_money"))) {
             businessDataExist.setOutBailMoney(businessDataUpdate.getOutBailMoney());
         }
         //资本属性
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("capital_belong"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("capital_belong"))) {
             businessDataExist.setCapitalBelong(businessDataUpdate.getCapitalBelong());
         }
         //项目结束时间
-        if(FiedRoleCache.checkFieldRole(userEntity,filedRoles.get("proj_end_date"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("proj_end_date"))) {
             businessDataExist.setProjEndDate(businessDataUpdate.getProjEndDate());
         }
         return businessDataExist;
@@ -928,24 +934,26 @@ public class DataController {
 
     /**
      * 重置对象
+     *
      * @param recourseEntity
      * @return
      */
-    private  void  recourseReset(RecourseEntity recourseEntity){
-            recourseEntity.setReplevyMoney(null);
-            recourseEntity.setSendStatus(Constants.DATA_READY_SEND);
-            recourseEntity.setReplevyType(Constants.NULLSTR);
-            recourseEntity.setReplevyDate(null);
-            recourseEntity.setContractId(Constants.NULLSTR);
-            recourseEntity.setUpdateDate(new Date());
+    private void recourseReset(RecourseEntity recourseEntity) {
+        recourseEntity.setReplevyMoney(null);
+        recourseEntity.setSendStatus(Constants.DATA_READY_SEND);
+        recourseEntity.setReplevyType(Constants.NULLSTR);
+        recourseEntity.setReplevyDate(null);
+        recourseEntity.setContractId(Constants.NULLSTR);
+        recourseEntity.setUpdateDate(new Date());
     }
 
     /**
      * 重置对象
+     *
      * @param compensatoryEntity
      * @return
      */
-    private  void  compensatoryReset(CompensatoryEntity compensatoryEntity){
+    private void compensatoryReset(CompensatoryEntity compensatoryEntity) {
         compensatoryEntity.setReplaceMoney(null);
         compensatoryEntity.setUpdateDate(new Date());
         compensatoryEntity.setContractId(Constants.NULLSTR);
@@ -955,10 +963,11 @@ public class DataController {
 
     /**
      * 重置对象
+     *
      * @param feeAndRefundEntity
      * @return
      */
-    private  void  feeAndRefundReset(FeeAndRefundEntity feeAndRefundEntity){
+    private void feeAndRefundReset(FeeAndRefundEntity feeAndRefundEntity) {
         feeAndRefundEntity.setChargeMoney(null);
         feeAndRefundEntity.setSendStatus(Constants.DATA_READY_SEND);
         feeAndRefundEntity.setChargeTime(null);
@@ -970,10 +979,11 @@ public class DataController {
 
     /**
      * 重置对象
+     *
      * @param repaymentEntity
      * @return
      */
-    private  void  repaymentReset(RepaymentEntity repaymentEntity){
+    private void repaymentReset(RepaymentEntity repaymentEntity) {
 //        compensatoryEntity.setReplaceMoney(null);
 //        compensatoryEntity.setUpdateDate(new Date());
 //        compensatoryEntity.setContractId(Constants.NULLSTR);

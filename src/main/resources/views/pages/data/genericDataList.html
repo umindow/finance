@@ -50,14 +50,14 @@ Finance  - ${view.moduleName}
                                 #end
                                 <td class="project-actions">
                                     <button type="button" class="btn btn-primary btn-xs" data-toggle="modal"
-                                            data-target="#${data.dataId}">
+                                            data-target="#div_${data.dataId}">
                                         修改
                                     </button>
                                     <button type="button" class="btn btn-warning btn-xs"
                                             attr="${data.dataId}" name="deleteBtn">
                                         删除
                                     </button>
-                                    <div class="modal inmodal" id="${data.dataId}" tabindex="-1" role="dialog"
+                                    <div class="modal inmodal" id="div_${data.dataId}" tabindex="-1" role="dialog"
                                          aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content animated fadeIn">
@@ -65,8 +65,7 @@ Finance  - ${view.moduleName}
                                                     <h4 class="modal-title">${view.moduleName}</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form method="post" class="form-horizontal" id="form${data.dataId}"
-                                                          action="${view.modifyUrl}">
+                                                    <form method="post" class="form-horizontal" id="form_${data.dataId}">
                                                         #for(obj:data.values)
                                                         <div class="form-group">
                                                             <label class="col-sm-4 control-label">${obj.filedCnName}</label>
@@ -76,7 +75,7 @@ Finance  - ${view.moduleName}
                                                                 <input type="text" name="${obj.fieldName}"
                                                                        value="${obj.value}"
                                                                        class="form-control"
-                                                                       id="datepicker_${obj.time}_${data.dataId}_${obj.fieldName}">
+                                                                       id="inputpicker_${data.dataId}_${obj.fieldName}">
                                                                 #else
                                                                 <input type="text" name="${obj.fieldName}"
                                                                        value="${obj.value}"
@@ -89,8 +88,8 @@ Finance  - ${view.moduleName}
                                                                 #end
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" name="id" value="${data.dataId}">
                                                         #end
+                                                        <input type="hidden" name="id" value="${data.dataId}">
                                                     </form>
                                                 </div>
                                                 <div class="modal-footer">
@@ -180,39 +179,27 @@ Finance  - ${view.moduleName}
         $("[id=modifyBtn]").each(function () {
             $(this).on("click", function () {
                 var dataId = $(this).attr("attr");
-                var form = $("#form" + dataId);
+                var form = $("#form_" + dataId);
+                alert(form.serialize());
                 $.post("${view.modifyUrl}", form.serialize(), function (result) {
                     if (result) {
                         success("修改成功", refreshWindow());
                     } else {
-                        error("修改失败");
+                        error("修改失败:" + result);
                     }
                 });
             });
         });
-        $("input[id^='datepicker_']").each(function () {
-            var ids = $(this).attr("id");
-            var formats = ids.split("_");
-            var timeShow = formats[1];
-            if(timeShow){
-                $(this).datepicker({
-                    dateFormat: "yy-mm-dd hh:mm:ss",
-                    showSecond: true,
-                    stepHour: 1,
-                    stepMinute: 1,
-                    stepSecond: 1,
-                    dayNamesMin: ['日', '一', '二', '三', '四', '五', '六'],
-                    monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
-                        '七月', '八月', '九月', '十月', '十一月', '十二月']
-                });
-            }else{
-                $(this).datepicker({
-                    dateFormat: 'yyyy-mm-dd',
-                    dayNamesMin: ['日', '一', '二', '三', '四', '五', '六'],
-                    monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
-                        '七月', '八月', '九月', '十月', '十一月', '十二月']
-                });
-            }
+        $("input[id^='inputpicker_']").each(function () {
+//            var ids = $(this).attr("id");
+//            var formats = ids.split("_");
+//            var timeShow = formats[1];
+            $(this).datepicker({
+                dateFormat: 'yy-mm-dd',
+                dayNamesMin: ['日', '一', '二', '三', '四', '五', '六'],
+                monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+                    '七月', '八月', '九月', '十月', '十一月', '十二月']
+            });
         });
         $("#datepicker").datepicker({
             dateFormat: 'yy-mm-dd',
