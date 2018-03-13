@@ -64,5 +64,5 @@ public abstract class AbstractSchedule implements Schedule {
     }
     public abstract String scheduleName();
 
-    public abstract void doSchedule(String dupKey);
+    public abstract void doSchedule(String dupKey)throws Exception;
 }

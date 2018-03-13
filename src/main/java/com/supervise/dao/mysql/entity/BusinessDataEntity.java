@@ -164,19 +164,16 @@ public class BusinessDataEntity extends BaseEntity {
      **/
     @Column(name = "loan_date")
     @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际放款日期",index = 20,isDate = true,dateFormat = Constants.YYYY_MM_DD)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date loanDate;
-
-//    private String loanDateForm;
-    /**、
+    
+    /**
      * 合同截止日期，合同登记时的结束时间
      **/
     @Column(name = "contract_end_date")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "合同截止日期",index = 21,isDate = true,dateFormat = Constants.YYYY_MM_DD)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date contractEndDate;
-
-//    private String contractEndDateForm;
+    
     /**
      * 还款方式（指客户与银行之间的还款方式）：
      * 1、按月等额本金 
@@ -255,10 +252,9 @@ public class BusinessDataEntity extends BaseEntity {
      **/
     @Column(name = "accept_date")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "受理时间",index = 31,isDate = true,dateFormat = Constants.YYYY_MM_DD)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date acceptDate;
-    //用于form表达映射
-//    private String acceptDateForm;
+    
     /**
      * 合同编码
      **/
@@ -292,10 +288,9 @@ public class BusinessDataEntity extends BaseEntity {
      **/
     @Column(name = "proj_end_date")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "项目结束时间",index = 36,isDate = true,dateFormat = Constants.YYYY_MM_DD)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date projEndDate;
 
-//    private String projEndDateForm;
     /**
      * 批次（当前传输日期，格式yyyyMMdd）
      **/
@@ -315,7 +310,6 @@ public class BusinessDataEntity extends BaseEntity {
      **/
     @Column(name = "first_loan_date")
       private Date firstLoanDate;
-
 
     @Column(name = "create_date")
     private Date createDate;

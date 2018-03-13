@@ -5,6 +5,7 @@ import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -54,6 +55,7 @@ public class RecourseEntity extends BaseEntity {
      **/
     @Column(name = "replevy_date")
     @DepRole(depTypes = {DepType.LAW_DEP},modify = true,fieldCnName = "追偿日期",index = 5,isDate = true,dateFormat = Constants.YYYY_MM_DD)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date replevyDate;
 
     /**

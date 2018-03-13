@@ -5,6 +5,7 @@ import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -47,6 +48,7 @@ public class CompensatoryEntity extends BaseEntity {
      **/
     @Column(name = "replace_date")
     @DepRole(depTypes = {DepType.RISK_DEP},modify = true,fieldCnName = "代偿日期",index = 4,isDate = true,dateFormat = Constants.YYYY_MM_DD)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date replaceDate;
     /**
      * 代偿金额

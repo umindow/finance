@@ -5,6 +5,7 @@ import com.supervise.config.mysql.base.BaseEntity;
 import com.supervise.config.role.DepRole;
 import com.supervise.config.role.DepType;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -61,6 +62,7 @@ public class FeeAndRefundEntity extends BaseEntity {
      **/
     @Column(name = "charge_time")
     @DepRole(depTypes = {DepType.FINANCE_DEP},modify = true,fieldCnName = "实际缴费时间",index = 6,isDate = true,dateFormat = Constants.YYYY_MM_DD)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date chargeTime;
 
     /**

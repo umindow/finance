@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by xishui.hb on 2018/1/31 上午10:59.
@@ -44,15 +43,16 @@ public class DataLoadedSchedule extends AbstractSchedule {
     }
 
     @Override
-    public void doSchedule(String dupKey) {
+    public void doSchedule(String dupKey) throws  Exception{
         //数据处理
     	//1、
     	//从dupkey中获取当前批次作为查询条件
-    	int lenth = Constants.SCH_DATA_LOADED_SCHEDULE.length();
-    	String batchDate = dupKey.substring(lenth,dupKey.length()).substring(0,10);
-        Date date = DateUtils.String2Date(batchDate,Constants.YYYY_MM_DD, Locale.ENGLISH);
-        date  = DateUtils.previousDay(date);
-        batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(date);
+//    	int lenth = Constants.SCH_DATA_LOADED_SCHEDULE.length();
+//    	String batchDate = dupKey.substring(lenth,dupKey.length()).substring(0,10);
+//        Date date = DateUtils.String2Date(batchDate,Constants.YYYY_MM_DD, Locale.ENGLISH);
+        Date nowDate = new Date();
+        Date preDate = DateUtils.previousDay(nowDate);
+        String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(nowDate);
 
         logger.info("data Loader job Start,batchDate is :"+batchDate);
         try {
@@ -63,6 +63,9 @@ public class DataLoadedSchedule extends AbstractSchedule {
         }catch(Exception e){
             logger.error("data businessDataLoader job ERROR,batchDate is :"+batchDate);
             logger.error(e.getLocalizedMessage());
+            e.printStackTrace();
+
+
         }
         try {
             //3、从VIEW中LOAD repayment当期那天批次的数据，并将LOAD的数据持久化到中间表
@@ -72,6 +75,8 @@ public class DataLoadedSchedule extends AbstractSchedule {
         }catch(Exception e){
             logger.error("data repaymentLoader job ERROR,batchDate is :"+batchDate);
             logger.error(e.getLocalizedMessage());
+            e.printStackTrace();
+            throw  new Exception(e);
         }
         try {
             //4、从VIEW中LOAD bankCredit当期那天批次的数据，并将LOAD的数据持久化到中间表
@@ -81,6 +86,8 @@ public class DataLoadedSchedule extends AbstractSchedule {
         }catch(Exception e){
             logger.error("data bankCreditLoader job ERROR,batchDate is :"+batchDate);
             logger.error(e.getLocalizedMessage());
+            e.printStackTrace();
+            throw  new Exception(e);
         }
     	//3、打印本次LOAD的操作结果：成功或失败，结束
         logger.info("All data Loader job Success,batchDate is :"+batchDate);

@@ -4,6 +4,8 @@ package com.supervise.dao.mysql.provider;
 import com.supervise.common.Constants;
 import com.supervise.config.mysql.base.BasicProvider;
 import com.supervise.config.mysql.base.QueryCondition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ClassName: RepaymentProvider <br/>
@@ -13,7 +15,7 @@ import com.supervise.config.mysql.base.QueryCondition;
  */
 public class RepaymentProvider extends BasicProvider {
 
-  
+    private final Logger logger = LoggerFactory.getLogger(RepaymentProvider.class);
     /**
      * 按照指定条件查询还款信息
      * @param batchDate 查询批次
@@ -23,7 +25,7 @@ public class RepaymentProvider extends BasicProvider {
         String selectSql = "SELECT * FROM "+Constants.REPAYMENT_VIEW;
 
         String whereSql = createWhereSql4batchdate(batchDate);
-
+        logger.info("queryRepaymentView whereSql :"+whereSql);
         return selectSql+whereSql;
     }
 

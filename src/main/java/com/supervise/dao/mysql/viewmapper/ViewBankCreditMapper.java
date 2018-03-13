@@ -2,6 +2,7 @@ package com.supervise.dao.mysql.viewmapper;
 
 import com.supervise.config.mysql.base.BaseMapper;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
+import com.supervise.dao.mysql.entity.ViewBankCreditEntity;
 import com.supervise.dao.mysql.provider.BankCreditProvider;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
@@ -25,21 +26,21 @@ public interface ViewBankCreditMapper extends BaseMapper<BankCreditEntity>{
 	/**
      * 按照指定条件查询银行授信信息
      * @param batchDate 批次
-     * @return List<BankCreditEntity>
+     * @return List<ViewBankCreditEntity>
      */
     @Results({
-            @Result(column = "primary_id", property = "primaryId"),
-            @Result(column = "org_id", property = "orgId"),
-            @Result(column = "bank_id", property = "bankId"),
-            @Result(column = "credit_type_id", property = "creditTypeId"),
-            @Result(column = "credit_money", property = "creditMoney"),
-            @Result(column = "bail_scale", property = "bailScale"),
-            @Result(column = "credit_start_date", property = "creditStartDate"),
-            @Result(column = "credit_end_date", property = "creditEndDate"),
-            @Result(column = "single_money_limit", property = "singleMoneyLimit"),
-            @Result(column = "is_for_credit", property = "isForCredit"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "银行授信记录标识", property = "primaryId"),
+            @Result(column = "机构编码", property = "orgId"),
+            @Result(column = "银行编号", property = "bankId"),
+            @Result(column = "授信类型", property = "creditTypeId"),
+            @Result(column = "授信额度", property = "creditMoney"),
+            @Result(column = "保证金比例", property = "bailScale"),
+            @Result(column = "授信开始日期", property = "creditStartDate"),
+            @Result(column = "授信结束日期", property = "creditEndDate"),
+            @Result(column = "单笔限额", property = "singleMoneyLimit"),
+            @Result(column = "是否循环授信", property = "isForCredit"),
+            @Result(column = "批次", property = "batchDate")
     })
     @SelectProvider(type = BankCreditProvider.class, method = "queryBankCreditView")
-    List<BankCreditEntity> queryBankCreditView(String batchDate);
+    List<ViewBankCreditEntity> queryBankCreditView(String batchDate);
 }
