@@ -119,7 +119,7 @@ public class BusinessDataLoader extends GenericDataProcessorHandler<List<Busines
                 businessDataEntity.setProjSatus(vbusinessDataEntity.getProjSatus());
                 businessDataEntity.setRepayType(vbusinessDataEntity.getRepayType());
 
-                if(StringUtils.isEmpty(vbusinessDataEntity.getLoanDate())){
+                if(!StringUtils.isEmpty(vbusinessDataEntity.getLoanDate())){
                     Date loanDate = DateUtils.String2Date(vbusinessDataEntity.getLoanDate(),Constants.YYYY_MM_DD, Locale.ENGLISH);
                     businessDataEntity.setLoanDate(loanDate);
                 }

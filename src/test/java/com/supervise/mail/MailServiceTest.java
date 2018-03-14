@@ -10,7 +10,7 @@ public class MailServiceTest extends BaseTest{
 
 	@Test
 	public void sendEmailDataTest(){
-		String dupKey = "BankCredit-Data2018-03-11-20";
+		String dupKey = "BankCredit-Data2018-03-14-20";
 		String schName ="BankCredit-Data";
 		String dataType = schName;
 		String batchDate= dupKey.substring(schName.length(), dupKey.length()-3);
