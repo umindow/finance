@@ -13,7 +13,7 @@ public class BankCreditSenderScheduleTest extends BaseTest{
 	
 	@Test
 	public void doScheduleTest(){
-		String dupKey = Constants.SCH_SEND_BANKCREDIT_SCHEDULE +"2018-03-12-23";
+		String dupKey = Constants.SCH_SEND_BANKCREDIT_SCHEDULE +"2018-03-14-22";
 		this.bankTrustSenderSchedule.doSchedule(dupKey);
 	}
 }

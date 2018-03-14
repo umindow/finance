@@ -44,6 +44,7 @@ public abstract class AbstractSchedule implements Schedule {
             scheduleChecker.changeScheduleStatus(dupKey, ScheduleStatusEntity.ScheduleStatus.COMPLETE);
         } catch (Exception e) {
             scheduleChecker.changeScheduleStatus(dupKey, ScheduleStatusEntity.ScheduleStatus.FAILED);
+            e.printStackTrace();
         }
     }
 

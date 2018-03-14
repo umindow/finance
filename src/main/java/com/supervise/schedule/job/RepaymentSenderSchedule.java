@@ -62,11 +62,13 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
     @Override
     public boolean senderData(List<JgBuRepayDetail> repaymentEntitys) throws Exception {
         long ret = -1;
+        logger.info("Repayment webSer send size:"+repaymentEntitys.size());
         try {
             ret = webService().saveJgBuRepayDetailAry(repaymentEntitys, repaymentEntitys.size());
             logger.info("Repayment webSer Ret:"+ret);
         } catch (Exception e) {
             logger.error("Repayment webSer Exception:"+e.getMessage());
+            e.printStackTrace();
             return false;
         }
         //如果返回值不是1 ，则发送失败。

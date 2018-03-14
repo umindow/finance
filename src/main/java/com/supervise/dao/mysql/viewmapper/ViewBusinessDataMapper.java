@@ -33,7 +33,7 @@ public interface ViewBusinessDataMapper extends BaseMapper<BusinessDataEntity>{
             @Result(column = "项目编码", property = "projId"),
             @Result(column = "客户类型", property = "clientType"),
             @Result(column = "客户编码", property = "clientId"),
-            @Result(column = "客户名称", property = "clienName"),
+            @Result(column = "客户名称", property = "clientName"),
             @Result(column = "证件类型", property = "iDCardType"),
             @Result(column = "证件号码", property = "iDCard"),
             @Result(column = "所属行业编码一级", property = "callingFirst"),
