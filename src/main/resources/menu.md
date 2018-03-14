@@ -1,7 +1,7 @@
 [{
     "name": "用户管理", 
     "url": "#",
-    "icon": "fa-github-alt",
+    "icon": "fa-database",
     "level": 20,
     "checkDep":false,
     "sub_menus": [
@@ -17,7 +17,7 @@
 {
     "name": "配置管理",
     "url": "#",
-    "icon": "fa-github-alt",
+    "icon": "fa-database",
     "level": 20,
     "checkDep":false,
     "sub_menus": [
