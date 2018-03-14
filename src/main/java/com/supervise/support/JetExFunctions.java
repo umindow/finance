@@ -2,7 +2,6 @@ package com.supervise.support;
 
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.BeanProperty;
 import com.supervise.cache.FiedRoleCache;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
@@ -15,7 +14,6 @@ import jetbrick.template.web.JetWebContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.CollectionUtils;
@@ -111,7 +109,7 @@ public class JetExFunctions {
     }
 
     public static String config(String key) {
-        return "模版工程";
+        return "";
     }
 
     public static UserEntity currentUser() {
