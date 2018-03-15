@@ -32,6 +32,6 @@ public class RepaymentOutport extends AbstractDataOutport{
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("batchDate",date);
         List<RepaymentEntity>  repaymentEntities = repaymentMapper.selectByExample(example);
-        return CollectionUtils.isEmpty(repaymentEntities) ? null: new GenericDataTranslate<RepaymentEntity>().translate(repaymentEntities,dataType.getDataLevel(),userEntity);
+        return  new GenericDataTranslate<RepaymentEntity>().translate(repaymentEntities,dataType.getDataLevel(),userEntity);
     }
 }

@@ -33,7 +33,7 @@ public class CompensatoryOutport extends AbstractDataOutport{
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("batchDate",date);
         List<CompensatoryEntity> entities = compensatoryMapper.selectByExample(example);
-        return CollectionUtils.isEmpty(entities) ? null: new GenericDataTranslate<CompensatoryEntity>().translate(entities,dataType.getDataLevel(),userEntity);
+        return new GenericDataTranslate<CompensatoryEntity>().translate(entities,dataType.getDataLevel(),userEntity);
 
     }
 }

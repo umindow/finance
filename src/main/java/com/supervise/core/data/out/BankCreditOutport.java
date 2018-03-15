@@ -32,7 +32,7 @@ public class BankCreditOutport extends AbstractDataOutport{
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("batchDate",date);
         List<BankCreditEntity> entities = bankCreditMapper.selectByExample(example);
-        return CollectionUtils.isEmpty(entities) ? null: new GenericDataTranslate<BankCreditEntity>().translate(entities,dataType.getDataLevel(),userEntity);
+        return new GenericDataTranslate<BankCreditEntity>().translate(entities,dataType.getDataLevel(),userEntity);
 
     }
 }

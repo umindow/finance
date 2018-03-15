@@ -26,12 +26,14 @@ import java.util.List;
 public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslate implements DataTranslate<T> {
     @Override
     public DataSet translate(List<T> datas, int dataType, UserEntity userEntity) {
-        if (CollectionUtils.isEmpty(datas) || null == userEntity) {
+        if (null == userEntity) {
             return new DataSet(null);
         }
         List<FiedRoleCache.DepRoleRef> depRoleRefs = depRoleRefs(dataType, userEntity);
         DataSet dataSet = new DataSet(new GenericFieldTranslate().fieldTranslate(depRoleRefs));
-
+        if(CollectionUtils.isEmpty(datas)){
+            return dataSet;
+        }
         List<DataVo> dataVos = new ArrayList<DataVo>();
         DataVo dataVo = null;
         for (final T t : datas) {

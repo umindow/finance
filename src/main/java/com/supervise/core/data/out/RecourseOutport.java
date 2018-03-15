@@ -33,6 +33,6 @@ public class RecourseOutport extends AbstractDataOutport{
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("batchDate",date);
         List<RecourseEntity> entities = recourseMapper.selectByExample(example);
-        return CollectionUtils.isEmpty(entities) ? null: new GenericDataTranslate<RecourseEntity>().translate(entities,dataType.getDataLevel(),userEntity);
+        return new GenericDataTranslate<RecourseEntity>().translate(entities,dataType.getDataLevel(),userEntity);
     }
 }

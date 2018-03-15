@@ -41,35 +41,37 @@ public abstract class AbstractDataOutport implements DataOutport {
             row.createCell(i + 1).setCellValue(dataSet.getFields().get(i));
 
         }
-        //表数据
-        DataVo dataVo = null;
-        FieldValue fieldValue = null;
-        for (int j = 0; j < dataSet.getDataVos().size(); j++) {
-            row = sheet.createRow(j + 1);
-            dataVo = dataSet.getDataVos().get(j);
-            row.createCell(0).setCellValue(dataVo.getDataId());
-            for (int m = 0; m < dataVo.getValues().size(); m++) {
-                fieldValue = dataVo.getValues().get(m);
-                if (fieldValue.getValue() instanceof Integer) {
-                    row.createCell(m + 1).setCellValue((Integer) fieldValue.getValue());
-                }
-                if (fieldValue.getValue() instanceof String) {
-                    row.createCell(m + 1).setCellValue((String) fieldValue.getValue());
-                }
-                if (fieldValue.getValue() instanceof BigDecimal) {
-                    row.createCell(m + 1).setCellValue(((BigDecimal) fieldValue.getValue()).doubleValue());
-                }
-                if (fieldValue.getValue() instanceof Double) {
-                    row.createCell(m + 1).setCellValue((Double) fieldValue.getValue());
-                }
-                if (fieldValue.getValue() instanceof Long) {
-                    row.createCell(m + 1).setCellValue((Long) fieldValue.getValue());
-                }
-                if (fieldValue.getValue() instanceof Float) {
-                    row.createCell(m + 1).setCellValue((Float) fieldValue.getValue());
-                }
-                if (fieldValue.getValue() instanceof Date) {
-                    row.createCell(m + 1).setCellValue(DateUtils.formatDate((Date) fieldValue.getValue(),DateUtils.DEFAULT_PATTERN));
+        if(!CollectionUtils.isEmpty(dataSet.getDataVos())) {
+            //表数据
+            DataVo dataVo = null;
+            FieldValue fieldValue = null;
+            for (int j = 0; j < dataSet.getDataVos().size(); j++) {
+                row = sheet.createRow(j + 1);
+                dataVo = dataSet.getDataVos().get(j);
+                row.createCell(0).setCellValue(dataVo.getDataId());
+                for (int m = 0; m < dataVo.getValues().size(); m++) {
+                    fieldValue = dataVo.getValues().get(m);
+                    if (fieldValue.getValue() instanceof Integer) {
+                        row.createCell(m + 1).setCellValue((Integer) fieldValue.getValue());
+                    }
+                    if (fieldValue.getValue() instanceof String) {
+                        row.createCell(m + 1).setCellValue((String) fieldValue.getValue());
+                    }
+                    if (fieldValue.getValue() instanceof BigDecimal) {
+                        row.createCell(m + 1).setCellValue(((BigDecimal) fieldValue.getValue()).doubleValue());
+                    }
+                    if (fieldValue.getValue() instanceof Double) {
+                        row.createCell(m + 1).setCellValue((Double) fieldValue.getValue());
+                    }
+                    if (fieldValue.getValue() instanceof Long) {
+                        row.createCell(m + 1).setCellValue((Long) fieldValue.getValue());
+                    }
+                    if (fieldValue.getValue() instanceof Float) {
+                        row.createCell(m + 1).setCellValue((Float) fieldValue.getValue());
+                    }
+                    if (fieldValue.getValue() instanceof Date) {
+                        row.createCell(m + 1).setCellValue(DateUtils.formatDate((Date) fieldValue.getValue(), DateUtils.DEFAULT_PATTERN));
+                    }
                 }
             }
         }

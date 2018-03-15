@@ -33,7 +33,7 @@ public class BusinessOutport extends AbstractDataOutport{
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("batchDate",date);
         List<BusinessDataEntity> entities = businessDataMapper.selectByExample(example);
-        return CollectionUtils.isEmpty(entities) ? null: new GenericDataTranslate<BusinessDataEntity>().translate(entities,dataType.getDataLevel(),userEntity);
+        return new GenericDataTranslate<BusinessDataEntity>().translate(entities,dataType.getDataLevel(),userEntity);
 
     }
 }

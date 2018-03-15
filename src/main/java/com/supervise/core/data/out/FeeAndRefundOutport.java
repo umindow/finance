@@ -33,6 +33,6 @@ public class FeeAndRefundOutport extends AbstractDataOutport{
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("batchDate",date);
         List<FeeAndRefundEntity> entities = feeAndRefundMapper.selectByExample(example);
-        return CollectionUtils.isEmpty(entities) ? null: new GenericDataTranslate<FeeAndRefundEntity>().translate(entities,dataType.getDataLevel(),userEntity);
+        return new GenericDataTranslate<FeeAndRefundEntity>().translate(entities,dataType.getDataLevel(),userEntity);
     }
 }
