@@ -59,5 +59,5 @@ public interface ViewBusinessDataMapper extends BaseMapper<BusinessDataEntity>{
             @Result(column = "批次", property = "batchDate")
     })
     @SelectProvider(type = BusinessDataProvider.class, method = "queryBusinessDataView")
-    List<ViewBusinessDataEntity> queryBusinessDataView(String batchDate);
+    List<ViewBusinessDataEntity> queryBusinessDataView(String batchDate, String projStatus);
 }
