@@ -24,7 +24,7 @@ public class RepaymentProvider extends BasicProvider {
     public String queryRepaymentView(String batchDate){
         String selectSql = "SELECT * FROM "+Constants.REPAYMENT_VIEW;
 
-        String whereSql = createWhereSql4batchdate(batchDate);
+        String whereSql = createWhereSql4batchdate(batchDate,"");
         logger.info("queryRepaymentView whereSql :"+whereSql);
         return selectSql+whereSql;
     }

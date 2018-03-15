@@ -1,6 +1,7 @@
 package com.supervise.viewDao;
 
 import com.supervise.BaseTest;
+import com.supervise.common.Constants;
 import com.supervise.dao.mysql.entity.ViewBusinessDataEntity;
 import com.supervise.dao.mysql.viewDao.ViewBusinessDataDao;
 import org.junit.Assert;
@@ -18,7 +19,8 @@ public class ViewBusinessDataDaoTest extends BaseTest{
 	@Test
 	public void queryRepaymentFromViewTest(){
 		String batchDate = "2018-02-24";
-		List<ViewBusinessDataEntity> resList = this.viewBusinessDataDao.queryBusinessDataFromView(batchDate);
+		String projStatus = Constants.PROJ_STATUS_REINS;
+		List<ViewBusinessDataEntity> resList = this.viewBusinessDataDao.queryBusinessDataFromView(batchDate,projStatus);
 		Assert.assertEquals(3, resList.size());
 	}
 

@@ -24,7 +24,7 @@ public class BankCreditProvider extends BasicProvider {
 	public String queryBankCreditView(String batchDate){
 		String selectSql = "SELECT * FROM "+Constants.BANKCREDIT_VIEW;
 
-		String whereSql = createWhereSql4batchdate(batchDate);
+		String whereSql = createWhereSql4batchdate(batchDate,"");
 		logger.info("queryBankCreditView whereSql :"+whereSql);
 		return selectSql+whereSql;
 	}
