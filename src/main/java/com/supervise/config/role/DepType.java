@@ -21,11 +21,11 @@ public enum DepType {
     //系统业务、退费、还款
     FINANCE_DEP(1, "财务部",new DataType[]{DataType.SUPERVISE_BIZ_DATA,DataType.SUPERVISE_FEE_DATA,DataType.SUPERVISE_REBACK_DATA}),
     //银行授信、系统业务
-    COMPREHENSIVE_DEP(2, "综合管理部",new DataType[]{DataType.SUPERVISE_BANK_DATA,DataType.SUPERVISE_BIZ_DATA}),
+    COMPREHENSIVE_DEP(2, "综合营运部",new DataType[]{DataType.SUPERVISE_BANK_DATA,DataType.SUPERVISE_BIZ_DATA}),
     //系统业务、退费、代偿
     RISK_DEP(3, "风险管理部",new DataType[]{DataType.SUPERVISE_BIZ_DATA,DataType.SUPERVISE_REPLACE_DATA}),
     //追偿
-    LAW_DEP(4, "资产管理以及法律事务部",new DataType[]{DataType.SUPERVISE_TRACE_DATA});
+    LAW_DEP(4, "资产法务部",new DataType[]{DataType.SUPERVISE_TRACE_DATA});
     @Getter @Setter
     private int depId;
     @Getter @Setter

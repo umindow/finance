@@ -54,6 +54,7 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
     @Override
     public boolean senderData(List<JgBuBankCredit> bankCreditEntities) throws Exception {
         long ret = -1;
+        logger.info("BankCredit webSer send size:"+bankCreditEntities.size());
         try {
             ret =  webService().saveJgBuBankCreditInfoAry(bankCreditEntities, bankCreditEntities.size());
             logger.info("BankCredit webSer Ret:"+ret);

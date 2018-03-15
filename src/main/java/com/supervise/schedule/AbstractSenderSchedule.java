@@ -68,10 +68,12 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
         }
         if (errorCount > 0) {
             //如果发送失败，则更新信息状态为发送失败，同时发送邮件、短信通知相关人
+            logger.info("webserv 发送失败 ");
             updateDataStatus(Constants.DATA_SEND_FAIL);
             sendDataFailProcessor(dupKey,scheduleName());
         }else{
             //发送成功，则更新发送的信息状态为发送成功
+            logger.info("webserv 发送成功 ");
             updateDataStatus(Constants.DATA_SEND_SUCESS);
         }
     }
