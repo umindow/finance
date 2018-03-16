@@ -143,22 +143,30 @@ public class RepaymentDataImport extends AbstractDataImport {
 //        this.repaymentDao.deleteRepaymentByBatchDate(batchDate);
         //然后保存导入的EXCEL记录
         for (final RepaymentEntity repaymentEntity : repaymentEntitys) {
-            repaymentEntity.setId(0L);//重新设置主键，避免主键重复
             String orgid = repaymentEntity.getOrgId();
             String projid = repaymentEntity.getProjId();
             String batchdate = repaymentEntity.getBatchDate();
             QueryCondition queryCondition = createQueryCondition(orgid,projid,batchdate);
             List<RepaymentEntity> repayEntityList = this.repaymentDao.queryRepaymentByCondition(queryCondition);
             if (!CollectionUtils.isEmpty(repayEntityList)) {
-                //不为空，则表示做更新
+                //不为空，同时主键ID号相同，则表示做更新;否则表示新增
+                boolean hasID = false;
                 for(RepaymentEntity repay :repayEntityList){
-                    repay.setId(repaymentEntity.getId());
-                    this.repaymentDao.updateRepayment(repay);
+                    if(repaymentEntity.getId()== repay.getId()){
+                        this.repaymentDao.updateRepayment(repay);
+                        break;
+                    }
+                }
+                if(!hasID){
+                    //标明没有查询到相同的主键ID
+                    repaymentEntity.setId(0L);//重新设置主键，避免主键重复
+                    this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
                 }
             }else{
                 //否则表示新增，同时查询业务数据，查看是否立项，如果有立项则新增，否则丢弃
                 List<BusinessDataEntity> resList  = this.businessDataDao.queryBusinessDataByCondition(queryCondition);
                 if(!CollectionUtils.isEmpty(resList)){
+                    repaymentEntity.setId(0L);//重新设置主键，避免主键重复
                     this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
                 }else{
                     logger.info("orgid :"+orgid +" projid:"+projid +" batchdate:"+batchdate);

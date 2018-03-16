@@ -171,6 +171,9 @@ public class DataController {
                         recourseEntity.setClientId(clientId);
                         recourseEntity.setClientName(clientName);
                         viewDataEntities.add(recourseEntity);
+                    }else{
+                        //如果没有在业务表中查询到项目编号，则视为脏数据，删除
+                        recourseMapper.delete(recourseEntity);
                     }
 
                 }
@@ -217,6 +220,9 @@ public class DataController {
                         compensatoryEntity.setClientId(clientId);
                         compensatoryEntity.setClientName(clientName);
                         viewDataEntities.add(compensatoryEntity);
+                    }else{
+                        //如果没有在业务表中查询到项目编号，则视为脏数据，删除
+                        compensatoryMapper.delete(compensatoryEntity);
                     }
 
                 }
@@ -262,6 +268,9 @@ public class DataController {
                         feeAndRefundEntity.setClientId(clientId);
                         feeAndRefundEntity.setClientName(clientName);
                         viewDataEntities.add(feeAndRefundEntity);
+                    }else{
+                        //如果没有在业务表中查询到项目编号，则视为脏数据，删除
+                        feeAndRefundMapper.delete(feeAndRefundEntity);
                     }
 
                 }
@@ -335,6 +344,9 @@ public class DataController {
                         repaymentEntity.setClientId(clientId);
                         repaymentEntity.setClientName(clientName);
                         viewDataEntities.add(repaymentEntity);
+                    }else{
+                        //如果没有在业务表中查询到项目编号，则视为脏数据，删除
+                        repaymentMapper.delete(repaymentEntity);
                     }
 
                 }
