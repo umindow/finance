@@ -30,10 +30,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by xishui.hb on 2018/1/30 下午5:30.
@@ -157,11 +154,28 @@ public class DataController {
                 criteria.andEqualTo("batchDate", date);
             }
             List<RecourseEntity> recourseEntities = recourseMapper.selectByExample(entityExample);
+            List<RecourseEntity> viewDataEntities =  new ArrayList<RecourseEntity>();
             if (CollectionUtils.isEmpty(recourseEntities)) {
                 pager.setPageNum(1);
                 pager.setPages(1);
+            }else{
+                //去业务表中获取客户编号以及客户名称
+                for(RecourseEntity recourseEntity:recourseEntities){
+                    String projId = recourseEntity.getProjId();
+                    String orgId  = recourseEntity.getOrgId();
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    if(!CollectionUtils.isEmpty(businessDataEntities)){
+                        BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
+                        String clientId = businessDataEntity.getClientId();
+                        String clientName = businessDataEntity.getClientName();
+                        recourseEntity.setClientId(clientId);
+                        recourseEntity.setClientName(clientName);
+                        viewDataEntities.add(recourseEntity);
+                    }
+
+                }
             }
-            DataSet dataSet = new GenericDataTranslate<RecourseEntity>().translate(recourseEntities, DataType.SUPERVISE_TRACE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
+            DataSet dataSet = new GenericDataTranslate<RecourseEntity>().translate(viewDataEntities, DataType.SUPERVISE_TRACE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
             ViewVo viewVo = new ViewVo();
             viewVo.setDataType(dataType);
@@ -186,11 +200,28 @@ public class DataController {
                 criteria.andEqualTo("batchDate", date);
             }
             List<CompensatoryEntity> compensatoryEntities = compensatoryMapper.selectByExample(entityExample);
+            List<CompensatoryEntity> viewDataEntities =  new ArrayList<CompensatoryEntity>();
             if (CollectionUtils.isEmpty(compensatoryEntities)) {
                 pager.setPageNum(1);
                 pager.setPages(1);
+            }else{
+                //去业务表中获取客户编号以及客户名称
+                for(CompensatoryEntity compensatoryEntity:compensatoryEntities){
+                    String projId = compensatoryEntity.getProjId();
+                    String orgId  = compensatoryEntity.getOrgId();
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    if(!CollectionUtils.isEmpty(businessDataEntities)){
+                        BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
+                        String clientId = businessDataEntity.getClientId();
+                        String clientName = businessDataEntity.getClientName();
+                        compensatoryEntity.setClientId(clientId);
+                        compensatoryEntity.setClientName(clientName);
+                        viewDataEntities.add(compensatoryEntity);
+                    }
+
+                }
             }
-            DataSet dataSet = new GenericDataTranslate<CompensatoryEntity>().translate(compensatoryEntities, DataType.SUPERVISE_REPLACE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
+            DataSet dataSet = new GenericDataTranslate<CompensatoryEntity>().translate(viewDataEntities, DataType.SUPERVISE_REPLACE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
             ViewVo viewVo = new ViewVo();
             viewVo.setDataType(dataType);
@@ -214,11 +245,28 @@ public class DataController {
                 criteria.andEqualTo("batchDate", date);
             }
             List<FeeAndRefundEntity> feeAndRefundEntities = feeAndRefundMapper.selectByExample(entityExample);
+            List<FeeAndRefundEntity> viewDataEntities =  new ArrayList<FeeAndRefundEntity>();
             if (CollectionUtils.isEmpty(feeAndRefundEntities)) {
                 pager.setPageNum(1);
                 pager.setPages(1);
+            }else{
+                //去业务表中获取客户编号以及客户名称
+                for(FeeAndRefundEntity feeAndRefundEntity:feeAndRefundEntities){
+                    String projId = feeAndRefundEntity.getProjId();
+                    String orgId  = feeAndRefundEntity.getOrgId();
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    if(!CollectionUtils.isEmpty(businessDataEntities)){
+                        BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
+                        String clientId = businessDataEntity.getClientId();
+                        String clientName = businessDataEntity.getClientName();
+                        feeAndRefundEntity.setClientId(clientId);
+                        feeAndRefundEntity.setClientName(clientName);
+                        viewDataEntities.add(feeAndRefundEntity);
+                    }
+
+                }
             }
-            DataSet dataSet = new GenericDataTranslate<FeeAndRefundEntity>().translate(feeAndRefundEntities, DataType.SUPERVISE_FEE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
+            DataSet dataSet = new GenericDataTranslate<FeeAndRefundEntity>().translate(viewDataEntities, DataType.SUPERVISE_FEE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
             ViewVo viewVo = new ViewVo();
             viewVo.setDataType(dataType);
@@ -270,11 +318,28 @@ public class DataController {
                 criteria.andEqualTo("batchDate", date);
             }
             List<RepaymentEntity> repaymentEntities = repaymentMapper.selectByExample(entityExample);
+            List<RepaymentEntity> viewDataEntities =  new ArrayList<RepaymentEntity>();
             if (CollectionUtils.isEmpty(repaymentEntities)) {
                 pager.setPageNum(1);
                 pager.setPages(1);
+            }else{
+                //去业务表中获取客户编号以及客户名称
+                for(RepaymentEntity repaymentEntity:repaymentEntities){
+                    String projId = repaymentEntity.getProjId();
+                    String orgId  = repaymentEntity.getOrgId();
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    if(!CollectionUtils.isEmpty(businessDataEntities)){
+                        BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
+                        String clientId = businessDataEntity.getClientId();
+                        String clientName = businessDataEntity.getClientName();
+                        repaymentEntity.setClientId(clientId);
+                        repaymentEntity.setClientName(clientName);
+                        viewDataEntities.add(repaymentEntity);
+                    }
+
+                }
             }
-            DataSet dataSet = new GenericDataTranslate<RepaymentEntity>().translate(repaymentEntities, DataType.SUPERVISE_REBACK_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
+            DataSet dataSet = new GenericDataTranslate<RepaymentEntity>().translate(viewDataEntities, DataType.SUPERVISE_REBACK_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
             ViewVo viewVo = new ViewVo();
             viewVo.setDataType(dataType);
@@ -1045,5 +1110,23 @@ public class DataController {
 //        }
 //        return vos;
 //    }
+
+    /**
+     * 获取业务数据表中的记录
+     * @param batchDate
+     * @param orgId
+     * @param projId
+     * @return List<BusinessDataEntity>
+     */
+    private List<BusinessDataEntity> getBusinessDataEntitys(String batchDate,String orgId,String projId){
+        Example example = new Example(RepaymentEntity.class);
+        Example.Criteria fcriteria = example.createCriteria();
+        fcriteria.andEqualTo("batchDate", batchDate);
+        fcriteria.andEqualTo("orgId", orgId);
+        fcriteria.andEqualTo("projId", projId);
+        List<BusinessDataEntity> rtList = businessDataMapper.selectByExample(example);
+        return rtList;
+    }
+
 
 }

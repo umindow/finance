@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -81,5 +82,18 @@ public class RecourseEntity extends BaseEntity {
     @Column(name = "sendStatus")
     private String sendStatus;
 
+    /**
+     * 客户编码
+     */
+    @Transient
+    @DepRole(depTypes = {DepType.LAW_DEP},modify = false,fieldCnName = "客户编码",index = 8)
+    private String clientId;
+
+    /**
+     * 客户名称
+     */
+    @Transient
+    @DepRole(depTypes = {DepType.LAW_DEP},modify = false,fieldCnName = "客户名称",index = 9)
+    private String clientName;
 
 }

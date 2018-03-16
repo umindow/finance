@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -84,4 +85,18 @@ public class RepaymentEntity extends BaseEntity {
     //发送状态，0:待发送 1 发送成功  -1 发送失败
     @Column(name = "sendStatus")
     private String sendStatus;
+
+    /**
+     * 客户编码
+     */
+    @Transient
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false,fieldCnName = "客户编码",index = 9)
+    private String clientId;
+
+    /**
+     * 客户名称
+     */
+    @Transient
+    @DepRole(depTypes = {DepType.FINANCE_DEP},modify = false,fieldCnName = "客户名称",index = 10)
+    private String clientName;
 }
