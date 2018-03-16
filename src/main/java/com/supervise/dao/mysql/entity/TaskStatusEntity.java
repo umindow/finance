@@ -31,22 +31,16 @@ public class TaskStatusEntity extends BaseEntity{
     private String dataName;
 
     /**
-     *执行结果：0, 成功  -1 失败
-     */
-    @Column(name = "result")
-    private String result;
-
-    /**
      *执行类型：0 同步数据 1 上报数据
      */
     @Column(name = "op_type")
     private String opType;
 
     /**
-     *备注
+     *执行结果：0, 成功  -1 失败
      */
-    @Column(name = "remark")
-    private String remark;
+    @Column(name = "result")
+    private String result;
 
     /**
      * 记录操作结束时间
@@ -59,5 +53,11 @@ public class TaskStatusEntity extends BaseEntity{
      */
     @Column(name = "create_time")
     private Date createTime;
+
+    /**
+     *备注
+     */
+    @Column(name = "remark")
+    private String remark;
 
 }

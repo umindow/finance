@@ -46,14 +46,13 @@ public class TaskStatusDao {
 	 * @param result
 	 * @return List<TaskStatusEntity>
 	 */
-	public List<TaskStatusEntity> queryTaskStatusByCondition(Date date,String option,String dataType,String result){
+	public List<TaskStatusEntity> queryTaskStatusByCondition(String date,String option,String dataType,String result){
 
 		Example example = new Example(TaskStatusEntity.class);
 		Example.Criteria fcriteria = example.createCriteria();
 		if(date!=null){
-			String datestr = new SimpleDateFormat(Constants.YYYY_MM_DD).format(date);
-			String datemin = datestr+Constants.DAY_MIN_DATE;
-			String datemax = datestr+Constants.DAY_MAX_DATE;
+			String datemin = date+Constants.DAY_MIN_DATE;
+			String datemax = date+Constants.DAY_MAX_DATE;
 			Date mixd = DateUtils.String2Date(datemin,Constants.YYYY_MM_DD_HH_MM_SS,Locale.ENGLISH);
 			Date maxd = DateUtils.String2Date(datemax,Constants.YYYY_MM_DD_HH_MM_SS,Locale.ENGLISH);
 			fcriteria.andBetween("opTime",mixd,maxd);
