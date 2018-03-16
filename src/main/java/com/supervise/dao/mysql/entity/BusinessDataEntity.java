@@ -172,6 +172,7 @@ public class BusinessDataEntity extends BaseEntity {
      **/
     @Column(name = "contract_end_date")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "合同截止日期",index = 21,isDate = true,dateFormat = Constants.YYYY_MM_DD)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date contractEndDate;
     
     /**

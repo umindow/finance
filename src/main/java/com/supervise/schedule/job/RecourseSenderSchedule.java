@@ -105,7 +105,7 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
                 jgBuReplevyInfo.setReplevyDate(xmlGregorianCalendar(recourseEntity.getReplevyDate()));//5
                 jgBuReplevyInfo.setReplevyMoney(recourseEntity.getReplevyMoney());//6
 
-                jgBuReplevyInfo.setBatchDate(recourseEntity.getBatchDate());//6
+                jgBuReplevyInfo.setBatchDate(recourseEntity.getBatchDate());//7
                 jgBuReplevyInfos.add(jgBuReplevyInfo);
             }
             return jgBuReplevyInfos;

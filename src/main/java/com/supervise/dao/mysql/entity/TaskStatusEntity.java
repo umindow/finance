@@ -19,12 +19,45 @@ import java.util.Date;
 @Data
 @Table(name = "finance_task_status")
 public class TaskStatusEntity extends BaseEntity{
+    /**
+     * 6大类数据类型 ：1 银行授信  2 业务信息 3 还款信息 4 收退费信息 5 代偿信息 6 追偿信息
+     */
     @Column(name = "data_type")
-    private int dataType;//发送的数据类型 6大类
+    private String  dataType;
+    /**
+     * 数据类型的名称,不必须填写，数据类型的中文描述
+     */
     @Column(name = "data_name")
-    private String dataName;//不必须填写，数据类型的中文描述
-    @Column(name = "create_time")
-    private Date createTime;//发送开始时间(发送不管成功与否的记录时间)
+    private String dataName;
+
+    /**
+     *执行结果：0, 成功  -1 失败
+     */
     @Column(name = "result")
-    private String result;//发送成功,发送失败
+    private String result;
+
+    /**
+     *执行类型：0 同步数据 1 上报数据
+     */
+    @Column(name = "op_type")
+    private String opType;
+
+    /**
+     *备注
+     */
+    @Column(name = "remark")
+    private String remark;
+
+    /**
+     * 记录操作结束时间
+     */
+    @Column(name = "op_time")
+    private Date opTime;
+
+    /**
+     * 创建日期
+     */
+    @Column(name = "create_time")
+    private Date createTime;
+
 }

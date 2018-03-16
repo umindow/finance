@@ -180,7 +180,6 @@ Finance  - ${view.moduleName}
             $(this).on("click", function () {
                 var dataId = $(this).attr("attr");
                 var form = $("#form_" + dataId);
-                alert(form.serialize());
                 $.post("${view.modifyUrl}", form.serialize(), function (result) {
                     if (result) {
                         success("修改成功", refreshWindow());

@@ -289,4 +289,7 @@ public final class Constants {
     public static final String PROJ_STATUS_REINS = "60";
     /***************************项目状态常量 end********************************/
 
+    /***************************查询条件常量 start********************************/
+    public static final String QUERY_SELECT_ALL = "ALL";
+    /***************************查询条件常量 end********************************/
 }

@@ -58,14 +58,15 @@ public final class FiedRoleCache {
         Map<String, DepRoleRef> depRoleRefMap = new HashMap<String, DepRoleRef>();
         for (final Field field : fields) {
             Column column = field.getAnnotation(Column.class);
-            if (null == column) {
-                continue;
+            String clumnName = "";
+            if (null != column) {
+                clumnName = column.name();
             }
             DepRole depRole = field.getAnnotation(DepRole.class);
             if(null == depRole){
                 continue;
             }
-            depRoleRefMap.put(column.name(), (null == depRole) ? null : new DepRoleRef(depRole.depTypes(), depRole.modify(), column.name(), field.getName(), depRole.fieldCnName(), depRole.index(),depRole.isDate(),depRole.dateFormat()));
+            depRoleRefMap.put(field.getName(), (null == depRole) ? null : new DepRoleRef(depRole.depTypes(), depRole.modify(), clumnName, field.getName(), depRole.fieldCnName(), depRole.index(), depRole.isDate(), depRole.dateFormat()));
         }
         FIED_ROLE_CACHE.put(dataType, depRoleRefMap);
         logger.info("Add Field Role Ref DataType:%s, Refs:%s", DataType.typeOfType(dataType).getDataName(), JSON.toJSON(depRoleRefMap));
