@@ -29,6 +29,7 @@ public class TaskStatusDao {
     public int insertTaskStatusToMiddleDB(TaskStatusEntity taskStatusEntity){
     	int id = -1;
     	if(null!=taskStatusEntity){
+			taskStatusEntity.setId(0L);
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 			Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			taskStatusEntity.setCreateTime(newDate);

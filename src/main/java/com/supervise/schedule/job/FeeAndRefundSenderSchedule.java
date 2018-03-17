@@ -4,8 +4,11 @@ import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.middleDao.FeeAndRefundDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuChargeRecord;
 import org.slf4j.Logger;
@@ -32,6 +35,9 @@ public class FeeAndRefundSenderSchedule extends AbstractSenderSchedule<JgBuCharg
     private final Logger logger = LoggerFactory.getLogger(FeeAndRefundSenderSchedule.class);
     @Autowired
     private FeeAndRefundDao feeAndRefundDao;
+
+    @Autowired
+    private TaskStatusDao taskStatusDao;
 
     private List<FeeAndRefundEntity> feeAndRefundEntitys = new ArrayList<FeeAndRefundEntity>();
 
@@ -86,6 +92,18 @@ public class FeeAndRefundSenderSchedule extends AbstractSenderSchedule<JgBuCharg
         }
     }
 
+    @Override
+    public void updateTaskStatus(String resultCode){
+        String dataType = String.valueOf(DataType.SUPERVISE_FEE_DATA.getDataLevel());
+        String dataName =DataType.SUPERVISE_FEE_DATA.getDataName();
+        String option = "1";
+        TaskStatusEntity taskStatusEntity = new TaskStatusEntity();
+        taskStatusEntity.setDataName(dataName);
+        taskStatusEntity.setDataType(dataType);
+        taskStatusEntity.setOpType(option);
+        taskStatusEntity.setResult(resultCode);
+        this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+    }
     @Override
     public String scheduleName() {
         return Constants.SCH_SEND_FEEANDREFUND_SCHEDULE;

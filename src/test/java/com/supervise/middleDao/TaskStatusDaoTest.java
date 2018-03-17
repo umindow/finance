@@ -1,12 +1,14 @@
 package com.supervise.middleDao;
 
 import com.supervise.BaseTest;
+import com.supervise.common.Constants;
 import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,21 +42,21 @@ public class TaskStatusDaoTest extends BaseTest{
 
 	@Test
 	public void queryTaskStatusByConditionTest(){
-		Date date  = new Date();
+		String  date  = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
 		String option = "0";
-		String result = "1";
-		String dataType = "1";
+		String result = "0";
+		String dataType = "100";
 
 
 
 		List<TaskStatusEntity> resListToDB = this.taskStatusDao.queryTaskStatusByCondition(date,option,dataType,result);
 
-		Assert.assertEquals(5,resListToDB.size());
+		Assert.assertEquals(2,resListToDB.size());
 	}
 
 	@Test
 	public void queryTaskStatusByConditionALLTest(){
-		Date date  = new Date();
+		String  date  = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
 		String option = "ALL";
 		String result = "all";
 		String dataType = "alL";
@@ -63,21 +65,21 @@ public class TaskStatusDaoTest extends BaseTest{
 
 		List<TaskStatusEntity> resListToDB = this.taskStatusDao.queryTaskStatusByCondition(date,option,dataType,result);
 
-		Assert.assertEquals(5,resListToDB.size());
+		Assert.assertEquals(13,resListToDB.size());
 	}
 
 	@Test
 	public void queryTaskStatusByConditionNullTest(){
-		Date date  = new Date();
+		String  date  = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
 		String option = "ALL";
-		String result = "2";
+		String result = "-1";
 		String dataType = "alL";
 
 
 
 		List<TaskStatusEntity> resListToDB = this.taskStatusDao.queryTaskStatusByCondition(date,option,dataType,result);
 
-		Assert.assertEquals(0,resListToDB.size());
+		Assert.assertEquals(4,resListToDB.size());
 	}
 
 }

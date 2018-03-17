@@ -4,8 +4,11 @@ import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.RepaymentEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.middleDao.RepaymentDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuRepayDetail;
 import org.slf4j.Logger;
@@ -32,6 +35,9 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
     private final Logger logger = LoggerFactory.getLogger(RepaymentSenderSchedule.class);
     @Autowired
     private RepaymentDao repaymentDao;
+
+    @Autowired
+    private TaskStatusDao taskStatusDao;
 
     private List<RepaymentEntity> repaymentEntitys = new ArrayList<RepaymentEntity>();
 
@@ -86,6 +92,19 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
             repaymentEntity.setSendStatus(status);
             repaymentDao.updateRepayment(repaymentEntity);
         }
+    }
+
+    @Override
+    public void updateTaskStatus(String resultCode){
+        String dataType = String.valueOf(DataType.SUPERVISE_REBACK_DATA.getDataLevel());
+        String dataName =DataType.SUPERVISE_REBACK_DATA.getDataName();
+        String option = "1";
+        TaskStatusEntity taskStatusEntity = new TaskStatusEntity();
+        taskStatusEntity.setDataName(dataName);
+        taskStatusEntity.setDataType(dataType);
+        taskStatusEntity.setOpType(option);
+        taskStatusEntity.setResult(resultCode);
+        this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
     }
 
     @Override

@@ -4,8 +4,11 @@ import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.CompensatoryEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.middleDao.CompensatoryDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuReplaceInfo;
 import org.slf4j.Logger;
@@ -32,6 +35,9 @@ public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuRepla
     private final Logger logger = LoggerFactory.getLogger(CompensatorySenderSchedule.class);
     @Autowired
     private CompensatoryDao compensatoryDao;
+
+    @Autowired
+    private TaskStatusDao taskStatusDao;
 
     private List<CompensatoryEntity> compensatoryEntitys = new ArrayList<CompensatoryEntity>();
     @Override
@@ -81,6 +87,19 @@ public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuRepla
             compensatoryEntity.setSendStatus(status);
             compensatoryDao.updateCompensatory(compensatoryEntity);
         }
+    }
+
+    @Override
+    public void updateTaskStatus(String resultCode){
+        String dataType = String.valueOf(DataType.SUPERVISE_REPLACE_DATA.getDataLevel());
+        String dataName =DataType.SUPERVISE_REPLACE_DATA.getDataName();
+        String option = "1";
+        TaskStatusEntity taskStatusEntity = new TaskStatusEntity();
+        taskStatusEntity.setDataName(dataName);
+        taskStatusEntity.setDataType(dataType);
+        taskStatusEntity.setOpType(option);
+        taskStatusEntity.setResult(resultCode);
+        this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
     }
 
     @Override

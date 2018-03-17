@@ -37,7 +37,7 @@ public class TaskStatusEntity extends BaseEntity{
     private String opType;
 
     /**
-     *执行结果：0, 成功  -1 失败
+     *执行结果：-1 失败,0, 成功  ,1 没有上报数据
      */
     @Column(name = "result")
     private String result;
