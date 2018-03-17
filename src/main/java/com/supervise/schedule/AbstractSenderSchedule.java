@@ -37,6 +37,7 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
 
         if (null == data) {
             logger.error("Load SenderSchedule Data Return is null.dupkey is:" + dupKey);
+            updateTaskStatus("1");
             return;
         }
         if (checkData(data)) {
@@ -70,10 +71,12 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
             //如果发送失败，则更新信息状态为发送失败，同时发送邮件、短信通知相关人
             logger.info("webserv 发送失败 ");
             updateDataStatus(Constants.DATA_SEND_FAIL);
+            updateTaskStatus("-1");
             sendDataFailProcessor(dupKey,scheduleName());
         }else{
             //发送成功，则更新发送的信息状态为发送成功
             logger.info("webserv 发送成功 ");
+            updateTaskStatus("0");
             updateDataStatus(Constants.DATA_SEND_SUCESS);
         }
     }
@@ -83,6 +86,8 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
     public abstract boolean checkData(List<T> t);
 
     public abstract void updateDataStatus(String status);
+
+    public abstract void updateTaskStatus(String resultCode);
 
     public abstract boolean senderData(List<T> t) throws Exception;
 

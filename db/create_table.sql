@@ -6,7 +6,7 @@ CREATE TABLE `finance_user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '用户名',
   `password` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '用户密码',
-  `user_cn_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '用户中文名',
+  `user_cn_name` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '用户中文名',
   `level` int(2) DEFAULT '1' COMMENT '用户级别',
   `email` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '用户邮箱',
   `phone` varchar(16) COLLATE utf8_bin DEFAULT NULL COMMENT '用户电话',
@@ -21,11 +21,14 @@ CREATE TABLE `finance_user` (
 -- ----------------------------
 DROP TABLE IF EXISTS `finance_task_status`;
 CREATE TABLE `finance_task_status` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `data_type` int(11) DEFAULT NULL COMMENT '数据类型,6大类',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `data_type` varchar(20) COLLATE utf8_bin DEFAULT NULL COMMENT '6大类数据类型 ：1 银行授信  2 业务信息 3 还款信息 4 收退费信息 5 代偿信息 6 追偿信息',
   `data_name` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '数据类型,不必填',
-  `create_time` timestamp NULL DEFAULT NULL,
-  `result` varchar(200) COLLATE utf8_bin DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL COMMENT '创建日期',
+  `result` varchar(10) COLLATE utf8_bin DEFAULT NULL COMMENT '执行结果：0, 成功  -1 失败',
+  `op_type` varchar(10) COLLATE utf8_bin DEFAULT NULL COMMENT '执行类型：0 同步数据 1 上报数据',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `op_time` datetime DEFAULT NULL COMMENT '执行时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ----------------------------
