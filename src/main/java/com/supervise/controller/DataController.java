@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -466,13 +465,8 @@ public class DataController {
             } else if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
                 BusinessDataEntity businessDataEntity = businessDataMapper.selectByPrimaryKey(dataId);
                 userEntity = SessionUser.INSTANCE.getCurrentUser();
-                String depId = userEntity.getDepId();
-                Long dep = -1L;
-                if (StringUtils.isEmpty(depId)) {
-                    dep = Long.parseLong(depId);
-                }
-                //如果是综合营运部，则可以直接删除该条记录；否则只能清除该部门所有权限字段的内容,并更新数据
-                if (DepType.COMPREHENSIVE_DEP.getDepId() == dep || -1 == dep) {
+                //如果是综合营运部，或者管理员则可以直接删除该条记录；否则只能清除该部门所有权限字段的内容,并更新数据
+                if (isCompdep(userEntity) || "20".equalsIgnoreCase(userEntity.getDataLevels())) {
                     businessDataMapper.deleteByPrimaryKey(dataId);
                     //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
                     String batchDate = businessDataEntity.getBatchDate();
@@ -877,11 +871,11 @@ public class DataController {
             businessDataExist.setClientType(businessDataUpdate.getClientType());
         }
         //客户编码
-        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_id"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_id"))||isCompdep(userEntity)) {
             businessDataExist.setClientId(businessDataUpdate.getClientId());
         }
         //客户名称
-        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_name"))) {
+        if (FiedRoleCache.checkFieldRole(userEntity, filedRoles.get("client_name"))||isCompdep(userEntity)) {
             businessDataExist.setClientName(businessDataUpdate.getClientName());
         }
         //证件类型
@@ -1143,5 +1137,20 @@ public class DataController {
         return rtList;
     }
 
+    /**
+     * 判断是否综合运行部
+     * @return
+     */
+    private boolean isCompdep(UserEntity userEntity){
+        String depId = userEntity.getDepId();
+        Long dep = -1L;
+        if(org.apache.commons.lang3.StringUtils.isEmpty(depId)){
+            dep = Long.parseLong(depId);
+        }
+        if(DepType.COMPREHENSIVE_DEP.getDepId()==dep){
+            return true;
+        }
+        return false;
+    }
 
 }
