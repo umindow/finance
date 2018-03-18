@@ -52,8 +52,8 @@ public class TaskStatusDao {
 		Example example = new Example(TaskStatusEntity.class);
 		Example.Criteria fcriteria = example.createCriteria();
 		if(date!=null){
-			String datemin = date+Constants.DAY_MIN_DATE;
-			String datemax = date+Constants.DAY_MAX_DATE;
+			String datemin = date+" "+Constants.DAY_MIN_DATE;
+			String datemax = date+" "+Constants.DAY_MAX_DATE;
 			Date mixd = DateUtils.String2Date(datemin,Constants.YYYY_MM_DD_HH_MM_SS,Locale.ENGLISH);
 			Date maxd = DateUtils.String2Date(datemax,Constants.YYYY_MM_DD_HH_MM_SS,Locale.ENGLISH);
 			fcriteria.andBetween("opTime",mixd,maxd);

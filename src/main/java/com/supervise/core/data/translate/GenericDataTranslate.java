@@ -3,11 +3,13 @@ package com.supervise.core.data.translate;
 import com.supervise.cache.FiedRoleCache;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.BaseEntity;
+import com.supervise.config.role.DepType;
 import com.supervise.controller.vo.DataSet;
 import com.supervise.controller.vo.DataVo;
 import com.supervise.controller.vo.FieldValue;
 import com.supervise.dao.mysql.entity.UserEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
         if (null == userEntity) {
             return new DataSet(null);
         }
+        boolean isComp = isComdep(userEntity);
         List<FiedRoleCache.DepRoleRef> depRoleRefs = depRoleRefs(dataType, userEntity);
         DataSet dataSet = new DataSet(new GenericFieldTranslate().fieldTranslate(depRoleRefs));
         if(CollectionUtils.isEmpty(datas)){
@@ -42,6 +45,7 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
             dataVo.setDataId(baseEntity.getId());
             List<FieldValue> fieldValues = new ArrayList<FieldValue>();
             for (final FiedRoleCache.DepRoleRef depRoleRef : depRoleRefs) {
+                String fielName = depRoleRef.getFieldName();
                 String methodName = "get" + depRoleRef.getFieldName().replaceFirst(depRoleRef.getFieldName().substring(0, 1), depRoleRef.getFieldName().substring(0, 1)
                         .toUpperCase());
                 try {
@@ -54,7 +58,12 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
                             fieldValues.add(new FieldValue(DateUtils.formatDate((Date) value, depRoleRef.getDateFormat()), depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify(), depRoleRef.isDate(), depRoleRef.getDateFormat()));
                         }
                     } else {
-                        fieldValues.add(new FieldValue(value, depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
+                        //如果是综合运营部，则可以修改BUSINESS中的客户姓名以及客户编号
+                        if(("clientName".equalsIgnoreCase(fielName)||"clientId".equalsIgnoreCase(fielName))&&isComp){
+                            fieldValues.add(new FieldValue(value, depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), true));
+                        }else{
+                            fieldValues.add(new FieldValue(value, depRoleRef.getFieldName(), depRoleRef.getFieldCnName(), depRoleRef.isModify()));
+                        }
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -70,5 +79,15 @@ public class GenericDataTranslate<T extends BaseEntity> extends AbstractTranslat
 
         dataSet.setDataVos(dataVos);
         return dataSet;
+    }
+
+    private boolean  isComdep(UserEntity userEntity){
+        if(userEntity!=null){
+            String depId = userEntity.getDepId();
+            if(!StringUtils.isEmpty(depId)&&String.valueOf(DepType.COMPREHENSIVE_DEP.getDepId()).equalsIgnoreCase(depId)){
+                return true;
+            }
+        }
+        return false;
     }
 }

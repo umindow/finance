@@ -31,6 +31,22 @@
        ]
 },
 {
+    "name": "日志管理",
+    "url": "#",
+    "icon": "fa-database",
+    "level": 20,
+    "checkDep":false,
+    "sub_menus": [
+       {
+         "name": "日志列表",
+          "url": "/log/list",
+          "icon": "fa-user",
+          "level":  20,
+          "checkDep":false
+          }
+       ]
+},
+{
     "name": "数据管理", 
     "url": "#",
     "icon": "fa-database",

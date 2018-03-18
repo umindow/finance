@@ -46,16 +46,15 @@ public class LogController {
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "date", required = false) String date,
-                             @RequestParam(value = "dataType", required = true) Integer dataType,
-                             @RequestParam(value = "optionType", required = true) String optionType,
-                             @RequestParam(value = "resultcode", required = true) String resultcode) {
+                             @RequestParam(value = "dataType", required = false) String dataType,
+                             @RequestParam(value = "optionType", required = false) String optionType,
+                             @RequestParam(value = "resultcode", required = false) String resultcode) {
         ModelAndView view = new ModelAndView("pages/log/list");
-        String dateTypeStr = dataType.toString();
         if (date == null || "".equals(date)) {
             date = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
         }
         List<TaskStatusVo> voList = new ArrayList<TaskStatusVo>();
-        List<TaskStatusEntity> entities = this.taskStatusDao.queryTaskStatusByCondition(date,dateTypeStr,optionType,resultcode);
+        List<TaskStatusEntity> entities = this.taskStatusDao.queryTaskStatusByCondition(date,optionType,dataType,resultcode);
         if(!CollectionUtils.isEmpty(entities)){
             for(TaskStatusEntity taskStatusEntity : entities){
                 TaskStatusVo  taskStatusVo = new TaskStatusVo();
@@ -65,10 +64,12 @@ public class LogController {
                 }else if("0".equalsIgnoreCase(taskStatusEntity.getOpType())){
                     taskStatusVo.setOptionType("同步数据");
                 }
-                if("-1".equalsIgnoreCase(taskStatusEntity.getOpType())){
-                    taskStatusVo.setOptionType("操作失败");
-                }else if("0".equalsIgnoreCase(taskStatusEntity.getOpType())){
-                    taskStatusVo.setOptionType("操作成功");
+                if("-1".equalsIgnoreCase(taskStatusEntity.getResult())){
+                    taskStatusVo.setResult("失败");
+                }else if("0".equalsIgnoreCase(taskStatusEntity.getResult())){
+                    taskStatusVo.setResult("成功");
+                }else if("1".equalsIgnoreCase(taskStatusEntity.getResult())){
+                    taskStatusVo.setResult("无数据");
                 }
 
                 if(taskStatusEntity.getOpTime()!=null){
@@ -79,6 +80,7 @@ public class LogController {
             }
 
         }
+        view.addObject("date",date);
         view.addObject("tasks", voList);
         return view;
     }
