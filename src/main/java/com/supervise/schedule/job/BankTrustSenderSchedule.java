@@ -4,8 +4,11 @@ import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.middleDao.BankCreditDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuBankCredit;
 import org.slf4j.Logger;
@@ -25,6 +28,9 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
     private final Logger logger = LoggerFactory.getLogger(BankTrustSenderSchedule.class);
     @Autowired
     private BankCreditDao bankCreditDao;
+    @Autowired
+    private TaskStatusDao taskStatusDao;
+
     private List<BankCreditEntity> bankCreditEntitys = new ArrayList<BankCreditEntity>();
     @Override
     public List<JgBuBankCredit> loadSenderData(String batchDate) {
@@ -64,7 +70,7 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
         }
         //如果返回值不是1 ，则发送失败。
         if(Constants.WEBSERV_RES_SUCESS!=ret){
-            return false;
+           return   false;
         }
         return true;
     }
@@ -76,6 +82,19 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
             bankCreditEntity.setSendStatus(status);
             bankCreditDao.updateBankCredit(bankCreditEntity);
         }
+    }
+
+    @Override
+    public void updateTaskStatus(String resultCode){
+        String dataType = String.valueOf(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+        String dataName =DataType.SUPERVISE_BANK_DATA.getDataName();
+        String option = "1";
+        TaskStatusEntity taskStatusEntity = new TaskStatusEntity();
+        taskStatusEntity.setDataName(dataName);
+        taskStatusEntity.setDataType(dataType);
+        taskStatusEntity.setOpType(option);
+        taskStatusEntity.setResult(resultCode);
+        this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
     }
 
     @Override

@@ -1,0 +1,109 @@
+#tag layout_block("title")
+Finance  - 日志管理
+#end
+#tag layout_block("breadcrumb")
+<li class="active"><strong style="color:red;">日志管理</strong></li>
+#end
+#tag layout_block("mainContent")
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="row m-b-sm m-t-sm">
+                        <div class="col-md-3">
+                            <label class="control-label">数据类型：</label>
+                            <select name="dataType" id ="dataType">
+                                <option value="ALL" selected="selected">ALL</option>
+                                <option value="100">系统业务数据</option>
+                                <option value="200">银行授信数据</option>
+                                <option value="300">还款数据</option>
+                                <option value="400">收费退费数据</option>
+                                <option value="500">代偿数据</option>
+                                <option value="600">追偿数据</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label">操作类型：</label>
+                                <select name="optionType" id="optionType" >
+                                    <option value="ALL" selected="selected">ALL</option>
+                                    <option value="0">数据同步</option>
+                                    <option value="1">数据上报</option>
+                                </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label">操作结果：</label>
+                                <select name="resultcode" id="resultcode">
+                                    <option value="ALL" selected="selected">ALL</option>
+                                    <option value="0">成功</option>
+                                    <option value="-1">失败</option>
+                                </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" id="datepicker" name="datepicker" placeholder="选择日期"
+                                       value="${date}"
+                                       class="input-sm form-control">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-primary" id="searchBtn">
+                                        查询
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="project-list">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <th>数据名称</th>
+                            <th>操作类型</th>
+                            <th>操作结果</th>
+                            <th>操作时间</th>
+                            </thead>
+                            <tbody>
+                            #for(job:tasks)
+                            <tr>
+                                <td>${job.dataName}
+                                </td>
+                                <td>${job.optionType}
+                                </td>
+                                <td>${job.result}
+                                </td>
+                                <td>${job.optime}
+                                </td>
+                            </tr>
+                            #end
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+#tag layout_block("js")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#datepicker").datepicker({
+            dateFormat: 'yy-mm-dd',
+            dayNamesMin: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+                '七月', '八月', '九月', '十月', '十一月', '十二月']
+        });
+        $('#searchBtn').on('click', function () {
+            var dataType =$("#dataType option:selected").val();
+            var optionType=$("#optionType option:selected").val();
+            var resultcode=$("#resultcode option:selected").val();
+            var date = $('#datepicker').val();
+            if (null == date || "" == date) {
+                error("请选择日期.");
+                return;
+            }
+            window.location.href = "/log/list?date=" + date + "&dataType=" + dataType+"&optionType="+optionType + "&resultcode="+resultcode;
+        });
+    });
+</script>
+#end
+#include("/common/framework.html")

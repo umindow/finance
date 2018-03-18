@@ -20,9 +20,9 @@ public class ViewBusinessDataDao {
      * @return 按照指定查询条件返回的查询结果集合
      */
     public List<ViewBusinessDataEntity> queryBusinessDataFromView(
-            String batchDate){
+            String batchDate,String projStatus){
         List<ViewBusinessDataEntity> responseList =
-                this.viewBusinessDataMapper.queryBusinessDataView(batchDate);
+                this.viewBusinessDataMapper.queryBusinessDataView(batchDate,projStatus);
         return responseList;
     }
 }

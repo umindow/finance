@@ -49,14 +49,14 @@ public class BusinessDataEntity extends BaseEntity {
      * 客户编码
      */
     @Column(name = "client_id")
-    @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "客户编码",index = 4)
+    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP,DepType.LAW_DEP},modify = false,fieldCnName = "客户编码",index = 4)
     private String clientId;
     
     /**
      * 客户名称
      */
     @Column(name = "client_name")
-    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP,DepType.LAW_DEP},modify = true,fieldCnName = "客户名称",index = 5)
+    @DepRole(depTypes = {DepType.FINANCE_DEP,DepType.COMPREHENSIVE_DEP,DepType.RISK_DEP,DepType.LAW_DEP},modify = false,fieldCnName = "客户名称",index = 5)
     private String clientName;
     
     /**
@@ -172,6 +172,7 @@ public class BusinessDataEntity extends BaseEntity {
      **/
     @Column(name = "contract_end_date")
     @DepRole(depTypes = {DepType.COMPREHENSIVE_DEP},modify = true,fieldCnName = "合同截止日期",index = 21,isDate = true,dateFormat = Constants.YYYY_MM_DD)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date contractEndDate;
     
     /**

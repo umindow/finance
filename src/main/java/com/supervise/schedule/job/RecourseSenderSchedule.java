@@ -4,8 +4,11 @@ import com.supervise.common.Constants;
 import com.supervise.common.ParserConvert;
 import com.supervise.config.mysql.base.QueryCondition;
 import com.supervise.config.mysql.base.QueryOperator;
+import com.supervise.config.role.DataType;
 import com.supervise.dao.mysql.entity.RecourseEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.middleDao.RecourseDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.schedule.AbstractSenderSchedule;
 import com.supervise.webservice.JgBuReplevyInfo;
 import org.slf4j.Logger;
@@ -32,6 +35,9 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
     private final Logger logger = LoggerFactory.getLogger(RecourseSenderSchedule.class);
     @Autowired
     private RecourseDao recourseDao;
+
+    @Autowired
+    private TaskStatusDao taskStatusDao;
 
     private List<RecourseEntity> recourseEntitys = new ArrayList<RecourseEntity>();
     @Override
@@ -87,6 +93,19 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
     }
 
     @Override
+    public void updateTaskStatus(String resultCode){
+        String dataType = String.valueOf(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
+        String dataName =DataType.SUPERVISE_TRACE_DATA.getDataName();
+        String option = "1";
+        TaskStatusEntity taskStatusEntity = new TaskStatusEntity();
+        taskStatusEntity.setDataName(dataName);
+        taskStatusEntity.setDataType(dataType);
+        taskStatusEntity.setOpType(option);
+        taskStatusEntity.setResult(resultCode);
+        this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+    }
+
+    @Override
     public String scheduleName() {
         return Constants.SCH_SEND_RECOURSE_SCHEDULE;
     }
@@ -105,7 +124,7 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
                 jgBuReplevyInfo.setReplevyDate(xmlGregorianCalendar(recourseEntity.getReplevyDate()));//5
                 jgBuReplevyInfo.setReplevyMoney(recourseEntity.getReplevyMoney());//6
 
-                jgBuReplevyInfo.setBatchDate(recourseEntity.getBatchDate());//6
+                jgBuReplevyInfo.setBatchDate(recourseEntity.getBatchDate());//7
                 jgBuReplevyInfos.add(jgBuReplevyInfo);
             }
             return jgBuReplevyInfos;

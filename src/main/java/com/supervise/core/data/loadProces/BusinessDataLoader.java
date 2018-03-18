@@ -55,7 +55,8 @@ public class BusinessDataLoader extends GenericDataProcessorHandler<List<Busines
     //涉及多个数据源的load，
     @Override
     public List<BusinessDataEntity> loadedData(String  batchDate) {
-        List<ViewBusinessDataEntity> businessDataEntityList =  viewBusinessDataDao.queryBusinessDataFromView(batchDate);
+        String projStatus = Constants.PROJ_STATUS_REINS;//保后状态
+        List<ViewBusinessDataEntity> businessDataEntityList =  viewBusinessDataDao.queryBusinessDataFromView(batchDate,projStatus);
         List<BusinessDataEntity>  businessDataEntitys  = conver(businessDataEntityList);
         return businessDataEntitys;
     }

@@ -186,7 +186,7 @@ public class BasicProvider {
      * @param batchDate
      * @return WhereSql
      */
-    protected String createWhereSql4batchdate(String batchDate){
+    protected String createWhereSql4batchdate(String batchDate,String proStatus){
         StringBuffer whereSql = new StringBuffer();
         if(!StringUtils.isEmpty(batchDate)){
             whereSql.append(Constants.SPACE);
@@ -232,6 +232,19 @@ public class BasicProvider {
             whereSql.append(Constants.SINGLE_QUOTE);
             whereSql.append(Constants.RIGHT_PARENTHESIS);
             whereSql.append(Constants.SPACE);
+            //设置项目状态
+            if(!StringUtils.isEmpty(proStatus)){
+                whereSql.append(Constants.CONNECTOR_AND);
+                whereSql.append(Constants.SPACE);
+                whereSql.append(Constants.FCS_RM_PROJ_STATUS);//项目状态
+                whereSql.append(Constants.SPACE);
+                whereSql.append(QueryOperator.EQUAL.getOperator());
+                whereSql.append(Constants.SPACE);
+                whereSql.append(Constants.SINGLE_QUOTE);
+                whereSql.append(proStatus);
+                whereSql.append(Constants.SINGLE_QUOTE);
+                whereSql.append(Constants.SPACE);
+            }
         }
 
         return whereSql.toString();

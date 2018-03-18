@@ -237,6 +237,7 @@ public final class Constants {
     public static final String FINANCE_FEE_AND_REFUND_INFO = "finance_fee_and_refund_info";
     public static final String FINANCE_RECOURSE_INFO = "finance_recourse_info";
     public static final String FCS_RM_BATCHDATE = "批次";
+    public static final String FCS_RM_PROJ_STATUS = "项目状态";
     /***************************数据库表常量 end********************************/
     /***************************视图常量 start********************************/
 //	public static final String REPAYMENT_VIEW = "repayment_info_view";
@@ -283,5 +284,12 @@ public final class Constants {
     public static final String DATA_SEND_SUCESS = "1";
     public static final String DATA_SEND_FAIL = "-1";
     /***************************发送状态常量 end********************************/
+    /***************************项目状态常量 start********************************/
+    public static final String PROJ_STATUS_FINISH = "90";
+    public static final String PROJ_STATUS_REINS = "60";
+    /***************************项目状态常量 end********************************/
 
+    /***************************查询条件常量 start********************************/
+    public static final String QUERY_SELECT_ALL = "ALL";
+    /***************************查询条件常量 end********************************/
 }

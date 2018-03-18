@@ -4,13 +4,11 @@ import com.supervise.config.role.DataType;
 import com.supervise.controller.vo.DataSet;
 import com.supervise.core.data.translate.GenericDataTranslate;
 import com.supervise.dao.mysql.entity.CompensatoryEntity;
-import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
 import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.mapper.CompensatoryMapper;
+import com.supervise.dao.mysql.middleDao.CompensatoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -27,12 +25,16 @@ import java.util.List;
 public class CompensatoryOutport extends AbstractDataOutport{
     @Autowired
     private CompensatoryMapper compensatoryMapper;
+    @Autowired
+    private CompensatoryDao compensatoryDao;
     @Override
     public DataSet dataSet(String date, DataType dataType, UserEntity userEntity) {
-        Example example = new Example(CompensatoryEntity.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("batchDate",date);
-        List<CompensatoryEntity> entities = compensatoryMapper.selectByExample(example);
+//        Example example = new Example(CompensatoryEntity.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("batchDate",date);
+//        List<CompensatoryEntity> entities = compensatoryMapper.selectByExample(example);
+
+        List<CompensatoryEntity>  entities = compensatoryDao.queryCompensatoryFormMiddleDB(date);
         return new GenericDataTranslate<CompensatoryEntity>().translate(entities,dataType.getDataLevel(),userEntity);
 
     }

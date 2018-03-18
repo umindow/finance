@@ -3,8 +3,10 @@ package com.supervise.core.data.loadProces;
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.core.data.spi.GenericDataProcessorHandler;
+import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.entity.RepaymentEntity;
 import com.supervise.dao.mysql.entity.ViewRepaymentEntity;
+import com.supervise.dao.mysql.mapper.BusinessDataMapper;
 import com.supervise.dao.mysql.middleDao.RepaymentDao;
 import com.supervise.dao.mysql.viewDao.ViewRepaymentDao;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,15 +41,31 @@ public class RepaymentLoader extends GenericDataProcessorHandler<List<RepaymentE
     @Autowired
     private RepaymentDao repaymentDao;
 
+    @Autowired
+    private BusinessDataMapper businessDataMapper;
+
     @Override
     public void afterData(List<RepaymentEntity> dataRes) {
         //插入数据库
         if(!CollectionUtils.isEmpty(dataRes)){
             logger.info("RepaymentEntity size :"+dataRes.size());
             for(RepaymentEntity repaymentEntity : dataRes){
-                logger.info(repaymentEntity.getBatchDate());
-                int ret = repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
-                logger.info("ret:"+ret);
+                String batchDate = repaymentEntity.getBatchDate();
+                String orgId = repaymentEntity.getOrgId();
+                String projId = repaymentEntity.getProjId();
+
+                Example example = new Example(RepaymentEntity.class);
+                Example.Criteria fcriteria = example.createCriteria();
+                fcriteria.andEqualTo("batchDate", batchDate);
+                fcriteria.andEqualTo("orgId", orgId);
+                fcriteria.andEqualTo("projId", projId);
+                List<BusinessDataEntity> rtList = businessDataMapper.selectByExample(example);
+
+                //如果在业务信息数据表中查询到项目ID等关键信息，则保存，否则丢弃
+                if(!CollectionUtils.isEmpty(rtList)){
+                    int ret = repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
+                    logger.info("ret:"+ret);
+                }
             }
         }
     }

@@ -18,13 +18,14 @@ public class BusinessDataProvider extends BasicProvider {
 	private final Logger logger = LoggerFactory.getLogger(BusinessDataProvider.class);
 	/**
 	 * 按照指定条件从视图中查询业务数据信息
-	 * @param batchDate 查询批次
+	 * @param batchDate 查询批次以及状态
 	 * @return SQL
 	 */
-	public String queryBusinessDataView(String batchDate){
+	public String queryBusinessDataView(String batchDate,String projStatus){
+
 		String selectSql = "SELECT * FROM "+Constants.BUSINESSDATA_VIEW;
 
-		String whereSql = createWhereSql4batchdate(batchDate);
+		String whereSql = createWhereSql4batchdate(batchDate,projStatus);
 //		System.out.println("whereSql:"+whereSql);
 		logger.info("queryBusinessDataView whereSql :"+whereSql);
 		return selectSql+whereSql;
