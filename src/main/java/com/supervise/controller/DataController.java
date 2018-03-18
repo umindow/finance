@@ -89,7 +89,9 @@ public class DataController {
     private UserEntity userEntity;
 
     @RequestMapping(value = "genericDataList", method = RequestMethod.GET)
-    public ModelAndView list(@RequestParam(value = "p", required = false) Integer pageNum, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "dataType", required = true) Integer dataType) {
+    public ModelAndView list(@RequestParam(value = "p", required = false) Integer pageNum,
+                             @RequestParam(value = "date", required = false) String date,
+                             @RequestParam(value = "dataType", required = true) Integer dataType) {
         if (date == null || "".equals(date)) {
             date = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
         }

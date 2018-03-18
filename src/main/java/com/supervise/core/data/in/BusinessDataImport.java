@@ -328,13 +328,26 @@ public class BusinessDataImport extends AbstractDataImport {
         //删除不在导入EXCEL中的记录
         for(final BusinessDataEntity businessExsit : resList){
             Long exsitId = businessExsit.getId();
+            String exsitclientId = businessExsit.getClientId();
+            String exsitclientName = businessExsit.getClientName();
+            String exsitorgid = businessExsit.getOrgId();
+            String exsitprojid = businessExsit.getProjId();
             isMatch = false;
             for(final BusinessDataEntity businessDataEntity : businessDataEntitys){
-                Long importId =businessDataEntity.getId();
-                if(importId == exsitId){
+                String orgid = businessDataEntity.getOrgId();
+                String projid = businessDataEntity.getProjId();
+                String batch = businessDataEntity.getBatchDate();
+                if(orgid.equalsIgnoreCase(exsitorgid)
+                        &&exsitprojid.equalsIgnoreCase(projid)
+                        &&batch.equalsIgnoreCase(batchDate)){
                     //如果找到，则更新记录
                     isMatch = true;
                     BeanUtils.copyProperties(businessExsit,businessDataEntity);//合并
+                    if(!isComdep){
+                        businessDataEntity.setClientId(exsitclientId);
+                        businessDataEntity.setClientName(exsitclientName);
+                    }
+                    businessDataEntity.setId(exsitId);
                     this.businessDataDao.updateBusinessData(businessDataEntity);
                     break;
                 }
@@ -394,12 +407,12 @@ public class BusinessDataImport extends AbstractDataImport {
             isMatch = false;
             //遍历所有已有ID
             for(final BusinessDataEntity businessExsit : resList){
-                String exorgId = businessExsit.getOrgId();
                 String exprojId = businessExsit.getProjId();
+                String exorgid = businessExsit.getOrgId();
                 String exbatchDate = businessExsit.getBatchDate();
-                if(exorgId.equalsIgnoreCase(imorgId)
-                        &&exprojId.equalsIgnoreCase(improjId)
-                        &&exbatchDate.equalsIgnoreCase(imbatchDate)){
+                if(exprojId.equalsIgnoreCase(improjId)
+                        &&exbatchDate.equalsIgnoreCase(imbatchDate)
+                        &&imorgId.equalsIgnoreCase(exorgid)){
                     //如果找到记录，则跳过
                     isMatch = true;
                     break;
@@ -453,6 +466,7 @@ public class BusinessDataImport extends AbstractDataImport {
             businessDataEntity.setClientType(Constants.NULLSTR);
         }
         //客户编码
+
         if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("client_id"))) {
             businessDataEntity.setClientId(Constants.NULLSTR);
         }
