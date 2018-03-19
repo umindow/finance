@@ -90,42 +90,55 @@ public class DataController {
 
     @RequestMapping(value = "genericDataList", method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "p", required = false) Integer pageNum,
-                             @RequestParam(value = "date", required = false) String date,
-                             @RequestParam(value = "dataType", required = true) Integer dataType) {
-        if (date == null || "".equals(date)) {
-            date = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+                             @RequestParam(value = "batchDate", required = false) String batchDate,
+                             @RequestParam(value = "dataType", required = true) Integer dataType,
+                             @RequestParam(value = "creditStartDate", required = false) String creditStartDate,
+                             @RequestParam(value = "creditEndDate", required = false) String creditEndDate,
+                             @RequestParam(value = "projId", required = false) String projId,
+                             @RequestParam(value = "clientName", required = false) String clientName) {
+        if (batchDate == null || "".equals(batchDate)) {
+            batchDate = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+        }
+        ViewVo viewVo = new ViewVo();
+        viewVo.setBatchDate(batchDate);
+        viewVo.setClientName(clientName);
+        viewVo.setCreditStartDate(creditStartDate);
+        viewVo.setCreditEndDate(creditEndDate);
+        viewVo.setProjId(projId);
+        viewVo.setDataType(dataType);
+        if(dataType == 200){
+            viewVo.setCreditType(true);
+        }else{
+            viewVo.setCreditType(false);
         }
         if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == dataType.intValue()) {
-            return new BankCreditDataList().dataList(pageNum, date, dataType);
+            return new BankCreditDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == dataType.intValue()) {
-            return new TraceDataList().dataList(pageNum, date, dataType);
+            return new TraceDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == dataType.intValue()) {
-            return new ReplaceDataList().dataList(pageNum, date, dataType);
+            return new ReplaceDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == dataType.intValue()) {
-            return new RefundAndFeeCreditDataList().dataList(pageNum, date, dataType);
+            return new RefundAndFeeCreditDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
-            return new BusinessDataList().dataList(pageNum, date, dataType);
+            return new BusinessDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == dataType.intValue()) {
-            return new RepaymentDataList().dataList(pageNum, date, dataType);
+            return new RepaymentDataList().dataList(pageNum, viewVo, dataType);
         } else {
             return null;
         }
     }
 
     protected interface SimpleDataList {
-        ModelAndView dataList(Integer pageNum, String date, Integer dataType);
+        ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType);
     }
 
     protected class BankCreditDataList implements SimpleDataList {
         @Override
-        public ModelAndView dataList(Integer pageNum, String date, Integer dataType) {
+        public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<BankCreditEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
             Example entityExample = new Example(BankCreditEntity.class);
             Example.Criteria criteria = entityExample.createCriteria();
-            if (null != date && !"".equals(date)) {
-                criteria.andEqualTo("batchDate", date);
-            }
             List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(entityExample);
             if (CollectionUtils.isEmpty(bankCreditEntities)) {
                 pager.setPageNum(1);
@@ -133,9 +146,6 @@ public class DataController {
             }
             DataSet dataSet = new GenericDataTranslate<BankCreditEntity>().translate(bankCreditEntities, DataType.SUPERVISE_BANK_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
-            ViewVo viewVo = new ViewVo();
-            viewVo.setDataType(dataType);
-            viewVo.setDate(date);
             viewVo.setDeleteUrl("/data/deleteData");
             viewVo.setModuleName(DataType.SUPERVISE_BANK_DATA.getDataName());
             viewVo.setModifyUrl("/data/bankCreditModify");
@@ -147,14 +157,11 @@ public class DataController {
     //追偿
     protected class TraceDataList implements SimpleDataList {
         @Override
-        public ModelAndView dataList(Integer pageNum, String date, Integer dataType) {
+        public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<RecourseEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
             Example entityExample = new Example(RecourseEntity.class);
             Example.Criteria criteria = entityExample.createCriteria();
-            if (null != date && !"".equals(date)) {
-                criteria.andEqualTo("batchDate", date);
-            }
             List<RecourseEntity> recourseEntities = recourseMapper.selectByExample(entityExample);
             List<RecourseEntity> viewDataEntities =  new ArrayList<RecourseEntity>();
             if (CollectionUtils.isEmpty(recourseEntities)) {
@@ -165,7 +172,7 @@ public class DataController {
                 for(RecourseEntity recourseEntity:recourseEntities){
                     String projId = recourseEntity.getProjId();
                     String orgId  = recourseEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -182,9 +189,6 @@ public class DataController {
             }
             DataSet dataSet = new GenericDataTranslate<RecourseEntity>().translate(viewDataEntities, DataType.SUPERVISE_TRACE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
-            ViewVo viewVo = new ViewVo();
-            viewVo.setDataType(dataType);
-            viewVo.setDate(date);
             viewVo.setDeleteUrl("/data/deleteData");
             viewVo.setModuleName(DataType.SUPERVISE_TRACE_DATA.getDataName());
             viewVo.setModifyUrl("/data/recourseModify");
@@ -196,14 +200,11 @@ public class DataController {
     //代偿
     protected class ReplaceDataList implements SimpleDataList {
         @Override
-        public ModelAndView dataList(Integer pageNum, String date, Integer dataType) {
+        public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<CompensatoryEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
             Example entityExample = new Example(CompensatoryEntity.class);
             Example.Criteria criteria = entityExample.createCriteria();
-            if (null != date && !"".equals(date)) {
-                criteria.andEqualTo("batchDate", date);
-            }
             List<CompensatoryEntity> compensatoryEntities = compensatoryMapper.selectByExample(entityExample);
             List<CompensatoryEntity> viewDataEntities =  new ArrayList<CompensatoryEntity>();
             if (CollectionUtils.isEmpty(compensatoryEntities)) {
@@ -214,7 +215,7 @@ public class DataController {
                 for(CompensatoryEntity compensatoryEntity:compensatoryEntities){
                     String projId = compensatoryEntity.getProjId();
                     String orgId  = compensatoryEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -231,9 +232,6 @@ public class DataController {
             }
             DataSet dataSet = new GenericDataTranslate<CompensatoryEntity>().translate(viewDataEntities, DataType.SUPERVISE_REPLACE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
-            ViewVo viewVo = new ViewVo();
-            viewVo.setDataType(dataType);
-            viewVo.setDate(date);
             viewVo.setDeleteUrl("/data/deleteData");
             viewVo.setModuleName(DataType.SUPERVISE_REPLACE_DATA.getDataName());
             viewVo.setModifyUrl("/data/componsatoryModify");
@@ -244,14 +242,11 @@ public class DataController {
 
     protected class RefundAndFeeCreditDataList implements SimpleDataList {
         @Override
-        public ModelAndView dataList(Integer pageNum, String date, Integer dataType) {
+        public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<FeeAndRefundEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
             Example entityExample = new Example(FeeAndRefundEntity.class);
             Example.Criteria criteria = entityExample.createCriteria();
-            if (null != date && !"".equals(date)) {
-                criteria.andEqualTo("batchDate", date);
-            }
             List<FeeAndRefundEntity> feeAndRefundEntities = feeAndRefundMapper.selectByExample(entityExample);
             List<FeeAndRefundEntity> viewDataEntities =  new ArrayList<FeeAndRefundEntity>();
             if (CollectionUtils.isEmpty(feeAndRefundEntities)) {
@@ -262,7 +257,7 @@ public class DataController {
                 for(FeeAndRefundEntity feeAndRefundEntity:feeAndRefundEntities){
                     String projId = feeAndRefundEntity.getProjId();
                     String orgId  = feeAndRefundEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -279,9 +274,6 @@ public class DataController {
             }
             DataSet dataSet = new GenericDataTranslate<FeeAndRefundEntity>().translate(viewDataEntities, DataType.SUPERVISE_FEE_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
-            ViewVo viewVo = new ViewVo();
-            viewVo.setDataType(dataType);
-            viewVo.setDate(date);
             viewVo.setDeleteUrl("/data/deleteData");
             viewVo.setModuleName(DataType.SUPERVISE_FEE_DATA.getDataName());
             viewVo.setModifyUrl("/data/feeAndRefundModfiy");
@@ -292,14 +284,11 @@ public class DataController {
 
     protected class BusinessDataList implements SimpleDataList {
         @Override
-        public ModelAndView dataList(Integer pageNum, String date, Integer dataType) {
+        public ModelAndView dataList(Integer pageNum, ViewVo viewVo,Integer dataType) {
             Page<BusinessDataEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
             Example entityExample = new Example(BankCreditEntity.class);
             Example.Criteria criteria = entityExample.createCriteria();
-            if (null != date && !"".equals(date)) {
-                criteria.andEqualTo("batchDate", date);
-            }
             List<BusinessDataEntity> businessDataEntities = businessDataMapper.selectByExample(entityExample);
             if (CollectionUtils.isEmpty(businessDataEntities)) {
                 pager.setPageNum(1);
@@ -307,9 +296,6 @@ public class DataController {
             }
             DataSet dataSet = new GenericDataTranslate<BusinessDataEntity>().translate(businessDataEntities, DataType.SUPERVISE_BIZ_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
-            ViewVo viewVo = new ViewVo();
-            viewVo.setDataType(dataType);
-            viewVo.setDate(date);
             viewVo.setDeleteUrl("/data/deleteData");
             viewVo.setModuleName(DataType.SUPERVISE_BIZ_DATA.getDataName());
             viewVo.setModifyUrl("/data/businessModify");
@@ -320,14 +306,11 @@ public class DataController {
 
     protected class RepaymentDataList implements SimpleDataList {
         @Override
-        public ModelAndView dataList(Integer pageNum, String date, Integer dataType) {
+        public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<RepaymentEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
             Example entityExample = new Example(RepaymentEntity.class);
             Example.Criteria criteria = entityExample.createCriteria();
-            if (null != date && !"".equals(date)) {
-                criteria.andEqualTo("batchDate", date);
-            }
             List<RepaymentEntity> repaymentEntities = repaymentMapper.selectByExample(entityExample);
             List<RepaymentEntity> viewDataEntities =  new ArrayList<RepaymentEntity>();
             if (CollectionUtils.isEmpty(repaymentEntities)) {
@@ -338,7 +321,7 @@ public class DataController {
                 for(RepaymentEntity repaymentEntity:repaymentEntities){
                     String projId = repaymentEntity.getProjId();
                     String orgId  = repaymentEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(date,orgId,projId);
+                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -355,9 +338,6 @@ public class DataController {
             }
             DataSet dataSet = new GenericDataTranslate<RepaymentEntity>().translate(viewDataEntities, DataType.SUPERVISE_REBACK_DATA.getDataLevel(), SessionUser.INSTANCE.getCurrentUser());
             view.addObject("dataSet", dataSet);
-            ViewVo viewVo = new ViewVo();
-            viewVo.setDataType(dataType);
-            viewVo.setDate(date);
             viewVo.setDeleteUrl("/data/deleteData");
             viewVo.setModuleName(DataType.SUPERVISE_REBACK_DATA.getDataName());
             viewVo.setModifyUrl("/data/repaymentModify");
@@ -402,31 +382,37 @@ public class DataController {
 
     @ResponseBody
     @RequestMapping("/outport")
-    public String dataOutport(@RequestParam(value = "type", required = false) Integer type, @RequestParam(value = "date", required = false) String date, HttpServletResponse response, HttpServletRequest request) {
+    public String dataOutport(@RequestParam(value = "batchDate", required = false) String batchDate,
+                              @RequestParam(value = "dataType", required = true) Integer dataType,
+                              @RequestParam(value = "creditStartDate", required = false) String creditStartDate,
+                              @RequestParam(value = "creditEndDate", required = false) String creditEndDate,
+                              @RequestParam(value = "projId", required = false) String projId,
+                              @RequestParam(value = "clientName", required = false) String clientName,
+            HttpServletResponse response, HttpServletRequest request) {
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
         try {
-            String fileName = DataType.typeOfType(type).getDataEnName() + ".xls";
+            String fileName = DataType.typeOfType(dataType.intValue()).getDataEnName() + ".xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             ServletOutputStream servletOutputStream = response.getOutputStream();
             userEntity = SessionUser.INSTANCE.getCurrentUser();
-            if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == type) {
+            if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == dataType.intValue()) {
                 bankCreditOutport.export(servletOutputStream, DataType.SUPERVISE_BANK_DATA, date, userEntity);
             }
-            if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == type) {
+            if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == dataType.intValue()) {
                 recourseOutport.export(servletOutputStream, DataType.SUPERVISE_TRACE_DATA, date, userEntity);
                 //追偿
             }
-            if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == type) {
+            if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == dataType.intValue()) {
                 repaymentOutport.export(servletOutputStream, DataType.SUPERVISE_REBACK_DATA, date, userEntity);
             }
-            if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == type) {
+            if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == dataType.intValue()) {
                 compensatoryOutport.export(servletOutputStream, DataType.SUPERVISE_REPLACE_DATA, date, userEntity);
             }
-            if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == type) {
+            if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == dataType.intValue()) {
                 feeAndRefundOutport.export(servletOutputStream, DataType.SUPERVISE_FEE_DATA, date, userEntity);
             }
-            if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == type) {
+            if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
                 businessOutport.export(servletOutputStream, DataType.SUPERVISE_BIZ_DATA, date, userEntity);
             }
         } catch (Exception e) {

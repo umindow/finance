@@ -19,5 +19,13 @@ public class ViewVo implements Serializable{
     private int dataType;//数据类型
     private String modifyUrl;//修改url
     private String deleteUrl;//
-    private String date;
+    //银行授信
+    private String creditStartDate;//格式 "yyyy-MM-dd"
+    private String creditEndDate;//格式 "yyyy-MM-dd"
+    //其他
+    private String projId;//
+    private String clientName;
+    private String batchDate;//格式 "yyyy-MM-dd"
+
+    private boolean creditType;
 }
