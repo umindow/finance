@@ -105,8 +105,11 @@ public abstract class AbstractSenderSchedule<T> extends AbstractSchedule {
             xmlGregorianCalendar.setMonth(calendar.get(Calendar.MONTH)+1);
             xmlGregorianCalendar.setDay(calendar.get(Calendar.DAY_OF_MONTH));
             xmlGregorianCalendar.setTime(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND), calendar.get(Calendar.MILLISECOND));
+            return xmlGregorianCalendar;
+        }else{
+            return  null;
         }
-        return xmlGregorianCalendar;
+
     }
     public class DataSpliter<T> implements Spliter<T> {
         @Override
