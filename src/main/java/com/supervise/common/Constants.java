@@ -291,5 +291,7 @@ public final class Constants {
 
     /***************************查询条件常量 start********************************/
     public static final String QUERY_SELECT_ALL = "ALL";
+    public static final String QUERY_MIN_DAT = "1900-01-01";
+    public static final String QUERY_MAX_DAT = "2199-01-01";
     /***************************查询条件常量 end********************************/
 }

@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.mapper.BankCreditMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
@@ -129,5 +130,31 @@ public class BankCreditDao {
 		Example.Criteria criteria = example.createCriteria();
 		criteria.andEqualTo("batchDate",batchDate);
 		bankCreditMapper.deleteByExample(example);
+	}
+
+	/**
+	 * 按照指定条件从中间库中查询银行授信信息
+	 * @param date
+	 * @param cstartDate >=授信开始日期
+	 * @param cendDate   <=授信结束日期
+	 * @return List<BankCreditEntity>
+	 */
+	public List<BankCreditEntity> queryBankCreditByCondition(String date,String cstartDate,String cendDate){
+
+		Example example = new Example(BankCreditEntity.class);
+		Example.Criteria fcriteria = example.createCriteria();
+		if(!StringUtils.isEmpty(cstartDate)){
+			Date startD = DateUtils.String2Date(cstartDate,Constants.YYYY_MM_DD,Locale.ENGLISH);
+			fcriteria.andGreaterThanOrEqualTo("creditStartDate", startD);
+		}
+		if(!StringUtils.isEmpty(cendDate)){
+			Date endD = DateUtils.String2Date(cendDate,Constants.YYYY_MM_DD,Locale.ENGLISH);
+			fcriteria.andLessThanOrEqualTo("creditEndDate", endD);
+		}
+		if (!StringUtils.isEmpty(date)) {
+			fcriteria.andEqualTo("batchDate", date);
+		}
+		List<BankCreditEntity> responseList  = this.bankCreditMapper.selectByExample(example);
+		return responseList;
 	}
 }
