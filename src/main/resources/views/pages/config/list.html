@@ -21,9 +21,7 @@ Finance  - 配置管理
                             <thead>
                             <th>配置类型</th>
                             <th>Job名称</th>
-                            <th>Job组</th>
-                            <th>JobTrigger组</th>
-                            <th>Job Cron</th>
+                            <th>Job定时时间(点)</th>
                             <th>Job数据类型</th>
                             <th>操作</th>
                             </thead>
@@ -34,11 +32,7 @@ Finance  - 配置管理
                                 </td>
                                 <td>${job.jobInfo.jobName}
                                 </td>
-                                <td>${job.jobInfo.jobGroup}
-                                </td>
-                                <td>${job.jobInfo.jobTriggerGroup}
-                                </td>
-                                <td>${job.jobInfo.cron}
+                                <td>${job.jobInfo.scheduleTime}
                                 </td>
                                 <td>${job.jobInfo.jobDataType}
                                 </td>

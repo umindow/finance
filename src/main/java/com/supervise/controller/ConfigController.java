@@ -1,6 +1,7 @@
 package com.supervise.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.supervise.common.Constants;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
 import com.supervise.controller.vo.ConfigVo;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by xishui.hb on 2018/2/2 下午3:05.
@@ -52,6 +55,13 @@ public class ConfigController {
                 configVo.setConfigTypeDesc(ConfigEntity.ConfigType.getConfigTypeDesc(configEntity.getConfigType()));
                 configVo.setId(configEntity.getId());
                 configVo.setJobInfo(JSON.parseObject(configEntity.getConfigContent(), JobInfo.class));
+                JobInfo job = JSON.parseObject(configEntity.getConfigContent(), JobInfo.class);
+                String cron = job.getCron();
+                if(StringUtils.isEmpty(job.getScheduleTime())){
+                    String time  = createScheduleTime(cron);
+                    job.setScheduleTime(time);
+                }
+                configVo.setJobInfo(job);
                 configVos.add(configVo);
             }
         }
@@ -71,12 +81,18 @@ public class ConfigController {
     @ResponseBody
     public Result saveUser(ConfigVo configVo) {
         if(null == configVo || null ==configVo.getJobInfo() || null == configVo.getJobInfo().getJobName()
-                || null == configVo.getJobInfo().getCron()){
-            return Result.fail("添加失败,Job名及Cron表达式不能为空.");
+                || null == configVo.getJobInfo().getScheduleTime()){
+            return Result.fail("添加失败,Job名及定时时间不能为空.");
         }
-        if(!isValidExpression(configVo.getJobInfo().getCron())){
-            return Result.fail("Cron表达式不符合规范.");
+        String scheduleTime = configVo.getJobInfo().getScheduleTime();
+        if(!isValidTimeExpression(scheduleTime)){
+            return Result.fail("定时时间不符合规范.");
         }
+        String cron = createCron(scheduleTime);
+        if(!isValidCronExpression(cron)){
+            return Result.fail("定时时间不符合规范.");
+        }
+        configVo.getJobInfo().setCron(cron);
         if(StringUtils.isEmpty(configVo.getJobInfo().getJobGroup())){
             configVo.getJobInfo().setJobGroup(JobInfo.DEFAULT_JOB_GROUP);
         }
@@ -111,7 +127,7 @@ public class ConfigController {
         return Result.success();
     }
 
-    private static boolean isValidExpression(final String cronExpression){
+    private static boolean isValidCronExpression(final String cronExpression){
         CronTriggerImpl trigger = new CronTriggerImpl();
         try {
             trigger.setCronExpression(cronExpression);
@@ -121,5 +137,52 @@ public class ConfigController {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private static boolean isValidTimeExpression(final String timeExpression){
+        // 验证规则
+        String regEx = "^((\\d)|(1\\d)|(2[0-4]))$";//支持0
+        // 编译正则表达式
+        Pattern pattern = Pattern.compile(regEx);
+        // 忽略大小写的写法
+        Matcher matcher = pattern.matcher(timeExpression);
+        // 字符串是否与正则表达式相匹配
+        boolean rs = matcher.matches();
+
+        return rs;
+    }
+
+    /**
+     * 根据表达式获取定时表达式:
+     * @param schedule
+     * @return
+     */
+    private String createCron(String schedule){
+        StringBuffer cron = new StringBuffer();
+        if(!StringUtils.isEmpty(schedule)){
+            cron.append("0");
+            cron.append(Constants.SPACE);
+            cron.append("0");
+            cron.append(Constants.SPACE);
+            cron.append(schedule);
+            cron.append(Constants.SPACE);
+            cron.append(Constants.AST);
+            cron.append(Constants.SPACE);
+            cron.append(Constants.AST);
+            cron.append(Constants.SPACE);
+            cron.append(Constants.QUESTION);
+        }
+        return cron.toString();
+    }
+
+    private  String  createScheduleTime(String cron){
+        String time = "";
+        if(!StringUtils.isEmpty(cron)&&isValidCronExpression(cron)){
+            String param [] = cron.split(Constants.SPACE);
+            if(param.length>=3){
+                time = param[2];
+            }
+        }
+        return time;
     }
 }
