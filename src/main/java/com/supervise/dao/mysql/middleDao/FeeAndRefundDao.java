@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
 import com.supervise.dao.mysql.mapper.FeeAndRefundMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
@@ -130,5 +131,25 @@ public class FeeAndRefundDao {
 		Example.Criteria criteria = example.createCriteria();
 		criteria.andEqualTo("batchDate", batchDate);
 		this.feeAndRefundMapper.deleteByExample(example);
+	}
+
+	/**
+	 * 按照指定条件从中间库中查询收退费信息
+	 * @param date
+	 * @param qprojId 模糊查询
+	 * @return List<FeeAndRefundEntity>
+	 */
+	public List<FeeAndRefundEntity> queryFeeAndRefundByCondition(String date,String qprojId){
+
+		Example example = new Example(FeeAndRefundEntity.class);
+		Example.Criteria fcriteria = example.createCriteria();
+		if (!StringUtils.isEmpty(date)) {
+			fcriteria.andEqualTo("batchDate", date);
+		}
+		if(!StringUtils.isEmpty(qprojId)){
+			fcriteria.andLike("projId", Constants.PRE_CENT+qprojId+Constants.PRE_CENT);
+		}
+		List<FeeAndRefundEntity> responseList  = this.feeAndRefundMapper.selectByExample(example);
+		return responseList;
 	}
 }

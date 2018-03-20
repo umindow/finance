@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.CompensatoryEntity;
 import com.supervise.dao.mysql.mapper.CompensatoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
@@ -130,5 +131,25 @@ public class CompensatoryDao {
 		Example.Criteria criteria = example.createCriteria();
 		criteria.andEqualTo("batchDate", batchDate);
 		this.compensatoryMapper.deleteByExample(example);
+	}
+
+	/**
+	 * 按照指定条件从中间库中查询代偿信息
+	 * @param date
+	 * @param qprojId 模糊查询
+	 * @return List<CompensatoryEntity>
+	 */
+	public List<CompensatoryEntity> queryCompensatoryByCondition(String date,String qprojId){
+
+		Example example = new Example(CompensatoryEntity.class);
+		Example.Criteria fcriteria = example.createCriteria();
+		if (!StringUtils.isEmpty(date)) {
+			fcriteria.andEqualTo("batchDate", date);
+		}
+		if(!StringUtils.isEmpty(qprojId)){
+			fcriteria.andLike("projId", Constants.PRE_CENT+qprojId+Constants.PRE_CENT);
+		}
+		List<CompensatoryEntity> responseList  = this.compensatoryMapper.selectByExample(example);
+		return responseList;
 	}
 }

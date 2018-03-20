@@ -2,14 +2,13 @@ package com.supervise.core.data.out;
 
 import com.supervise.config.role.DataType;
 import com.supervise.controller.vo.DataSet;
+import com.supervise.controller.vo.ViewVo;
 import com.supervise.core.data.translate.GenericDataTranslate;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.entity.UserEntity;
-import com.supervise.dao.mysql.mapper.BankCreditMapper;
+import com.supervise.dao.mysql.middleDao.BankCreditDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -25,13 +24,12 @@ import java.util.List;
 @Service
 public class BankCreditOutport extends AbstractDataOutport{
     @Autowired
-    private BankCreditMapper bankCreditMapper;
+    private BankCreditDao bankCreditDao;
+
     @Override
-    public DataSet dataSet(String date,DataType dataType, UserEntity userEntity) {
-        Example example = new Example(BankCreditEntity.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("batchDate",date);
-        List<BankCreditEntity> entities = bankCreditMapper.selectByExample(example);
+    public DataSet dataSet(ViewVo viewVo,DataType dataType, UserEntity userEntity) {
+
+        List<BankCreditEntity> entities = bankCreditDao.queryBankCreditByCondition(viewVo.getBatchDate(), viewVo.getCreditStartDate(), viewVo.getCreditEndDate());
         return new GenericDataTranslate<BankCreditEntity>().translate(entities,dataType.getDataLevel(),userEntity);
 
     }

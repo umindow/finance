@@ -153,8 +153,8 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
             if (!CollectionUtils.isEmpty(feeEntityList)) {
                 //不为空，则表示做更新
                 for(FeeAndRefundEntity fee :feeEntityList){
-                    fee.setId(feeAndRefundEntity.getId());
-                    this.feeAndRefundDao.updateFeeAndRefund(fee);
+                    feeAndRefundEntity.setId(fee.getId());
+                    this.feeAndRefundDao.updateFeeAndRefund(feeAndRefundEntity);
                 }
             }else{
                 //否则表示新增，同时查询业务数据，查看是否立项，如果有立项则新增，否则丢弃

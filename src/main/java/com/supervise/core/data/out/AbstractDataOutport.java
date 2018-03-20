@@ -5,8 +5,8 @@ import com.supervise.config.role.DataType;
 import com.supervise.controller.vo.DataSet;
 import com.supervise.controller.vo.DataVo;
 import com.supervise.controller.vo.FieldValue;
+import com.supervise.controller.vo.ViewVo;
 import com.supervise.dao.mysql.entity.UserEntity;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -27,8 +27,8 @@ import java.util.Date;
  */
 public abstract class AbstractDataOutport implements DataOutport {
     @Override
-    public void export(ServletOutputStream servletOutputStream, DataType dataType, String date, UserEntity userEntity) throws Exception {
-        DataSet dataSet = dataSet(date, dataType, userEntity);
+    public void export(ServletOutputStream servletOutputStream, DataType dataType, ViewVo viewVo, UserEntity userEntity) throws Exception {
+        DataSet dataSet = dataSet(viewVo, dataType, userEntity);
         if (null == dataSet || CollectionUtils.isEmpty(dataSet.getFields())) {
             throw new Exception("无数据项.");
         }
@@ -80,5 +80,5 @@ public abstract class AbstractDataOutport implements DataOutport {
         servletOutputStream.close();
     }
 
-    abstract DataSet dataSet(String date, DataType dataType, UserEntity userEntity);
+    abstract DataSet dataSet(ViewVo date, DataType dataType, UserEntity userEntity);
 }

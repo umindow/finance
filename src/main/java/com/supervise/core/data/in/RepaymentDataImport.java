@@ -153,7 +153,8 @@ public class RepaymentDataImport extends AbstractDataImport {
                 boolean hasID = false;
                 for(RepaymentEntity repay :repayEntityList){
                     if(repaymentEntity.getId()== repay.getId()){
-                        this.repaymentDao.updateRepayment(repay);
+                        this.repaymentDao.updateRepayment(repaymentEntity);
+                        hasID = true;
                         break;
                     }
                 }

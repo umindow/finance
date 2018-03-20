@@ -147,8 +147,8 @@ public class RecourseDataImport extends AbstractDataImport {
             if (!CollectionUtils.isEmpty(recourseEntityList)) {
                 //不为空，则表示做更新
                 for(RecourseEntity recourse :recourseEntityList){
-                    recourse.setId(recourseEntity.getId());
-                    this.recourseDao.updateRecourse(recourse);
+                    recourseEntity.setId(recourse.getId());
+                    this.recourseDao.updateRecourse(recourseEntity);
                 }
             }else{
                 //否则表示新增，同时查询业务数据，查看是否立项，如果有立项则新增，否则丢弃

@@ -2,14 +2,18 @@ package com.supervise.core.data.out;
 
 import com.supervise.config.role.DataType;
 import com.supervise.controller.vo.DataSet;
+import com.supervise.controller.vo.ViewVo;
 import com.supervise.core.data.translate.GenericDataTranslate;
+import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.entity.CompensatoryEntity;
 import com.supervise.dao.mysql.entity.UserEntity;
-import com.supervise.dao.mysql.mapper.CompensatoryMapper;
+import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import com.supervise.dao.mysql.middleDao.CompensatoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,19 +27,40 @@ import java.util.List;
  */
 @Service
 public class CompensatoryOutport extends AbstractDataOutport{
+//    @Autowired
+//    private CompensatoryMapper compensatoryMapper;
     @Autowired
-    private CompensatoryMapper compensatoryMapper;
+    private BusinessDataDao businessDataDao;
+
     @Autowired
     private CompensatoryDao compensatoryDao;
     @Override
-    public DataSet dataSet(String date, DataType dataType, UserEntity userEntity) {
-//        Example example = new Example(CompensatoryEntity.class);
-//        Example.Criteria criteria = example.createCriteria();
-//        criteria.andEqualTo("batchDate",date);
-//        List<CompensatoryEntity> entities = compensatoryMapper.selectByExample(example);
-
-        List<CompensatoryEntity>  entities = compensatoryDao.queryCompensatoryFormMiddleDB(date);
-        return new GenericDataTranslate<CompensatoryEntity>().translate(entities,dataType.getDataLevel(),userEntity);
+    public DataSet dataSet(ViewVo viewVo, DataType dataType, UserEntity userEntity) {
+        List<CompensatoryEntity> entities = compensatoryDao.queryCompensatoryByCondition(viewVo.getBatchDate(), viewVo.getProjId());
+        List<CompensatoryEntity> viewDataEntities =  new ArrayList<CompensatoryEntity>();
+        if (!CollectionUtils.isEmpty(entities)){
+             //去业务表中获取客户编号以及客户名称
+            for(CompensatoryEntity compensatoryEntity:entities){
+                String projId = compensatoryEntity.getProjId();
+                //String orgId  = compensatoryEntity.getOrgId();
+                List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, viewVo.getClientName());
+                if(!CollectionUtils.isEmpty(businessDataEntities)){
+                    BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
+                    String clientId = businessDataEntity.getClientId();
+                    String clientName = businessDataEntity.getClientName();
+                    compensatoryEntity.setClientId(clientId);
+                    compensatoryEntity.setClientName(clientName);
+                    viewDataEntities.add(compensatoryEntity);
+                }else{
+                    //如果没有在业务表中查询到项目编号，则视为脏数据，删除
+                    List<BusinessDataEntity> exentities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, "");
+                    if(CollectionUtils.isEmpty(exentities)){
+                        compensatoryDao.deleteCompensatoryByID(compensatoryEntity.getId());
+                    }
+                }
+            }
+        }
+            return new GenericDataTranslate<CompensatoryEntity>().translate(viewDataEntities,dataType.getDataLevel(),userEntity);
 
     }
 }
