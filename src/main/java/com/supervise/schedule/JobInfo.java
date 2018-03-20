@@ -20,6 +20,7 @@ public class JobInfo {
     private String jobGroup;
     private String jobTriggerGroup;
     private String jobDataType;//对应DataType.dataName
+    private String scheduleTime;//单位为小时
 
     @Override
     public String toString() {
@@ -29,6 +30,7 @@ public class JobInfo {
                 ", jobGroup='" + jobGroup + '\'' +
                 ", jobTriggerGroup='" + jobTriggerGroup + '\'' +
                 ", jobDataType='" + jobDataType + '\'' +
+                ", scheduleTime='" + scheduleTime + '\'' +
                 '}';
     }
 }

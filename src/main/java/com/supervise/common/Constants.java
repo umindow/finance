@@ -21,7 +21,15 @@ public final class Constants {
     /***************************分隔符常量 begin******************************/
 
     /**
-     * 反斜线标识
+     * 星号
+     */
+    public static final String AST = "*";
+    /**
+     * 问号
+     */
+    public static final String QUESTION = "?";
+    /**
+     * 百分号
      */
     public static final String PRE_CENT="%";
 	/**
@@ -64,6 +72,7 @@ public final class Constants {
 	 * #分隔符
 	 */
 	public static final String POUND = "#";
+
 
 	/**
 	 * 分号分隔符

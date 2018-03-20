@@ -3,8 +3,7 @@
 <configuration scan="true" scanPeriod="300 seconds" debug="false">
 
     <!-- 配置文件，包括此文件内的所有变量的配置 -->
-    <property name="LOG_PATH" value="/data/www/java/work/logs"></property>
-    <!--<property name="LOG_PATH" value="/home/operate/opt/app/log/finance"/>-->
+    <property name="LOG_PATH" value="opt/app/log/finance"/>
     <property name="APP_NAME" value="finance"/>
     <property name="MY_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36}:%L- %msg%n"/>
 
