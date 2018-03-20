@@ -2,15 +2,13 @@ package com.supervise.core.data.out;
 
 import com.supervise.config.role.DataType;
 import com.supervise.controller.vo.DataSet;
+import com.supervise.controller.vo.ViewVo;
 import com.supervise.core.data.translate.GenericDataTranslate;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
-import com.supervise.dao.mysql.entity.FeeAndRefundEntity;
 import com.supervise.dao.mysql.entity.UserEntity;
-import com.supervise.dao.mysql.mapper.BusinessDataMapper;
+import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -26,13 +24,11 @@ import java.util.List;
 @Service
 public class BusinessOutport extends AbstractDataOutport{
     @Autowired
-    private BusinessDataMapper businessDataMapper;
+    private BusinessDataDao businessDataDao;
     @Override
-    public DataSet dataSet(String date,DataType dataType,UserEntity userEntity) {
-        Example example = new Example(BusinessDataEntity.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("batchDate",date);
-        List<BusinessDataEntity> entities = businessDataMapper.selectByExample(example);
+    public DataSet dataSet(ViewVo viewVo,DataType dataType,UserEntity userEntity) {
+
+        List<BusinessDataEntity> entities = businessDataDao.queryBusinessDataByCondition(viewVo.getBatchDate(), viewVo.getProjId(), viewVo.getClientName());
         return new GenericDataTranslate<BusinessDataEntity>().translate(entities,dataType.getDataLevel(),userEntity);
 
     }

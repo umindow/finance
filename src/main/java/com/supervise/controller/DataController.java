@@ -15,6 +15,7 @@ import com.supervise.core.data.out.*;
 import com.supervise.core.data.translate.GenericDataTranslate;
 import com.supervise.dao.mysql.entity.*;
 import com.supervise.dao.mysql.mapper.*;
+import com.supervise.dao.mysql.middleDao.*;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,18 @@ public class DataController {
 
     private final Logger logger = LoggerFactory.getLogger(DataController.class);
 
+    @Autowired
+    private BankCreditDao bankCreditDao;
+    @Autowired
+    private BusinessDataDao businessDataDao;
+    @Autowired
+    private RepaymentDao repaymentDao;
+    @Autowired
+    private CompensatoryDao compensatoryDao;
+    @Autowired
+    private FeeAndRefundDao feeAndRefundDao;
+    @Autowired
+    private RecourseDao recourseDao;
     @Autowired
     private BankCreditMapper bankCreditMapper;
     @Autowired
@@ -118,7 +131,7 @@ public class DataController {
         } else if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == dataType.intValue()) {
             return new ReplaceDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == dataType.intValue()) {
-            return new RefundAndFeeCreditDataList().dataList(pageNum, viewVo, dataType);
+            return new FeeAndRefundDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
             return new BusinessDataList().dataList(pageNum, viewVo, dataType);
         } else if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == dataType.intValue()) {
@@ -137,9 +150,7 @@ public class DataController {
         public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<BankCreditEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
-            Example entityExample = new Example(BankCreditEntity.class);
-            Example.Criteria criteria = entityExample.createCriteria();
-            List<BankCreditEntity> bankCreditEntities = bankCreditMapper.selectByExample(entityExample);
+            List<BankCreditEntity> bankCreditEntities = bankCreditDao.queryBankCreditByCondition(viewVo.getBatchDate(),viewVo.getCreditStartDate(),viewVo.getCreditEndDate());
             if (CollectionUtils.isEmpty(bankCreditEntities)) {
                 pager.setPageNum(1);
                 pager.setPages(1);
@@ -160,9 +171,7 @@ public class DataController {
         public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<RecourseEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
-            Example entityExample = new Example(RecourseEntity.class);
-            Example.Criteria criteria = entityExample.createCriteria();
-            List<RecourseEntity> recourseEntities = recourseMapper.selectByExample(entityExample);
+            List<RecourseEntity> recourseEntities = recourseDao.queryRecourseByCondition(viewVo.getBatchDate(),viewVo.getProjId());
             List<RecourseEntity> viewDataEntities =  new ArrayList<RecourseEntity>();
             if (CollectionUtils.isEmpty(recourseEntities)) {
                 pager.setPageNum(1);
@@ -171,8 +180,8 @@ public class DataController {
                 //去业务表中获取客户编号以及客户名称
                 for(RecourseEntity recourseEntity:recourseEntities){
                     String projId = recourseEntity.getProjId();
-                    String orgId  = recourseEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
+                    //String orgId  = recourseEntity.getOrgId();
+                    List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, viewVo.getClientName());
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -182,7 +191,11 @@ public class DataController {
                         viewDataEntities.add(recourseEntity);
                     }else{
                         //如果没有在业务表中查询到项目编号，则视为脏数据，删除
-                        recourseMapper.delete(recourseEntity);
+                        List<BusinessDataEntity> exentities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, "");
+                        if(CollectionUtils.isEmpty(exentities)){
+                            recourseDao.deleteRecourseByID(recourseEntity.getId());
+                        }
+
                     }
 
                 }
@@ -203,9 +216,7 @@ public class DataController {
         public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<CompensatoryEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
-            Example entityExample = new Example(CompensatoryEntity.class);
-            Example.Criteria criteria = entityExample.createCriteria();
-            List<CompensatoryEntity> compensatoryEntities = compensatoryMapper.selectByExample(entityExample);
+            List<CompensatoryEntity> compensatoryEntities = compensatoryDao.queryCompensatoryByCondition(viewVo.getBatchDate(), viewVo.getProjId());
             List<CompensatoryEntity> viewDataEntities =  new ArrayList<CompensatoryEntity>();
             if (CollectionUtils.isEmpty(compensatoryEntities)) {
                 pager.setPageNum(1);
@@ -214,8 +225,8 @@ public class DataController {
                 //去业务表中获取客户编号以及客户名称
                 for(CompensatoryEntity compensatoryEntity:compensatoryEntities){
                     String projId = compensatoryEntity.getProjId();
-                    String orgId  = compensatoryEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
+                    //String orgId  = compensatoryEntity.getOrgId();
+                    List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, viewVo.getClientName());
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -225,7 +236,10 @@ public class DataController {
                         viewDataEntities.add(compensatoryEntity);
                     }else{
                         //如果没有在业务表中查询到项目编号，则视为脏数据，删除
-                        compensatoryMapper.delete(compensatoryEntity);
+                        List<BusinessDataEntity> exentities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, "");
+                        if(CollectionUtils.isEmpty(exentities)){
+                            compensatoryDao.deleteCompensatoryByID(compensatoryEntity.getId());
+                        }
                     }
 
                 }
@@ -240,14 +254,12 @@ public class DataController {
         }
     }
 
-    protected class RefundAndFeeCreditDataList implements SimpleDataList {
+    protected class FeeAndRefundDataList implements SimpleDataList {
         @Override
         public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<FeeAndRefundEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
-            Example entityExample = new Example(FeeAndRefundEntity.class);
-            Example.Criteria criteria = entityExample.createCriteria();
-            List<FeeAndRefundEntity> feeAndRefundEntities = feeAndRefundMapper.selectByExample(entityExample);
+            List<FeeAndRefundEntity> feeAndRefundEntities = feeAndRefundDao.queryFeeAndRefundByCondition(viewVo.getBatchDate(), viewVo.getProjId());
             List<FeeAndRefundEntity> viewDataEntities =  new ArrayList<FeeAndRefundEntity>();
             if (CollectionUtils.isEmpty(feeAndRefundEntities)) {
                 pager.setPageNum(1);
@@ -256,8 +268,8 @@ public class DataController {
                 //去业务表中获取客户编号以及客户名称
                 for(FeeAndRefundEntity feeAndRefundEntity:feeAndRefundEntities){
                     String projId = feeAndRefundEntity.getProjId();
-                    String orgId  = feeAndRefundEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
+                    // String orgId  = feeAndRefundEntity.getOrgId();
+                    List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, viewVo.getClientName());
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -267,7 +279,10 @@ public class DataController {
                         viewDataEntities.add(feeAndRefundEntity);
                     }else{
                         //如果没有在业务表中查询到项目编号，则视为脏数据，删除
-                        feeAndRefundMapper.delete(feeAndRefundEntity);
+                        List<BusinessDataEntity> exentities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, "");
+                        if(CollectionUtils.isEmpty(exentities)){
+                            feeAndRefundDao.deleteFeeAndRefundByID(feeAndRefundEntity.getId());
+                        }
                     }
 
                 }
@@ -287,9 +302,7 @@ public class DataController {
         public ModelAndView dataList(Integer pageNum, ViewVo viewVo,Integer dataType) {
             Page<BusinessDataEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
-            Example entityExample = new Example(BankCreditEntity.class);
-            Example.Criteria criteria = entityExample.createCriteria();
-            List<BusinessDataEntity> businessDataEntities = businessDataMapper.selectByExample(entityExample);
+            List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataByCondition(viewVo.getBatchDate(),viewVo.getProjId(),viewVo.getClientName());
             if (CollectionUtils.isEmpty(businessDataEntities)) {
                 pager.setPageNum(1);
                 pager.setPages(1);
@@ -309,9 +322,7 @@ public class DataController {
         public ModelAndView dataList(Integer pageNum, ViewVo viewVo, Integer dataType) {
             Page<RepaymentEntity> pager = PageHelper.startPage(pageNum == null ? 1 : pageNum, Constants.PAGE_SIZE);
             ModelAndView view = new ModelAndView("pages/data/genericDataList", "list", pager);
-            Example entityExample = new Example(RepaymentEntity.class);
-            Example.Criteria criteria = entityExample.createCriteria();
-            List<RepaymentEntity> repaymentEntities = repaymentMapper.selectByExample(entityExample);
+            List<RepaymentEntity> repaymentEntities = repaymentDao.queryRepaymentByCondition(viewVo.getBatchDate(),viewVo.getProjId());
             List<RepaymentEntity> viewDataEntities =  new ArrayList<RepaymentEntity>();
             if (CollectionUtils.isEmpty(repaymentEntities)) {
                 pager.setPageNum(1);
@@ -321,7 +332,7 @@ public class DataController {
                 for(RepaymentEntity repaymentEntity:repaymentEntities){
                     String projId = repaymentEntity.getProjId();
                     String orgId  = repaymentEntity.getOrgId();
-                    List<BusinessDataEntity> businessDataEntities = getBusinessDataEntitys(viewVo.getBatchDate(),orgId,projId);
+                    List<BusinessDataEntity> businessDataEntities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, viewVo.getClientName());
                     if(!CollectionUtils.isEmpty(businessDataEntities)){
                         BusinessDataEntity businessDataEntity = businessDataEntities.get(0);
                         String clientId = businessDataEntity.getClientId();
@@ -331,7 +342,10 @@ public class DataController {
                         viewDataEntities.add(repaymentEntity);
                     }else{
                         //如果没有在业务表中查询到项目编号，则视为脏数据，删除
-                        repaymentMapper.delete(repaymentEntity);
+                        List<BusinessDataEntity> exentities = businessDataDao.queryBusinessDataByExProj(viewVo.getBatchDate(), projId, "");
+                        if(CollectionUtils.isEmpty(exentities)){
+                            repaymentDao.deleteRepaymentByID(repaymentEntity.getId());
+                        }
                     }
 
                 }
@@ -391,29 +405,42 @@ public class DataController {
             HttpServletResponse response, HttpServletRequest request) {
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
+        String date = batchDate;
+        ViewVo viewVo = new ViewVo();
+        viewVo.setBatchDate(batchDate);
+        viewVo.setClientName(clientName);
+        viewVo.setCreditStartDate(creditStartDate);
+        viewVo.setCreditEndDate(creditEndDate);
+        viewVo.setProjId(projId);
+        viewVo.setDataType(dataType);
+        if(dataType == 200){
+            viewVo.setCreditType(true);
+        }else{
+            viewVo.setCreditType(false);
+        }
         try {
             String fileName = DataType.typeOfType(dataType.intValue()).getDataEnName() + ".xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             ServletOutputStream servletOutputStream = response.getOutputStream();
             userEntity = SessionUser.INSTANCE.getCurrentUser();
             if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == dataType.intValue()) {
-                bankCreditOutport.export(servletOutputStream, DataType.SUPERVISE_BANK_DATA, date, userEntity);
+                bankCreditOutport.export(servletOutputStream, DataType.SUPERVISE_BANK_DATA, viewVo, userEntity);
             }
             if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == dataType.intValue()) {
-                recourseOutport.export(servletOutputStream, DataType.SUPERVISE_TRACE_DATA, date, userEntity);
+                recourseOutport.export(servletOutputStream, DataType.SUPERVISE_TRACE_DATA, viewVo, userEntity);
                 //追偿
             }
             if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == dataType.intValue()) {
-                repaymentOutport.export(servletOutputStream, DataType.SUPERVISE_REBACK_DATA, date, userEntity);
+                repaymentOutport.export(servletOutputStream, DataType.SUPERVISE_REBACK_DATA, viewVo, userEntity);
             }
             if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == dataType.intValue()) {
-                compensatoryOutport.export(servletOutputStream, DataType.SUPERVISE_REPLACE_DATA, date, userEntity);
+                compensatoryOutport.export(servletOutputStream, DataType.SUPERVISE_REPLACE_DATA, viewVo, userEntity);
             }
             if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == dataType.intValue()) {
-                feeAndRefundOutport.export(servletOutputStream, DataType.SUPERVISE_FEE_DATA, date, userEntity);
+                feeAndRefundOutport.export(servletOutputStream, DataType.SUPERVISE_FEE_DATA, viewVo, userEntity);
             }
             if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
-                businessOutport.export(servletOutputStream, DataType.SUPERVISE_BIZ_DATA, date, userEntity);
+                businessOutport.export(servletOutputStream, DataType.SUPERVISE_BIZ_DATA, viewVo, userEntity);
             }
         } catch (Exception e) {
             return e.getMessage();
@@ -1106,22 +1133,6 @@ public class DataController {
 //        return vos;
 //    }
 
-    /**
-     * 获取业务数据表中的记录
-     * @param batchDate
-     * @param orgId
-     * @param projId
-     * @return List<BusinessDataEntity>
-     */
-    private List<BusinessDataEntity> getBusinessDataEntitys(String batchDate,String orgId,String projId){
-        Example example = new Example(RepaymentEntity.class);
-        Example.Criteria fcriteria = example.createCriteria();
-        fcriteria.andEqualTo("batchDate", batchDate);
-        fcriteria.andEqualTo("orgId", orgId);
-        fcriteria.andEqualTo("projId", projId);
-        List<BusinessDataEntity> rtList = businessDataMapper.selectByExample(example);
-        return rtList;
-    }
 
     /**
      * 判断是否综合运行部

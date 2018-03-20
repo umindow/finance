@@ -192,12 +192,32 @@ public class BankCreditDataImport extends AbstractDataImport {
         /**
          * 先删除当天批次的所有记录，
          */
-        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        this.bankCreditDao.deleteBankCreditByBatchDate(batchDate);
+//        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+//        this.bankCreditDao.deleteBankCreditByBatchDate(batchDate);
         //然后保存导入的EXCEL记录
         for (final BankCreditEntity bankCreditEntity : bankCreditEntities) {
-            bankCreditEntity.setId(0L);//重新设置主键，避免主键重复
-            this.bankCreditDao.insertBankCreditToMiddleDB(bankCreditEntity);
+            //bankCreditEntity.setId(0L);//重新设置主键，避免主键重复
+            //String batchdate = bankCreditEntity.getBatchDate();
+            long id = bankCreditEntity.getId();
+            if(0!=id){
+                BankCreditEntity  exBankCreditEntity = this.bankCreditDao.queryBankCreditByKey(id);
+                if(null!=exBankCreditEntity){
+                    //更新
+                    this.bankCreditDao.updateBankCredit(bankCreditEntity);
+                }
+                else{
+                    //新增
+                    bankCreditEntity.setId(0L);
+                    this.bankCreditDao.insertBankCreditToMiddleDB(bankCreditEntity);
+                }
+            }else{
+                //新增
+                bankCreditEntity.setId(0L);
+                this.bankCreditDao.insertBankCreditToMiddleDB(bankCreditEntity);
+            }
+
+
+
         }
         bankCreditEntities.clear();
 

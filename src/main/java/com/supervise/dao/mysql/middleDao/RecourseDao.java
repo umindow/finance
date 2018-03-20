@@ -3,7 +3,6 @@ package com.supervise.dao.mysql.middleDao;
 import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.mysql.base.QueryCondition;
-import com.supervise.dao.mysql.entity.BankCreditEntity;
 import com.supervise.dao.mysql.entity.RecourseEntity;
 import com.supervise.dao.mysql.mapper.RecourseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,15 +139,15 @@ public class RecourseDao {
 	 * @param qprojId 模糊查询
 	 * @return List<RecourseEntity>
 	 */
-	public List<RecourseEntity> queryBankCreditByCondition(String date,String qprojId){
+	public List<RecourseEntity> queryRecourseByCondition(String date,String qprojId){
 
-		Example example = new Example(BankCreditEntity.class);
+		Example example = new Example(RecourseEntity.class);
 		Example.Criteria fcriteria = example.createCriteria();
 		if (!StringUtils.isEmpty(date)) {
 			fcriteria.andEqualTo("batchDate", date);
 		}
 		if(!StringUtils.isEmpty(qprojId)){
-			fcriteria.andLike("projId", qprojId);
+			fcriteria.andLike("projId", Constants.PRE_CENT+qprojId+Constants.PRE_CENT);
 		}
 		List<RecourseEntity> responseList  = this.recourseMapper.selectByExample(example);
 		return responseList;

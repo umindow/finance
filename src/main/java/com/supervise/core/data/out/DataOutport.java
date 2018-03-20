@@ -1,6 +1,7 @@
 package com.supervise.core.data.out;
 
 import com.supervise.config.role.DataType;
+import com.supervise.controller.vo.ViewVo;
 import com.supervise.dao.mysql.entity.UserEntity;
 
 import javax.servlet.ServletOutputStream;
@@ -16,5 +17,5 @@ import javax.servlet.ServletOutputStream;
  */
 public interface DataOutport {
 
-    void export(ServletOutputStream servletOutputStream, DataType dataType, String date, UserEntity userEntity) throws Exception;
+    void export(ServletOutputStream servletOutputStream, DataType dataType, ViewVo viewVo, UserEntity userEntity) throws Exception;
 }

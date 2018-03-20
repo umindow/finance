@@ -128,8 +128,8 @@ public class CompensatoryDataImport extends AbstractDataImport {
         /**
          * 先删除当天批次的所有记录，
          */
-        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        this.compensatoryDao.deleteCompensatoryByBatchDate(batchDate);
+//        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+//        this.compensatoryDao.deleteCompensatoryByBatchDate(batchDate);
         //然后保存导入的EXCEL记录
         for (final CompensatoryEntity compensatoryEntity : compensatoryEntitys) {
             compensatoryEntity.setId(0L);//重新设置主键，避免主键重复
@@ -141,8 +141,8 @@ public class CompensatoryDataImport extends AbstractDataImport {
             if (!CollectionUtils.isEmpty(compEntityList)) {
                 //不为空，则表示做更新
                 for(CompensatoryEntity comp :compEntityList){
-                    comp.setId(compensatoryEntity.getId());
-                    this.compensatoryDao.updateCompensatory(comp);
+                    compensatoryEntity.setId(comp.getId());
+                    this.compensatoryDao.updateCompensatory(compensatoryEntity);
                 }
             }else{
                 //否则表示新增，同时查询业务数据，查看是否立项，如果有立项则新增，否则丢弃

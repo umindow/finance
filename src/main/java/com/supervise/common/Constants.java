@@ -20,6 +20,10 @@ public final class Constants {
     
     /***************************分隔符常量 begin******************************/
 
+    /**
+     * 反斜线标识
+     */
+    public static final String PRE_CENT="%";
 	/**
 	 * 反斜线标识
 	 */

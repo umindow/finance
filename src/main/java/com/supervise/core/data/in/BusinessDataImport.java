@@ -7,7 +7,8 @@ import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.config.role.DataType;
 import com.supervise.config.role.DepType;
-import com.supervise.dao.mysql.entity.*;
+import com.supervise.dao.mysql.entity.BusinessDataEntity;
+import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.mapper.CompensatoryMapper;
 import com.supervise.dao.mysql.mapper.FeeAndRefundMapper;
 import com.supervise.dao.mysql.mapper.RecourseMapper;
@@ -24,7 +25,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -352,52 +352,52 @@ public class BusinessDataImport extends AbstractDataImport {
                     break;
                 }
             }
-            //如果没有找到，不删除原有的，避免各部门账号相互删数据
-            if(!isMatch){
-                if(isComdep){
-                    businessDataDao.deleteBusinessDataByID(businessExsit.getId());
-                    //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
-                    batchDate = businessExsit.getBatchDate();
-                    String orgId = businessExsit.getOrgId();
-                    String projId = businessExsit.getProjId();
-                    //删除收退费信息
-                    Example example = new Example(FeeAndRefundEntity.class);
-                    Example.Criteria fcriteria = example.createCriteria();
-                    fcriteria.andEqualTo("batchDate", batchDate);
-                    fcriteria.andEqualTo("orgId", orgId);
-                    fcriteria.andEqualTo("projId", projId);
-                    feeAndRefundMapper.deleteByExample(example);
-                    example.clear();
-
-                    //删除还款信息
-                    example = new Example(RepaymentEntity.class);
-                    Example.Criteria rcriteria = example.createCriteria();
-                    rcriteria.andEqualTo("batchDate", batchDate);
-                    rcriteria.andEqualTo("orgId", orgId);
-                    rcriteria.andEqualTo("projId", projId);
-                    repaymentMapper.deleteByExample(example);
-                    example.clear();
-                    //删除追偿信息
-                    example = new Example(RecourseEntity.class);
-                    Example.Criteria recriteria = example.createCriteria();
-                    recriteria.andEqualTo("batchDate", batchDate);
-                    recriteria.andEqualTo("orgId", orgId);
-                    recriteria.andEqualTo("projId", projId);
-                    recourseMapper.deleteByExample(example);
-                    example.clear();
-                    //删除代偿信息
-                    example = new Example(CompensatoryEntity.class);
-                    Example.Criteria ccriteria = example.createCriteria();
-                    ccriteria.andEqualTo("batchDate", batchDate);
-                    ccriteria.andEqualTo("orgId", orgId);
-                    ccriteria.andEqualTo("projId", projId);
-                    compensatoryMapper.deleteByExample(example);
-                    example.clear();
-                }else{
-                    deleteBusinessDataEntity4Role(businessExsit,filedRoles,getUserEntity());
-                    this.businessDataDao.updateBusinessData(businessExsit);
-                }
-            }
+            //如果没有找到，不删除原有的，避免各部门账号相互删数据  不删除
+//            if(!isMatch){
+//                if(isComdep){
+//                    businessDataDao.deleteBusinessDataByID(businessExsit.getId());
+//                    //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
+//                    batchDate = businessExsit.getBatchDate();
+//                    String orgId = businessExsit.getOrgId();
+//                    String projId = businessExsit.getProjId();
+//                    //删除收退费信息
+//                    Example example = new Example(FeeAndRefundEntity.class);
+//                    Example.Criteria fcriteria = example.createCriteria();
+//                    fcriteria.andEqualTo("batchDate", batchDate);
+//                    fcriteria.andEqualTo("orgId", orgId);
+//                    fcriteria.andEqualTo("projId", projId);
+//                    feeAndRefundMapper.deleteByExample(example);
+//                    example.clear();
+//
+//                    //删除还款信息
+//                    example = new Example(RepaymentEntity.class);
+//                    Example.Criteria rcriteria = example.createCriteria();
+//                    rcriteria.andEqualTo("batchDate", batchDate);
+//                    rcriteria.andEqualTo("orgId", orgId);
+//                    rcriteria.andEqualTo("projId", projId);
+//                    repaymentMapper.deleteByExample(example);
+//                    example.clear();
+//                    //删除追偿信息
+//                    example = new Example(RecourseEntity.class);
+//                    Example.Criteria recriteria = example.createCriteria();
+//                    recriteria.andEqualTo("batchDate", batchDate);
+//                    recriteria.andEqualTo("orgId", orgId);
+//                    recriteria.andEqualTo("projId", projId);
+//                    recourseMapper.deleteByExample(example);
+//                    example.clear();
+//                    //删除代偿信息
+//                    example = new Example(CompensatoryEntity.class);
+//                    Example.Criteria ccriteria = example.createCriteria();
+//                    ccriteria.andEqualTo("batchDate", batchDate);
+//                    ccriteria.andEqualTo("orgId", orgId);
+//                    ccriteria.andEqualTo("projId", projId);
+//                    compensatoryMapper.deleteByExample(example);
+//                    example.clear();
+//                }else{
+//                    deleteBusinessDataEntity4Role(businessExsit,filedRoles,getUserEntity());
+//                    this.businessDataDao.updateBusinessData(businessExsit);
+//                }
+//            }
         }
         //将新的ID号或者没有ID号的记录保存到数据库
         for (final BusinessDataEntity businessDataEntity : businessDataEntitys) {
@@ -422,7 +422,6 @@ public class BusinessDataImport extends AbstractDataImport {
             if(!isMatch){
                 if(isComdep){
                     businessDataEntity.setId(0L);//重新设置主键，避免主键重复
-                    businessDataEntity.setSendStatus(Constants.DATA_READY_SEND);
                     if(StringUtils.isEmpty(businessDataEntity.getBatchDate())){
                         businessDataEntity.setBatchDate(batchDate);
                     }

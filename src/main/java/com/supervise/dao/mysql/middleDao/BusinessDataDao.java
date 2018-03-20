@@ -7,6 +7,7 @@ import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.mapper.BusinessDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
@@ -130,5 +131,53 @@ public class BusinessDataDao {
 		Example.Criteria criteria = example.createCriteria();
 		criteria.andEqualTo("batchDate", batchDate);
 		this.businessDataMapper.deleteByExample(example);
+	}
+
+	/**
+	 * 按照指定条件从中间库中查询业务信息
+	 * @param date
+	 * @param qprojId 模糊查询
+	 * @param clientName 模糊查询
+	 * @return List<BusinessDataEntity>
+	 */
+	public List<BusinessDataEntity> queryBusinessDataByCondition(String date,String qprojId,String clientName){
+
+		Example example = new Example(BusinessDataEntity.class);
+		Example.Criteria fcriteria = example.createCriteria();
+		if (!StringUtils.isEmpty(date)) {
+			fcriteria.andEqualTo("batchDate", date);
+		}
+		if(!StringUtils.isEmpty(qprojId)){
+			fcriteria.andLike("projId", Constants.PRE_CENT+qprojId+Constants.PRE_CENT);
+		}
+		if(!StringUtils.isEmpty(clientName)){
+			fcriteria.andLike("clientName", Constants.PRE_CENT+clientName+Constants.PRE_CENT);
+		}
+		List<BusinessDataEntity> responseList  = this.businessDataMapper.selectByExample(example);
+		return responseList;
+	}
+
+	/**
+	 * 按照指定条件从中间库中查询业务信息
+	 * @param date
+	 * @param qprojId 精准查询
+	 * @param clientName 模糊查询
+	 * @return List<BusinessDataEntity>
+	 */
+	public List<BusinessDataEntity> queryBusinessDataByExProj(String date,String qprojId,String clientName){
+
+		Example example = new Example(BusinessDataEntity.class);
+		Example.Criteria fcriteria = example.createCriteria();
+		if (!StringUtils.isEmpty(date)) {
+			fcriteria.andEqualTo("batchDate", date);
+		}
+		if(!StringUtils.isEmpty(qprojId)){
+			fcriteria.andEqualTo("projId", qprojId);
+		}
+		if(!StringUtils.isEmpty(clientName)){
+			fcriteria.andLike("clientName", Constants.PRE_CENT+clientName+Constants.PRE_CENT);
+		}
+		List<BusinessDataEntity> responseList  = this.businessDataMapper.selectByExample(example);
+		return responseList;
 	}
 }
