@@ -152,4 +152,18 @@ public class RecourseDao {
 		List<RecourseEntity> responseList  = this.recourseMapper.selectByExample(example);
 		return responseList;
 	}
+
+	/**
+	 * 删除追偿信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteRecourseByCondition(String batchDate,String orgId,String projId){
+		Example example = new Example(RecourseEntity.class);
+		Example.Criteria recriteria = example.createCriteria();
+		recriteria.andEqualTo("batchDate", batchDate);
+		recriteria.andEqualTo("orgId", orgId);
+		recriteria.andEqualTo("projId", projId);
+		recourseMapper.deleteByExample(example);
+	}
 }

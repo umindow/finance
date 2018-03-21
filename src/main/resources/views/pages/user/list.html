@@ -11,9 +11,11 @@ Finance  - 用户管理
             <div class="ibox">
                 <div class="ibox-content">
                     <div class="row m-b-sm m-t-sm">
+                        #if(addUsers)
                         <div class="col-md-12">
                             <a href="/user/add" class="btn btn-primary btn-sm pull-right">新增用户</a>
                         </div>
+                        #end
                     </div>
 
                     <div class="project-list">
@@ -42,9 +44,72 @@ Finance  - 用户管理
                                 </td>
                                 <td>${userDepDesc(user.depId)}
                                 </td>
+
                                 <td class="project-actions">
+                                    #if(updateUser)
+                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal"
+                                            data-target="#div_${user.id}">
+                                        修改
+                                    </button>
+                                    #end
+                                    #if(deleteUser)
                                     <a href="javascript:del('${user.id}','${user.userName}')" class="btn btn-info btn-xs"><i
                                             class="fa fa-pencil"></i> 删除 </a>
+                                    #end
+                                    <div class="modal inmodal" id="div_${user.id}" tabindex="-1" role="dialog"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content animated fadeIn">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">用户信息修改</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="post" class="form-horizontal"
+                                                          id="modifyUser">
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">用户名</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" name="userName"
+                                                                       value="${user.userName}" readonly="readonly"
+                                                                       class="form-control">
+                                                            </div>
+                                                            <label class="col-sm-4 control-label">密码</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" name="password"
+                                                                       value="${user.password}" class="form-control">
+                                                            </div>
+                                                            <label class="col-sm-4 control-label">中文名</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" name="userCnName"
+                                                                       value="${user.userCnName}" class="form-control">
+                                                            </div>
+                                                            <label class="col-sm-4 control-label">邮箱地址</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" name="user.email"
+                                                                       value="${user.email}"
+                                                                       class="form-control">
+                                                            </div>
+                                                            <label class="col-sm-4 control-label">电话</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" name="phone"
+                                                                       value="${user.phone}"
+                                                                       class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" name="id" value="${user.id}">
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-white" data-dismiss="modal">
+                                                        关闭
+                                                    </button>
+                                                    <button type="button" id="modifyBtn" class="btn btn-primary"
+                                                            attr="${user.id}">修改保存
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             #end
@@ -59,10 +124,29 @@ Finance  - 用户管理
 #end
 #tag layout_block("js")
 <script type="text/javascript">
-    $(document).ready(function () {
-
+//    $(document).ready(function () {
+//        var depId=$(user.depId);
+//        alert("depId");
+//        $(":radio[name='depId'][value='" + depId + "']").prop("checked", "checked");
+//    });
+    $("[id=modifyBtn]").each(function () {
+        $(this).on("click", function () {
+            var userId = $(this).attr("attr");
+            var form = $('#modifyUser');//
+            var password = $(form).find('input[name=password]').val();
+            if('' == password){
+                error("密码不能为空.");
+                return;
+            }
+            $.post("/user/modifyUser", form.serialize(), function (result) {
+                if (result) {
+                    success("修改成功", refreshWindow());
+                } else {
+                    error("修改失败:" + result);
+                }
+            });
+        });
     });
-
     function del(id, name) {
         sw_confirm("确认删除吗?", "将永久删除[" + name + "]。", "warning", function () {
             $.post("/user/delete", {"id": id}, function (result) {

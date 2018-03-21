@@ -61,15 +61,15 @@ Finance  - ${view.moduleName}
                         <table class="table table-hover table-striped">
                             <thead>
                             #for(field:dataSet.fields)
-                            <th>${field}</th>
+                            <th  style="text-align:center;">${field}</th>
                             #end
-                            <th>操作</th>
+                            <th style="text-align:center;">操作</th>
                             </thead>
                             <tbody>
                             #for(data:dataSet.dataVos)
                             <tr>
                                 #for(obj:data.values)
-                                <td>${obj.value}
+                                <td style="border:1px solid rgba(92, 92, 92, 0.09)" nowrap="nowrap">${obj.value}
                                 </td>
                                 #end
                                 <td class="project-actions">
@@ -169,6 +169,7 @@ Finance  - ${view.moduleName}
 #end
 #tag layout_block("js")
 <script type="text/javascript">
+
     $(document).ready(function () {
         var dataType = '${view.dataType}';
         $('#pagination').twbsPagination({
@@ -230,6 +231,7 @@ Finance  - ${view.moduleName}
             });
         });
         $('#searchBtn').on('click', function () {
+
             var batchDate = $('#query_picker_batchDate').val();
             var url = "/data/genericDataList?dataType=${view.dataType}&batchDate=" + batchDate;
             if (dataType == 200) {//授信

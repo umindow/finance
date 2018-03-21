@@ -152,4 +152,18 @@ public class RepaymentDao{
 		List<RepaymentEntity> responseList  = this.repaymentMapper.selectByExample(example);
 		return responseList;
 	}
+
+	/**
+	 * 删除还款信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteRepaymentByCondition(String batchDate,String orgId,String projId){
+		Example example = new Example(RepaymentEntity.class);
+		Example.Criteria rcriteria = example.createCriteria();
+		rcriteria.andEqualTo("batchDate", batchDate);
+		rcriteria.andEqualTo("orgId", orgId);
+		rcriteria.andEqualTo("projId", projId);
+		this.repaymentMapper.deleteByExample(example);
+	}
 }

@@ -2,7 +2,6 @@ package com.supervise.controller;
 
 import com.supervise.common.Constants;
 import com.supervise.common.SessionUser;
-import com.supervise.config.role.RoleType;
 import com.supervise.controller.vo.Login;
 import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.mapper.UserMapper;
@@ -10,7 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import tk.mybatis.mapper.entity.Example;
 
@@ -41,7 +43,7 @@ public class LoginController {
         List<UserEntity> userEntities = userMapper.selectByExample(example);
         if(CollectionUtils.isEmpty(userEntities)){
             modelAndView.setViewName("/index");
-            modelAndView.addObject("msg","用户不存在");
+            modelAndView.addObject("msg","用户名或密码错误!");
             return  modelAndView;
         }
         request.getSession().setAttribute(Constants.SessionContant.USER_SESSION_KEY, userEntities.get(0));
