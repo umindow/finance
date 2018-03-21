@@ -74,8 +74,9 @@ public class UserController {
                 }
             }
         }else if(10==userEntity.getLevel()){
+            UserEntity eUserEntity  =userMapper.selectByPrimaryKey(userEntity.getId());
             if (userEntity.getUserStatus() == UserEntity.UserStatus.ALIVE.getStatus()) {
-                aliveUsers.add(userEntity);
+                aliveUsers.add(eUserEntity);
             }
         }
         view.addObject("users", aliveUsers);
@@ -151,6 +152,7 @@ public class UserController {
     @RequestMapping(value = "/modifyUser", method = RequestMethod.POST)
     public Result modifyUser(UserEntity userEntity) {
         long id = userEntity.getId();
+        //用户更新
         UserEntity euserEntity = userMapper.selectByPrimaryKey(id);
         euserEntity.setUserCnName(userEntity.getUserCnName());
         euserEntity.setPassword(userEntity.getPassword());
