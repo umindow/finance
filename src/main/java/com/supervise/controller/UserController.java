@@ -152,6 +152,7 @@ public class UserController {
     @RequestMapping(value = "/modifyUser", method = RequestMethod.POST)
     public Result modifyUser(UserEntity userEntity) {
         long id = userEntity.getId();
+        //用户更新
         UserEntity euserEntity = userMapper.selectByPrimaryKey(id);
         euserEntity.setUserCnName(userEntity.getUserCnName());
         euserEntity.setPassword(userEntity.getPassword());
