@@ -78,36 +78,36 @@ public class CompensatoryDataImport extends AbstractDataImport {
                         compensatoryEntity.setId(Long.parseLong(value));
                         break;
                     case 1://机构编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
                             value = CellUtil.trimValue(value);
                             compensatoryEntity.setOrgId(value);
                         }
                         break;
                     case 2://项目编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
                             value = CellUtil.trimValue(value);
                             compensatoryEntity.setProjId(value);
                         }
                         break;
                     case 3://合同编号
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contractId"))) {
                             value = CellUtil.trimValue(value);
                             compensatoryEntity.setContractId(value);
                         }
                         break;
                     case 4://代偿日期
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replace_date"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replaceDate"))) {
                             compensatoryEntity.setReplaceDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 5://代偿金额
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replace_money"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replaceMoney"))) {
                             Double money = CellUtil.transfValuetoDouble(value);
                             compensatoryEntity.setReplaceMoney(new BigDecimal(money));
                         }
                         break;
                     case 6:
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batchDate"))) {
                             String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
                             compensatoryEntity.setBatchDate(batchDate);
                         }

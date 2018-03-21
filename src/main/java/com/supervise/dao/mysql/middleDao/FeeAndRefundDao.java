@@ -152,4 +152,18 @@ public class FeeAndRefundDao {
 		List<FeeAndRefundEntity> responseList  = this.feeAndRefundMapper.selectByExample(example);
 		return responseList;
 	}
+
+	/**
+	 * 删除收退费信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteFeeAndRefundByCondition(String batchDate,String orgId,String projId){
+		Example example = new Example(FeeAndRefundEntity.class);
+		Example.Criteria fcriteria = example.createCriteria();
+		fcriteria.andEqualTo("batchDate", batchDate);
+		fcriteria.andEqualTo("orgId", orgId);
+		fcriteria.andEqualTo("projId", projId);
+		this.feeAndRefundMapper.deleteByExample(example);
+	}
 }

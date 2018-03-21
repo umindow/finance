@@ -65,9 +65,12 @@ Finance  - 用户管理
                             <label class="col-sm-3 control-label">所属部门</label>
                             <div class="col-sm-9">
                                 #for(depRole:depRoles)
-                                <div class="i-checks"><label> <input type="radio" name="depId"
+                                <div class="i-checks"><label>
+                                    <input type="radio" name="depId"
                                                                      value="${depRole.depId}">
-                                    <i></i>${depRole.depDesc} </label></div>
+                                    <i></i>${depRole.depDesc}
+                                    </label>
+                                </div>
                                 #end
                             </div>
                         </div>
@@ -85,7 +88,7 @@ Finance  - 用户管理
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button class="btn btn-white" type="button">取消</button>
+                                <a href="/user/list" class="btn btn-white">取消</a>
                                 <button id="addUserSubmit" class="btn btn-primary" type="button">保存</button>
                             </div>
                         </div>

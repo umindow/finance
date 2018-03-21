@@ -77,48 +77,48 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
                         feeAndRefundEntity.setId(Long.parseLong(value));
                         break;
                     case 1://机构编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
                             value = CellUtil.trimValue(value);
                             feeAndRefundEntity.setOrgId(value);
                         }
                         break;
                     case 2://项目编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
                             value = CellUtil.trimValue(value);
                             feeAndRefundEntity.setProjId(value);
                         }
                         break;
                     case 3://合同编号
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contractId"))) {
                             value = CellUtil.trimValue(value);
                             feeAndRefundEntity.setContractId(value);
                         }
                         break;
                     case 4://收退费标示
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_may"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("chargeWay"))) {
                             value = CellUtil.trimValue(value);
                             feeAndRefundEntity.setChargeWay(value);
                         }
                         break;
                     case 5://费用类型编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_type"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("chargeType"))) {
                             value = CellUtil.trimValue(value);
                             feeAndRefundEntity.setChargeType(value);
                         }
                         break;
                     case 6://实际缴费时间
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_time"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("chargeTime"))) {
                             feeAndRefundEntity.setChargeTime(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 7://实际缴费金额
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("charge_money"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("chargeMoney"))) {
                             Double money = CellUtil.transfValuetoDouble(value);
                             feeAndRefundEntity.setChargeMoney(new BigDecimal(money));
                         }
                         break;
                     case 8:
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batchDate"))) {
                             String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
                             feeAndRefundEntity.setBatchDate(batchDate);
                         }

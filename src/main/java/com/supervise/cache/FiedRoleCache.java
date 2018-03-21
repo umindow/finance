@@ -102,9 +102,9 @@ public final class FiedRoleCache {
         if (null == depRoleRef) {
             return false;
         }
-        if(!depRoleRef.isModify()){
-            return false;
-        }
+//        if(!depRoleRef.isModify()){
+//            return false;
+//        }
         if (depRoleRef.depTypes.length > 0) {
             for (final DepType depType : depRoleRef.getDepTypes()) {
                 if (depType.getDepId() == Integer.valueOf(userEntity.getDepId())) {

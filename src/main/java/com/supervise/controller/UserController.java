@@ -1,11 +1,7 @@
 package com.supervise.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.supervise.common.Constants;
 import com.supervise.common.SessionUser;
 import com.supervise.config.role.DataType;
 import com.supervise.config.role.DepType;
@@ -13,7 +9,6 @@ import com.supervise.config.role.RoleType;
 import com.supervise.dao.mysql.entity.UserEntity;
 import com.supervise.dao.mysql.mapper.UserMapper;
 import com.supervise.support.Result;
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -64,14 +59,32 @@ public class UserController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "p", required = false) Integer pageNum) {
         ModelAndView view = new ModelAndView("pages/user/list");
-        List<UserEntity> userEntityList = userMapper.selectAll();
+        UserEntity userEntity = SessionUser.INSTANCE.getCurrentUser();
         List<UserEntity> aliveUsers = new ArrayList<UserEntity>();
-        for (final UserEntity user : userEntityList) {
-            if (user.getUserStatus() == UserEntity.UserStatus.ALIVE.getStatus()) {
-                aliveUsers.add(user);
+        boolean addUsers = false;
+        boolean deleteUser = false;
+        boolean updateUser = true;
+        if(20==userEntity.getLevel()){
+            addUsers=true;
+            deleteUser= true;
+            List<UserEntity> userEntityList = userMapper.selectAll();
+            for (final UserEntity user : userEntityList) {
+                if (user.getUserStatus() == UserEntity.UserStatus.ALIVE.getStatus()) {
+                    aliveUsers.add(user);
+                }
+            }
+        }else if(10==userEntity.getLevel()){
+            if (userEntity.getUserStatus() == UserEntity.UserStatus.ALIVE.getStatus()) {
+                aliveUsers.add(userEntity);
             }
         }
         view.addObject("users", aliveUsers);
+        view.addObject("addUsers", addUsers);
+        view.addObject("deleteUser", deleteUser);
+        view.addObject("updateUser", updateUser);
+        view.addObject("roles", Arrays.asList(RoleType.values()));
+        view.addObject("dataRoles", DataType.listHtmlDataType());
+        view.addObject("depRoles",Arrays.asList(DepType.values()));
         return view;
     }
 
@@ -130,7 +143,20 @@ public class UserController {
             return Result.fail("用户不存在.");
         }
         user.setUserStatus(UserEntity.UserStatus.NON_LIVE.getStatus());
-        userMapper.updateByPrimaryKey(user);
+        userMapper.deleteByPrimaryKey(id);
+        return Result.success();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/modifyUser", method = RequestMethod.POST)
+    public Result modifyUser(UserEntity userEntity) {
+        long id = userEntity.getId();
+        UserEntity euserEntity = userMapper.selectByPrimaryKey(id);
+        euserEntity.setUserCnName(userEntity.getUserCnName());
+        euserEntity.setPassword(userEntity.getPassword());
+        euserEntity.setEmail(userEntity.getEmail());
+        euserEntity.setPhone(userEntity.getPhone());
+        userMapper.updateByPrimaryKeySelective(euserEntity);
         return Result.success();
     }
 }

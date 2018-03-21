@@ -152,4 +152,18 @@ public class CompensatoryDao {
 		List<CompensatoryEntity> responseList  = this.compensatoryMapper.selectByExample(example);
 		return responseList;
 	}
+
+	/**
+	 * 删除代偿信息
+	 * @param batchDate  条件
+	 * @return
+	 */
+	public void deleteCompensatoryByCondition(String batchDate,String orgId,String projId){
+		Example example = new Example(CompensatoryEntity.class);
+		Example.Criteria ccriteria = example.createCriteria();
+		ccriteria.andEqualTo("batchDate", batchDate);
+		ccriteria.andEqualTo("orgId", orgId);
+		ccriteria.andEqualTo("projId", projId);
+		compensatoryMapper.deleteByExample(example);
+	}
 }

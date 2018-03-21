@@ -78,42 +78,42 @@ public class RecourseDataImport extends AbstractDataImport {
                         recourseEntity.setId(Long.parseLong(value));
                         break;
                     case 1://机构编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("org_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
                             value = CellUtil.trimValue(value);
                             recourseEntity.setOrgId(value);
                         }
                         break;
                     case 2://项目编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("proj_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
                             value = CellUtil.trimValue(value);
                             recourseEntity.setProjId(value);
                         }
                         break;
                     case 3://合同编号
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contract_id"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contractId"))) {
                             value = CellUtil.trimValue(value);
                             recourseEntity.setContractId(value);
                         }
                         break;
                     case 4://追偿类型
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevy_type"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyType"))) {
                             value = CellUtil.trimValue(value);
                             recourseEntity.setReplevyType(value);
                         }
                         break;
                     case 5://追偿日期
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevy_date"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyDate"))) {
                             recourseEntity.setReplevyDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
                         }
                         break;
                     case 6://追偿金额
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevy_money"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyMoney"))) {
                             Double money = CellUtil.transfValuetoDouble(value);
                             recourseEntity.setReplevyMoney(new BigDecimal(money));
                         }
                         break;
                     case 7:
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batch_date"))) {
+                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batchDate"))) {
                             String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
                             recourseEntity.setBatchDate(batchDate);
                         }

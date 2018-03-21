@@ -2,14 +2,14 @@
     "name": "用户管理", 
     "url": "#",
     "icon": "fa-database",
-    "level": 20,
+    "level": 10,
     "checkDep":false,
     "sub_menus": [
        {
          "name": "用户列表", 
           "url": "/user/list",
           "icon": "fa-user",
-          "level":  20,
+          "level":  10,
           "checkDep":false
           }
        ]
