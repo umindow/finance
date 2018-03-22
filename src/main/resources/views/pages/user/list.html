@@ -65,7 +65,7 @@ Finance  - 用户管理
                                                 </div>
                                                 <div class="modal-body">
                                                     <form method="post" class="form-horizontal"
-                                                          id="modifyUser">
+                                                          id="modifyUser_${user.id}">
                                                         <div class="form-group">
                                                             <label class="col-sm-4 control-label">用户名</label>
                                                             <div class="col-sm-8">
@@ -132,7 +132,7 @@ Finance  - 用户管理
     $("[id=modifyBtn]").each(function () {
         $(this).on("click", function () {
             var userId = $(this).attr("attr");
-            var form = $('#modifyUser');//
+            var form = $('#modifyUser_'+userId);//
             var password = $(form).find('input[name=password]').val();
             if('' == password){
                 error("密码不能为空.");
