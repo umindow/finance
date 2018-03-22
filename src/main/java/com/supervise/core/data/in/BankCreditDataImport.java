@@ -203,6 +203,8 @@ public class BankCreditDataImport extends AbstractDataImport {
                 BankCreditEntity  exBankCreditEntity = this.bankCreditDao.queryBankCreditByKey(id);
                 if(null!=exBankCreditEntity){
                     //更新
+                    bankCreditEntity.setSendStatus(exBankCreditEntity.getSendStatus());
+                    bankCreditEntity.setCreateDate(exBankCreditEntity.getCreateDate());
                     this.bankCreditDao.updateBankCredit(bankCreditEntity);
                 }
                 else{

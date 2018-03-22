@@ -348,6 +348,8 @@ public class BusinessDataImport extends AbstractDataImport {
                         businessDataEntity.setClientName(exsitclientName);
                     }
                     businessDataEntity.setId(exsitId);
+                    businessDataEntity.setCreateDate(businessExsit.getCreateDate());
+                    businessDataEntity.setSendStatus(businessExsit.getSendStatus());
                     this.businessDataDao.updateBusinessData(businessDataEntity);
                     break;
                 }

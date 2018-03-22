@@ -102,7 +102,9 @@ public class BusinessDataSenderSchedule extends AbstractSenderSchedule<JgBuProje
         taskStatusEntity.setDataType(dataType);
         taskStatusEntity.setOpType(option);
         taskStatusEntity.setResult(resultCode);
+        taskStatusEntity.setRemark(String.valueOf(businessDataEntities.size()));
         this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        businessDataEntities.clear();
     }
 
     @Override

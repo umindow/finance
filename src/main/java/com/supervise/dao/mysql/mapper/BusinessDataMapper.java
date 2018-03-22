@@ -63,7 +63,10 @@ public interface BusinessDataMapper extends BaseMapper<BusinessDataEntity>{
             @Result(column = "out_bail_money", property = "outBailMoney"),
             @Result(column = "capital_belong", property = "capitalBelong"),
             @Result(column = "proj_end_date", property = "projEndDate"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = BusinessDataProvider.class, method = "queryBusinessDataFormMiddleDB")
     List<BusinessDataEntity> queryBusinessDataFormMiddleDB(String batchDate);
@@ -110,7 +113,10 @@ public interface BusinessDataMapper extends BaseMapper<BusinessDataEntity>{
                 @Result(column = "out_bail_money", property = "outBailMoney"),
                 @Result(column = "capital_belong", property = "capitalBelong"),
                 @Result(column = "proj_end_date", property = "projEndDate"),
-                @Result(column = "batch_date", property = "batchDate")
+                @Result(column = "batch_date", property = "batchDate"),
+                @Result(column = "create_date", property = "createDate"),
+                @Result(column = "update_date", property = "updateDate"),
+                @Result(column = "sendStatus", property = "sendStatus")
         })
         @SelectProvider(type = BusinessDataProvider.class, method = "queryBusinessDataByConditions")
         List<BusinessDataEntity> queryBusinessDataByConditions(QueryCondition queryCondition);

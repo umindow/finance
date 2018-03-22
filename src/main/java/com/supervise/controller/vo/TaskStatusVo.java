@@ -12,5 +12,6 @@ public class TaskStatusVo {
     private String optionType;
     private String result;
     private String optime;//格式 "yyyy-MM-dd HH:mm:ss"
+    private String dataNum;
 
 }

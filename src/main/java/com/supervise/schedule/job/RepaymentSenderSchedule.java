@@ -92,6 +92,7 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
             repaymentEntity.setSendStatus(status);
             repaymentDao.updateRepayment(repaymentEntity);
         }
+
     }
 
     @Override
@@ -104,7 +105,9 @@ public class RepaymentSenderSchedule extends AbstractSenderSchedule<JgBuRepayDet
         taskStatusEntity.setDataType(dataType);
         taskStatusEntity.setOpType(option);
         taskStatusEntity.setResult(resultCode);
+        taskStatusEntity.setRemark(String.valueOf(repaymentEntitys.size()));
         this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        repaymentEntitys.clear();
     }
 
     @Override

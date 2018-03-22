@@ -154,6 +154,8 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
                 //不为空，则表示做更新
                 for(FeeAndRefundEntity fee :feeEntityList){
                     feeAndRefundEntity.setId(fee.getId());
+                    feeAndRefundEntity.setSendStatus(fee.getSendStatus());
+                    feeAndRefundEntity.setCreateDate(fee.getCreateDate());
                     this.feeAndRefundDao.updateFeeAndRefund(feeAndRefundEntity);
                 }
             }else{

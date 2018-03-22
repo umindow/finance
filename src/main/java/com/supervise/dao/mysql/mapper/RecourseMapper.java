@@ -33,7 +33,10 @@ public interface RecourseMapper extends BaseMapper<RecourseEntity>{
             @Result(column = "replevy_type", property = "replevyType"),
             @Result(column = "replevy_date", property = "replevyDate"),
             @Result(column = "replevy_money", property = "replevyMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = RecourseProvider.class, method = "queryRecourseFormMiddleDB")
     List<RecourseEntity> queryRecourseFormMiddleDB(String batchDate);
@@ -50,7 +53,10 @@ public interface RecourseMapper extends BaseMapper<RecourseEntity>{
             @Result(column = "replevy_type", property = "replevyType"),
             @Result(column = "replevy_date", property = "replevyDate"),
             @Result(column = "replevy_money", property = "replevyMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = RecourseProvider.class, method = "queryRecourseByConditions")
     List<RecourseEntity> queryRecourseByConditions(QueryCondition queryCondition);

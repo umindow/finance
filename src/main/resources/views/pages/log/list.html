@@ -60,6 +60,7 @@ Finance  - 日志管理
                             <th>操作类型</th>
                             <th>操作结果</th>
                             <th>操作时间</th>
+                            <th>数据条数</th>
                             </thead>
                             <tbody>
                             #for(job:tasks)
@@ -71,6 +72,8 @@ Finance  - 日志管理
                                 <td>${job.result}
                                 </td>
                                 <td>${job.optime}
+                                </td>
+                                <td>${job.dataNum}
                                 </td>
                             </tr>
                             #end
