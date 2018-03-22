@@ -5,7 +5,6 @@ import com.supervise.common.DateUtils;
 import com.supervise.core.data.loadProces.BankCreditLoader;
 import com.supervise.core.data.loadProces.BusinessDataLoader;
 import com.supervise.core.data.loadProces.RepaymentLoader;
-import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.schedule.AbstractSchedule;
 import org.slf4j.Logger;
@@ -76,20 +75,7 @@ public class DataLoadedSchedule extends AbstractSchedule {
             e.printStackTrace();
             busiSuc = false;
         }
-        String dataType ="100";
-        String dataName ="系统业务数据";
-        String option = "0";
-        String resultCode = "";
-        if(!busiSuc){
-            resultCode = "-1";
-        }else{
-            resultCode = "0";
-        }
-        TaskStatusEntity taskStatusEntity  = createEntity(dataType,dataName,option,resultCode);
-        int ret = this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
-        if(ret!=-1){
-            logger.info("系统业务数据 data taskstatus job Success,batchDate is :"+batchDate);
-        }
+
         try {
             //3、从VIEW中LOAD repayment当期那天批次的数据，并将LOAD的数据持久化到中间表
             logger.info("-------------------------data repaymentLoader job doing------------------");
@@ -102,20 +88,7 @@ public class DataLoadedSchedule extends AbstractSchedule {
             repaySuc = false;
 
         }
-        dataType ="300";
-        dataName ="还款数据";
-        if(!repaySuc){
-            resultCode = "-1";
-        }else{
-            resultCode = "0";
-        }
-        taskStatusEntity.setDataType(dataType);
-        taskStatusEntity.setDataName(dataName);
-        taskStatusEntity.setResult(resultCode);
-        ret = this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
-        if(ret!=-1){
-            logger.info("还款数据 data taskstatus job Success,batchDate is :"+batchDate);
-        }
+
         try {
             //4、从VIEW中LOAD bankCredit当期那天批次的数据，并将LOAD的数据持久化到中间表
             logger.info("-------------------------data bankCreditLoader job doing------------------");
@@ -126,21 +99,6 @@ public class DataLoadedSchedule extends AbstractSchedule {
             logger.error(e.getLocalizedMessage());
             e.printStackTrace();
             bankSuc = false;
-        }
-
-        dataType ="200";
-        dataName ="银行授信数据";
-        if(!repaySuc){
-            resultCode = "-1";
-        }else{
-            resultCode = "0";
-        }
-        taskStatusEntity.setDataType(dataType);
-        taskStatusEntity.setDataName(dataName);
-        taskStatusEntity.setResult(resultCode);
-        ret = this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
-        if(ret!=-1){
-            logger.info("银行授信数据 data taskstatus job Success,batchDate is :"+batchDate);
         }
 
     	//3、打印本次LOAD的操作结果：成功或失败，结束
@@ -154,21 +112,5 @@ public class DataLoadedSchedule extends AbstractSchedule {
         }
     }
 
-    /**
-     * 构造对象
-     * @param dataype
-     * @param dataName
-     * @param optiontype
-     * @param resultCode
-     * @return
-     */
-    private TaskStatusEntity createEntity(String dataype,String dataName,String optiontype,String resultCode){
-        TaskStatusEntity taskStatusEntity = new TaskStatusEntity();
-        taskStatusEntity.setRemark("");
-        taskStatusEntity.setResult(resultCode);
-        taskStatusEntity.setOpType(optiontype);
-        taskStatusEntity.setDataName(dataName);
-        taskStatusEntity.setDataType(dataype);
-        return  taskStatusEntity;
-    }
+
 }

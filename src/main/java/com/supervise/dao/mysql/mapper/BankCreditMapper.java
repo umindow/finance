@@ -43,7 +43,10 @@ public interface BankCreditMapper extends BaseMapper<BankCreditEntity>{
             @Result(column = "is_for_credit", property = "isForCredit"),
             @Result(column = "credit_status", property = "creditStatus"),
             @Result(column = "item_lean", property = "itemLean"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = BankCreditProvider.class, method = "queryBankCreditFormMiddleDB")
     List<BankCreditEntity> queryBankCreditFormMiddleDB(String batchDate);
@@ -71,7 +74,10 @@ public interface BankCreditMapper extends BaseMapper<BankCreditEntity>{
             @Result(column = "is_for_credit", property = "isForCredit"),
             @Result(column = "credit_status", property = "creditStatus"),
             @Result(column = "item_lean", property = "itemLean"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = BankCreditProvider.class, method = "queryBankCreditByConditions")
     List<BankCreditEntity> queryBankCreditByConditions(QueryCondition queryCondition);

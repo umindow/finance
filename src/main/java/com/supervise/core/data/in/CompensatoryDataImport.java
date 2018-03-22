@@ -142,6 +142,8 @@ public class CompensatoryDataImport extends AbstractDataImport {
                 //不为空，则表示做更新
                 for(CompensatoryEntity comp :compEntityList){
                     compensatoryEntity.setId(comp.getId());
+                    compensatoryEntity.setSendStatus(comp.getSendStatus());
+                    compensatoryEntity.setCreateDate(comp.getCreateDate());
                     this.compensatoryDao.updateCompensatory(compensatoryEntity);
                 }
             }else{

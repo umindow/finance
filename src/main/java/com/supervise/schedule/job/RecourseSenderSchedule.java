@@ -90,6 +90,7 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
             recourseEntity.setSendStatus(status);
             recourseDao.updateRecourse(recourseEntity);
         }
+
     }
 
     @Override
@@ -102,7 +103,9 @@ public class RecourseSenderSchedule extends AbstractSenderSchedule<JgBuReplevyIn
         taskStatusEntity.setDataType(dataType);
         taskStatusEntity.setOpType(option);
         taskStatusEntity.setResult(resultCode);
+        taskStatusEntity.setRemark(String.valueOf(recourseEntitys.size()));
         this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        recourseEntitys.clear();
     }
 
     @Override

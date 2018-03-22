@@ -32,7 +32,10 @@ public interface CompensatoryMapper extends BaseMapper<CompensatoryEntity>{
             @Result(column = "contract_id", property = "contractId"),
             @Result(column = "replace_date", property = "replaceDate"),
             @Result(column = "replace_money", property = "replaceMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = CompensatoryProvider.class, method = "queryCompensatoryFormMiddleDB")
     List<CompensatoryEntity> queryCompensatoryFormMiddleDB(String batchDate);
@@ -48,7 +51,10 @@ public interface CompensatoryMapper extends BaseMapper<CompensatoryEntity>{
             @Result(column = "contract_id", property = "contractId"),
             @Result(column = "replace_date", property = "replaceDate"),
             @Result(column = "replace_money", property = "replaceMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = CompensatoryProvider.class, method = "queryCompensatoryByConditions")
     List<CompensatoryEntity> queryCompensatoryByConditions(QueryCondition queryCondition);

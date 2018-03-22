@@ -34,7 +34,10 @@ public interface FeeAndRefundMapper extends BaseMapper<FeeAndRefundEntity>{
             @Result(column = "charge_type", property = "chargeType"),
             @Result(column = "charge_time", property = "chargeTime"),
             @Result(column = "charge_money", property = "chargeMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = FeeAndRefundProvider.class, method = "queryFeeAndRefundFormMiddleDB")
     List<FeeAndRefundEntity> queryFeeAndRefundFormMiddleDB(String batchDate);
@@ -52,7 +55,10 @@ public interface FeeAndRefundMapper extends BaseMapper<FeeAndRefundEntity>{
             @Result(column = "charge_type", property = "chargeType"),
             @Result(column = "charge_time", property = "chargeTime"),
             @Result(column = "charge_money", property = "chargeMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = FeeAndRefundProvider.class, method = "queryFeeAndRefundByConditions")
     List<FeeAndRefundEntity> queryFeeAndRefundByConditions(QueryCondition queryCondition);

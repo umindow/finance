@@ -148,6 +148,8 @@ public class RecourseDataImport extends AbstractDataImport {
                 //不为空，则表示做更新
                 for(RecourseEntity recourse :recourseEntityList){
                     recourseEntity.setId(recourse.getId());
+                    recourseEntity.setSendStatus(recourse.getSendStatus());
+                    recourseEntity.setCreateDate(recourse.getCreateDate());
                     this.recourseDao.updateRecourse(recourseEntity);
                 }
             }else{

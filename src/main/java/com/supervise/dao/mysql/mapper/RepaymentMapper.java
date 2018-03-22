@@ -34,7 +34,10 @@ public interface RepaymentMapper extends BaseMapper<RepaymentEntity>{
             @Result(column = "principal", property = "principal"),
             @Result(column = "interest", property = "interest"),
             @Result(column = "punish_money", property = "punishMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = RepaymentProvider.class, method = "queryRepaymentFormMiddleDB")
     List<RepaymentEntity> queryRepaymentFormMiddleDB(String batchDate);
@@ -53,7 +56,10 @@ public interface RepaymentMapper extends BaseMapper<RepaymentEntity>{
             @Result(column = "principal", property = "principal"),
             @Result(column = "interest", property = "interest"),
             @Result(column = "punish_money", property = "punishMoney"),
-            @Result(column = "batch_date", property = "batchDate")
+            @Result(column = "batch_date", property = "batchDate"),
+            @Result(column = "create_date", property = "createDate"),
+            @Result(column = "update_date", property = "updateDate"),
+            @Result(column = "sendStatus", property = "sendStatus")
     })
     @SelectProvider(type = RepaymentProvider.class, method = "queryRepaymentByConditions")
     List<RepaymentEntity> queryRepaymentByConditions(QueryCondition queryCondition);

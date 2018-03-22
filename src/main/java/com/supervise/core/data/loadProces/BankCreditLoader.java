@@ -3,8 +3,10 @@ package com.supervise.core.data.loadProces;
 import com.supervise.common.Constants;
 import com.supervise.core.data.spi.GenericDataProcessorHandler;
 import com.supervise.dao.mysql.entity.BankCreditEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.entity.ViewBankCreditEntity;
 import com.supervise.dao.mysql.middleDao.BankCreditDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.dao.mysql.viewDao.ViewBankCreditDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +37,43 @@ public class BankCreditLoader extends GenericDataProcessorHandler<List<BankCredi
     @Autowired
     private BankCreditDao bankCreditDao;
 
+    @Autowired
+    private TaskStatusDao taskStatusDao;
+
+
+
 
     @Override
     public void afterData(List<BankCreditEntity> dataRes) {
         //插入数据库
-        if(!CollectionUtils.isEmpty(dataRes)){
-            logger.info("BankCreditEntity size :"+dataRes.size());
-            for(BankCreditEntity bankCreditEntity : dataRes){
-                int ret = bankCreditDao.insertBankCreditToMiddleDB(bankCreditEntity);
-                logger.info("ret:"+ret);
+        String dataType ="200";
+        String dataName ="银行授信数据";
+        String resultCode = "0";
+        String option = "0";
+        boolean issucess = true;
+
+        try{
+            if(!CollectionUtils.isEmpty(dataRes)){
+                logger.info("BankCreditEntity size :"+dataRes.size());
+                for(BankCreditEntity bankCreditEntity : dataRes){
+                    int ret = bankCreditDao.insertBankCreditToMiddleDB(bankCreditEntity);
+                    logger.info("ret:"+ret);
+                }
             }
+        }catch (Exception e){
+            issucess = false;
+            e.printStackTrace();
+        }
+        if(!issucess){
+            resultCode = "-1";
+        }else{
+            resultCode = "0";
+        }
+        TaskStatusEntity taskStatusEntity  = new TaskStatusEntity(dataType,dataName,option,resultCode);
+        taskStatusEntity.setRemark(String.valueOf(dataRes.size()));
+        int ret = this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        if(ret!=-1){
+            logger.info("银行授信数据 data taskstatus job Success,batchDate is :"+new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date()));
         }
 
     }
@@ -101,4 +130,22 @@ public class BankCreditLoader extends GenericDataProcessorHandler<List<BankCredi
         }
         return bankCreditEntityList;
     }
+
+    /**
+     * 构造对象
+     * @param dataype
+     * @param dataName
+     * @param optiontype
+     * @param resultCode
+     * @return
+     */
+//    private TaskStatusEntity createEntity(String dataype,String dataName,String optiontype,String resultCode){
+//        TaskStatusEntity taskStatusEntity = new TaskStatusEntity();
+//        taskStatusEntity.setRemark("");
+//        taskStatusEntity.setResult(resultCode);
+//        taskStatusEntity.setOpType(optiontype);
+//        taskStatusEntity.setDataName(dataName);
+//        taskStatusEntity.setDataType(dataype);
+//        return  taskStatusEntity;
+//    }
 }

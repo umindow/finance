@@ -87,6 +87,7 @@ public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuRepla
             compensatoryEntity.setSendStatus(status);
             compensatoryDao.updateCompensatory(compensatoryEntity);
         }
+
     }
 
     @Override
@@ -99,7 +100,9 @@ public class CompensatorySenderSchedule extends AbstractSenderSchedule<JgBuRepla
         taskStatusEntity.setDataType(dataType);
         taskStatusEntity.setOpType(option);
         taskStatusEntity.setResult(resultCode);
+        taskStatusEntity.setRemark(String.valueOf(compensatoryEntitys.size()));
         this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        compensatoryEntitys.clear();
     }
 
     @Override

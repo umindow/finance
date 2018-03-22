@@ -90,6 +90,7 @@ public class FeeAndRefundSenderSchedule extends AbstractSenderSchedule<JgBuCharg
             feeAndRefundEntity.setSendStatus(status);
             feeAndRefundDao.updateFeeAndRefund(feeAndRefundEntity);
         }
+
     }
 
     @Override
@@ -102,7 +103,9 @@ public class FeeAndRefundSenderSchedule extends AbstractSenderSchedule<JgBuCharg
         taskStatusEntity.setDataType(dataType);
         taskStatusEntity.setOpType(option);
         taskStatusEntity.setResult(resultCode);
+        taskStatusEntity.setRemark(String.valueOf(feeAndRefundEntitys.size()));
         this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        feeAndRefundEntitys.clear();
     }
     @Override
     public String scheduleName() {

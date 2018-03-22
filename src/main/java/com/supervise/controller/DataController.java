@@ -525,6 +525,10 @@ public class DataController {
             if (null == bankCreditEntity || bankCreditEntity.getId() == null) {
                 return false;
             }
+            BankCreditEntity ebankCreditEntity  = bankCreditMapper.selectByPrimaryKey(bankCreditEntity.getId());
+            bankCreditEntity.setSendStatus(ebankCreditEntity.getSendStatus());
+            bankCreditEntity.setCreateDate(ebankCreditEntity.getCreateDate());
+            bankCreditEntity.setUpdateDate(new Date());
             bankCreditMapper.updateByPrimaryKey(bankCreditEntity);
         } catch (Exception e) {
             return false;
@@ -557,6 +561,10 @@ public class DataController {
                 logger.info("delete recourse record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
+                RecourseEntity erecourseEntity = recourseMapper.selectByPrimaryKey(recourseEntity.getId());
+                recourseEntity.setSendStatus(erecourseEntity.getSendStatus());
+                recourseEntity.setCreateDate(erecourseEntity.getCreateDate());
+                recourseEntity.setUpdateDate(new Date());
                 recourseMapper.updateByPrimaryKeySelective(recourseEntity);
                 logger.info("update recourse record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
@@ -591,6 +599,10 @@ public class DataController {
                 logger.info("delete compensatory record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
+                CompensatoryEntity ecompensatoryEntity = compensatoryMapper.selectByPrimaryKey(compensatoryEntity.getId());
+                compensatoryEntity.setSendStatus(ecompensatoryEntity.getSendStatus());
+                compensatoryEntity.setCreateDate(ecompensatoryEntity.getCreateDate());
+                compensatoryEntity.setUpdateDate(new Date());
                 compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
                 logger.info("update compensatory record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
@@ -625,6 +637,10 @@ public class DataController {
                 logger.info("delete feeAndRefund record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
+                FeeAndRefundEntity efeeAndRefundEntity = feeAndRefundMapper.selectByPrimaryKey(feeAndRefundEntity.getId());
+                feeAndRefundEntity.setSendStatus(efeeAndRefundEntity.getSendStatus());
+                feeAndRefundEntity.setCreateDate(efeeAndRefundEntity.getCreateDate());
+                feeAndRefundEntity.setUpdateDate(new Date());
                 feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
                 logger.info("update feeAndRefund record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
@@ -650,9 +666,9 @@ public class DataController {
             //根据权限设置更新的字段
             Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
             businessDataExist = updateBusinessDataEntity4Role(businessDataExist, businessDataEntity, filedRoles, userEntity);
-            String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
-            Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
-            businessDataExist.setUpdateDate(newDate);
+//            String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
+//            Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
+            businessDataExist.setUpdateDate(new Date());
             businessDataMapper.updateByPrimaryKeySelective(businessDataExist);
         } catch (Exception e) {
             return false;
@@ -685,6 +701,10 @@ public class DataController {
                 logger.info("delete repayment record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
+                RepaymentEntity erepaymentEntity = repaymentMapper.selectByPrimaryKey(repaymentEntity.getId());
+                repaymentEntity.setSendStatus(erepaymentEntity.getSendStatus());
+                repaymentEntity.setCreateDate(erepaymentEntity.getCreateDate());
+                repaymentEntity.setUpdateDate(new Date());
                 repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
                 logger.info("update repayment record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }

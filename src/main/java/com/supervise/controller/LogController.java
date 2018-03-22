@@ -76,6 +76,7 @@ public class LogController {
                     String time = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(taskStatusEntity.getOpTime());
                     taskStatusVo.setOptime(time);
                 }
+                taskStatusVo.setDataNum(taskStatusEntity.getRemark());
                 voList.add(taskStatusVo);
             }
 

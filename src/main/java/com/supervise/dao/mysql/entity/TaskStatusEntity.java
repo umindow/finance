@@ -55,9 +55,20 @@ public class TaskStatusEntity extends BaseEntity{
     private Date createTime;
 
     /**
-     *备注
+     *数据条数
      */
     @Column(name = "remark")
     private String remark;
+
+    public TaskStatusEntity(String dataype,String dataName,String optiontype,String resultCode){
+        this.result= resultCode;
+        this.dataName = dataName;
+        this.dataType = dataype;
+        this.opType = optiontype;
+    }
+
+    public TaskStatusEntity(){
+
+    }
 
 }

@@ -4,8 +4,10 @@ import com.supervise.common.Constants;
 import com.supervise.common.DateUtils;
 import com.supervise.core.data.spi.GenericDataProcessorHandler;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.entity.ViewBusinessDataEntity;
 import com.supervise.dao.mysql.middleDao.BusinessDataDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.dao.mysql.viewDao.ViewBusinessDataDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +40,42 @@ public class BusinessDataLoader extends GenericDataProcessorHandler<List<Busines
     @Autowired
     private BusinessDataDao businessDataDao;
 
+    @Autowired
+    private TaskStatusDao taskStatusDao;
+
     @Override
     public void afterData(List<BusinessDataEntity> dataRes) {
         //插入数据库
-        if(!CollectionUtils.isEmpty(dataRes)){
-            logger.info("BusinessDataEntity size :"+dataRes.size());
-            for(BusinessDataEntity businessDataEntity : dataRes){
-                logger.info(businessDataEntity.getBatchDate());
-                int ret = businessDataDao.insertBusinessDataToMiddleDB(businessDataEntity);
-                logger.info("ret:"+ret);
+        String dataType ="100";
+        String dataName ="系统业务数据";
+        String resultCode = "0";
+        String option = "0";
+        boolean issucess = true;
+        //插入数据库
+        try {
+            if(!CollectionUtils.isEmpty(dataRes)){
+                logger.info("BusinessDataEntity size :"+dataRes.size());
+                for(BusinessDataEntity businessDataEntity : dataRes){
+                    logger.info(businessDataEntity.getBatchDate());
+                    int ret = businessDataDao.insertBusinessDataToMiddleDB(businessDataEntity);
+                    logger.info("ret:"+ret);
+                }
             }
+        }catch (Exception e){
+            issucess = false;
+            e.printStackTrace();
         }
-
-
+        if(!issucess){
+            resultCode = "-1";
+        }else{
+            resultCode = "0";
+        }
+        TaskStatusEntity taskStatusEntity  = new TaskStatusEntity(dataType,dataName,option,resultCode);
+        taskStatusEntity.setRemark(String.valueOf(dataRes.size()));
+        int ret = this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        if(ret!=-1){
+            logger.info("系统业务数据 data taskstatus job Success,batchDate is :"+new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date()));
+        }
     }
     //涉及多个数据源的load，
     @Override

@@ -32,6 +32,11 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
     private TaskStatusDao taskStatusDao;
 
     private List<BankCreditEntity> bankCreditEntitys = new ArrayList<BankCreditEntity>();
+
+    public void setbankCreditEntitys(List<BankCreditEntity> res){
+        this.bankCreditEntitys = res;
+    }
+
     @Override
     public List<JgBuBankCredit> loadSenderData(String batchDate) {
 //        Example example = new Example(BankCreditEntity.class);
@@ -82,6 +87,7 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
             bankCreditEntity.setSendStatus(status);
             bankCreditDao.updateBankCredit(bankCreditEntity);
         }
+
     }
 
     @Override
@@ -94,7 +100,9 @@ public class BankTrustSenderSchedule extends AbstractSenderSchedule<JgBuBankCred
         taskStatusEntity.setDataType(dataType);
         taskStatusEntity.setOpType(option);
         taskStatusEntity.setResult(resultCode);
+        taskStatusEntity.setRemark(String.valueOf(bankCreditEntitys.size()));
         this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        bankCreditEntitys.clear();
     }
 
     @Override

@@ -5,9 +5,11 @@ import com.supervise.common.DateUtils;
 import com.supervise.core.data.spi.GenericDataProcessorHandler;
 import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.entity.RepaymentEntity;
+import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.entity.ViewRepaymentEntity;
 import com.supervise.dao.mysql.mapper.BusinessDataMapper;
 import com.supervise.dao.mysql.middleDao.RepaymentDao;
+import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.dao.mysql.viewDao.ViewRepaymentDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,30 +46,61 @@ public class RepaymentLoader extends GenericDataProcessorHandler<List<RepaymentE
     @Autowired
     private BusinessDataMapper businessDataMapper;
 
+
+    @Autowired
+    private TaskStatusDao taskStatusDao;
+
     @Override
     public void afterData(List<RepaymentEntity> dataRes) {
         //插入数据库
-        if(!CollectionUtils.isEmpty(dataRes)){
-            logger.info("RepaymentEntity size :"+dataRes.size());
-            for(RepaymentEntity repaymentEntity : dataRes){
-                String batchDate = repaymentEntity.getBatchDate();
-                String orgId = repaymentEntity.getOrgId();
-                String projId = repaymentEntity.getProjId();
+        String dataType ="300";
+        String dataName ="还款数据";
+        String resultCode = "0";
+        String option = "0";
+        boolean issucess = true;
+        String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
+        try {
+            //插入数据库
+            if(!CollectionUtils.isEmpty(dataRes)){
+                logger.info("RepaymentEntity size :"+dataRes.size());
+                for(RepaymentEntity repaymentEntity : dataRes){
+                    String orgId = repaymentEntity.getOrgId();
+                    String projId = repaymentEntity.getProjId();
 
-                Example example = new Example(RepaymentEntity.class);
-                Example.Criteria fcriteria = example.createCriteria();
-                fcriteria.andEqualTo("batchDate", batchDate);
-                fcriteria.andEqualTo("orgId", orgId);
-                fcriteria.andEqualTo("projId", projId);
-                List<BusinessDataEntity> rtList = businessDataMapper.selectByExample(example);
-
-                //如果在业务信息数据表中查询到项目ID等关键信息，则保存，否则丢弃
-                if(!CollectionUtils.isEmpty(rtList)){
-                    int ret = repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
-                    logger.info("ret:"+ret);
+                    Example example = new Example(RepaymentEntity.class);
+                    Example.Criteria fcriteria = example.createCriteria();
+                    fcriteria.andEqualTo("batchDate", batchDate);
+                    fcriteria.andEqualTo("orgId", orgId);
+                    fcriteria.andEqualTo("projId", projId);
+                    List<BusinessDataEntity> rtList = businessDataMapper.selectByExample(example);
+                    //如果在业务信息数据表中查询到项目ID等关键信息，则保存，否则丢弃
+                    if(!CollectionUtils.isEmpty(rtList)){
+                        int ret = repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
+                        logger.info("ret:"+ret);
+                    }
                 }
             }
+        }catch (Exception e){
+            issucess = false;
+            e.printStackTrace();
         }
+        if(!issucess){
+            resultCode = "-1";
+        }else{
+            resultCode = "0";
+        }
+        TaskStatusEntity taskStatusEntity  = new TaskStatusEntity(dataType,dataName,option,resultCode);
+        List<RepaymentEntity> reList = repaymentDao.queryRepaymentFormMiddleDB(batchDate);
+        if(!CollectionUtils.isEmpty(reList)){
+            taskStatusEntity.setRemark(String.valueOf(reList.size()));
+        }else{
+            taskStatusEntity.setRemark("0");
+        }
+        int ret = this.taskStatusDao.insertTaskStatusToMiddleDB(taskStatusEntity);
+        if(ret!=-1){
+            logger.info("还款数据 data taskstatus job Success,batchDate is :"+batchDate);
+        }
+
     }
     //涉及多个数据源的load，所以需要需要做reduce操作
     @Override
