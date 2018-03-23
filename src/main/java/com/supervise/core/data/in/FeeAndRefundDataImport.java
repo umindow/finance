@@ -82,10 +82,11 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
                             }
                             break;
                         case 1://机构编码
-                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
-                                value = CellUtil.trimValue(value);
-                                feeAndRefundEntity.setOrgId(value);
-                            }
+//                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
+//                                value = CellUtil.trimValue(value);
+//                                feeAndRefundEntity.setOrgId(value);
+//                            }
+                            feeAndRefundEntity.setOrgId(Constants.ORG_ID);
                             break;
                         case 2://项目编码
                             if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {

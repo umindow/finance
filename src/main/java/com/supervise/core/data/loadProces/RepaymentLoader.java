@@ -7,7 +7,7 @@ import com.supervise.dao.mysql.entity.BusinessDataEntity;
 import com.supervise.dao.mysql.entity.RepaymentEntity;
 import com.supervise.dao.mysql.entity.TaskStatusEntity;
 import com.supervise.dao.mysql.entity.ViewRepaymentEntity;
-import com.supervise.dao.mysql.mapper.BusinessDataMapper;
+import com.supervise.dao.mysql.middleDao.BusinessDataDao;
 import com.supervise.dao.mysql.middleDao.RepaymentDao;
 import com.supervise.dao.mysql.middleDao.TaskStatusDao;
 import com.supervise.dao.mysql.viewDao.ViewRepaymentDao;
@@ -44,7 +44,7 @@ public class RepaymentLoader extends GenericDataProcessorHandler<List<RepaymentE
     private RepaymentDao repaymentDao;
 
     @Autowired
-    private BusinessDataMapper businessDataMapper;
+    private BusinessDataDao businessDataDao;
 
 
     @Autowired
@@ -72,7 +72,7 @@ public class RepaymentLoader extends GenericDataProcessorHandler<List<RepaymentE
                     fcriteria.andEqualTo("batchDate", batchDate);
                     fcriteria.andEqualTo("orgId", orgId);
                     fcriteria.andEqualTo("projId", projId);
-                    List<BusinessDataEntity> rtList = businessDataMapper.selectByExample(example);
+                    List<BusinessDataEntity> rtList = businessDataDao.queryBusinessDataByExample(batchDate,orgId,projId);
                     //如果在业务信息数据表中查询到项目ID等关键信息，则保存，否则丢弃
                     if(!CollectionUtils.isEmpty(rtList)){
                         int ret = repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);

@@ -27,7 +27,7 @@ public class BusinessDataDao {
 	* @param businessDataEntity 还款记录
 	* @return int 主键ID号
 	 */
-    public int insertBusinessDataToMiddleDB(BusinessDataEntity businessDataEntity){
+    public synchronized  int insertBusinessDataToMiddleDB(BusinessDataEntity businessDataEntity){
     
     	//将entity中的batchdate做处理，格式：yyyy-MM-dd HH:mm:ss 转换成yyyy-MM-dd
     	int id = -1;
@@ -73,7 +73,7 @@ public class BusinessDataDao {
 	 * @param businessDataEntity
 	 * int id
 	 */
-	public  int updateBusinessData(BusinessDataEntity businessDataEntity){
+	public synchronized  int updateBusinessData(BusinessDataEntity businessDataEntity){
 		int id = -1;
 		if(null!=businessDataEntity){
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
@@ -89,7 +89,7 @@ public class BusinessDataDao {
 	 * @param businessDataEntity
 	 * int id
 	 */
-	public  int deleteBusinessData(BusinessDataEntity businessDataEntity){
+	public synchronized  int deleteBusinessData(BusinessDataEntity businessDataEntity){
 		int id = -1;
 		if(null!=businessDataEntity){
 			id = this.businessDataMapper.delete(businessDataEntity);
@@ -102,7 +102,7 @@ public class BusinessDataDao {
 	 * @param key
 	 * int
 	 */
-	public  int deleteBusinessDataByID(Long key){
+	public synchronized  int deleteBusinessDataByID(Long key){
 		int id = -1;
 		if(null!=key){
 			id = this.businessDataMapper.deleteByPrimaryKey(key);
@@ -126,7 +126,7 @@ public class BusinessDataDao {
 	 * @param batchDate  条件
 	 * @return
 	 */
-	public void deleteBusinessDataByBatchDate(String batchDate){
+	public synchronized  void deleteBusinessDataByBatchDate(String batchDate){
 		Example example = new Example(BusinessDataEntity.class);
 		Example.Criteria criteria = example.createCriteria();
 		criteria.andEqualTo("batchDate", batchDate);
@@ -179,5 +179,22 @@ public class BusinessDataDao {
 		}
 		List<BusinessDataEntity> responseList  = this.businessDataMapper.selectByExample(example);
 		return responseList;
+	}
+	/**
+	 * 按照指定条件从中间库中查询业务数据信息
+	 * @param batchDate  批次
+	 * @param orgId  批次
+	 * @param projId  批次
+	 * @return 按照指定查询条件返回的查询结果集合
+	 */
+	public List<BusinessDataEntity> queryBusinessDataByExample(
+			String batchDate,String orgId,String projId){
+		Example example = new Example(BusinessDataEntity.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("batchDate", batchDate);
+		criteria.andEqualTo("orgId", orgId);
+		criteria.andEqualTo("projId", projId);
+		List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
+		return resList;
 	}
 }
