@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -72,7 +73,9 @@ public class BankCreditDataImport extends AbstractDataImport {
                     switch (cell.getColumnIndex()) {
                         case 0://主键ID号
                             value = CellUtil.trimValue(value);
-                            bankCreditEntity.setId(Long.parseLong(value));
+                            if(!StringUtils.isEmpty(value)){
+                                bankCreditEntity.setId(Long.parseLong(value));
+                            }
                             break;
                         case 1://银行授信记录ID
                             if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("primaryId"))) {
@@ -223,8 +226,8 @@ public class BankCreditDataImport extends AbstractDataImport {
             for (final BankCreditEntity bankCreditEntity : bankCreditEntities) {
                 //bankCreditEntity.setId(0L);//重新设置主键，避免主键重复
                 //String batchdate = bankCreditEntity.getBatchDate();
-                long id = bankCreditEntity.getId();
-                if(0!=id){
+                Long id = bankCreditEntity.getId();
+                if(null!=id&&id.longValue()>0){
                     BankCreditEntity  exBankCreditEntity = this.bankCreditDao.queryBankCreditByKey(id);
                     if(null!=exBankCreditEntity){
                         //更新

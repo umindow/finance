@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -76,7 +77,9 @@ public class FeeAndRefundDataImport extends AbstractDataImport {
                     switch (cell.getColumnIndex()) {
                         case 0://主键ID号
                             value = CellUtil.trimValue(value);
-                            feeAndRefundEntity.setId(Long.parseLong(value));
+                            if(!StringUtils.isEmpty(value)){
+                                feeAndRefundEntity.setId(Long.parseLong(value));
+                            }
                             break;
                         case 1://机构编码
                             if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {

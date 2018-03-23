@@ -76,7 +76,9 @@ public class BusinessDataImport extends AbstractDataImport {
                     switch (cell.getColumnIndex()) {
                         case 0://主键ID号
                             value = CellUtil.trimValue(value);
-                            businessDataEntity.setId(Long.parseLong(value));
+                            if(!org.springframework.util.StringUtils.isEmpty(value)){
+                                businessDataEntity.setId(Long.parseLong(value));
+                            }
                             break;
                         case 1://机构编码
                             if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {

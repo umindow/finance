@@ -168,7 +168,7 @@ public class RepaymentDataImport extends AbstractDataImport {
                     //不为空，同时主键ID号相同，则表示做更新;否则表示新增
                     boolean hasID = false;
                     for(RepaymentEntity repay :repayEntityList){
-                        if(repaymentEntity.getId()== repay.getId()){
+                        if(null!=repaymentEntity.getId()&&repaymentEntity.getId()== repay.getId()){
                             repaymentEntity.setSendStatus(repay.getSendStatus());
                             repaymentEntity.setCreateDate(repay.getCreateDate());
                             this.repaymentDao.updateRepayment(repaymentEntity);
