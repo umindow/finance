@@ -49,81 +49,92 @@ public class RecourseDataImport extends AbstractDataImport {
 
     @Override
     public void resolve(Workbook wb) throws Exception {
+        logger.info("Recoursefile start import!");
         Sheet sheet = wb.getSheetAt(0);//获取第一个表格
         if (null == sheet) {
             return;
         }
         RecourseEntity recourseEntity = null;
-        for (Row row : sheet) {
-            if (null == row) {
-                continue;
-            }
-            if (row.getRowNum() == 0) {
-                continue;
-            }
-            if (null==row.getCell(1)) {
-                break;
-            }
-            
-            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
-			recourseEntity = new RecourseEntity();
-            for (Cell cell : row) {
-                if (cell == null) {
+        try{
+            for (Row row : sheet) {
+                if (null == row) {
                     continue;
                 }
-                String value = getValue(cell);
-                switch (cell.getColumnIndex()) {
-                    case 0://主键ID号
-                        value = CellUtil.trimValue(value);
-                        recourseEntity.setId(Long.parseLong(value));
-                        break;
-                    case 1://机构编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
-                            value = CellUtil.trimValue(value);
-                            recourseEntity.setOrgId(value);
-                        }
-                        break;
-                    case 2://项目编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
-                            value = CellUtil.trimValue(value);
-                            recourseEntity.setProjId(value);
-                        }
-                        break;
-                    case 3://合同编号
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contractId"))) {
-                            value = CellUtil.trimValue(value);
-                            recourseEntity.setContractId(value);
-                        }
-                        break;
-                    case 4://追偿类型
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyType"))) {
-                            value = CellUtil.trimValue(value);
-                            recourseEntity.setReplevyType(value);
-                        }
-                        break;
-                    case 5://追偿日期
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyDate"))) {
-                            recourseEntity.setReplevyDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
-                        }
-                        break;
-                    case 6://追偿金额
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyMoney"))) {
-                            Double money = CellUtil.transfValuetoDouble(value);
-                            recourseEntity.setReplevyMoney(new BigDecimal(money));
-                        }
-                        break;
-                    case 7:
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batchDate"))) {
-                            String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
-                            recourseEntity.setBatchDate(batchDate);
-                        }
-                        break;
-                    default:
-                        break;
+                if (row.getRowNum() == 0) {
+                    continue;
                 }
+                if (null==row.getCell(1)) {
+                    break;
+                }
+
+                Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
+                recourseEntity = new RecourseEntity();
+                for (Cell cell : row) {
+                    if (cell == null) {
+                        continue;
+                    }
+                    String value = getValue(cell);
+                    switch (cell.getColumnIndex()) {
+                        case 0://主键ID号
+                            value = CellUtil.trimValue(value);
+                            recourseEntity.setId(Long.parseLong(value));
+                            break;
+                        case 1://机构编码
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
+                                value = CellUtil.trimValue(value);
+                                recourseEntity.setOrgId(value);
+                            }
+                            break;
+                        case 2://项目编码
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
+                                value = CellUtil.trimValue(value);
+                                recourseEntity.setProjId(value);
+                            }
+                            break;
+                        case 3://合同编号
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contractId"))) {
+                                value = CellUtil.trimValue(value);
+                                recourseEntity.setContractId(value);
+                            }
+                            break;
+                        case 4://追偿类型
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyType"))) {
+                                value = CellUtil.trimValue(value);
+                                recourseEntity.setReplevyType(value);
+                            }
+                            break;
+                        case 5://追偿日期
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyDate"))) {
+                                recourseEntity.setReplevyDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
+                            }
+                            break;
+                        case 6://追偿金额
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("replevyMoney"))) {
+                                Double money = CellUtil.transfValuetoDouble(value);
+                                if(null!=money){
+                                    recourseEntity.setReplevyMoney(new BigDecimal(money));
+                                }
+                            }
+                            break;
+                        case 7:
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batchDate"))) {
+                                String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
+                                recourseEntity.setBatchDate(batchDate);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                recourseEntitys.add(recourseEntity);
             }
-            recourseEntitys.add(recourseEntity);
+        }catch (Exception e){
+            recourseEntitys.clear();
+            logger.info("Recoursefile import error!");
+            e.printStackTrace();
         }
+        logger.info("Recoursefile import end,size:"+recourseEntitys.size());
+
     }
 
     @Override

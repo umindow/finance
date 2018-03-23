@@ -7,9 +7,7 @@ import com.supervise.controller.vo.DataVo;
 import com.supervise.controller.vo.FieldValue;
 import com.supervise.controller.vo.ViewVo;
 import com.supervise.dao.mysql.entity.UserEntity;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.ServletOutputStream;
@@ -34,6 +32,10 @@ public abstract class AbstractDataOutport implements DataOutport {
         }
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet(dataType.getDataName());
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        HSSFDataFormat format = workbook.createDataFormat();
+        cellStyle.setDataFormat(format.getFormat("@"));
+
         HSSFRow row = sheet.createRow(0);//表头title设置
         row.createCell(0).setCellValue("数据主键");
         //表头完毕
@@ -52,22 +54,37 @@ public abstract class AbstractDataOutport implements DataOutport {
                 for (int m = 0; m < dataVo.getValues().size(); m++) {
                     fieldValue = dataVo.getValues().get(m);
                     if (fieldValue.getValue() instanceof Integer) {
-                        row.createCell(m + 1).setCellValue((Integer) fieldValue.getValue());
+                        //row.createCell(m + 1).setCellValue((Integer) fieldValue.getValue());
+                        HSSFCell cell =row.createCell(m + 1);
+                        cell.setCellStyle(cellStyle);
+                        cell.setCellValue((Integer) fieldValue.getValue());
                     }
                     if (fieldValue.getValue() instanceof String) {
                         row.createCell(m + 1).setCellValue((String) fieldValue.getValue());
                     }
                     if (fieldValue.getValue() instanceof BigDecimal) {
-                        row.createCell(m + 1).setCellValue(((BigDecimal) fieldValue.getValue()).doubleValue());
+                       // row.createCell(m + 1).setCellValue(((BigDecimal) fieldValue.getValue()).doubleValue());
+                        HSSFCell cell =row.createCell(m + 1);
+                        cell.setCellStyle(cellStyle);
+                        cell.setCellValue(((BigDecimal) fieldValue.getValue()).doubleValue());
                     }
                     if (fieldValue.getValue() instanceof Double) {
-                        row.createCell(m + 1).setCellValue((Double) fieldValue.getValue());
+                        //row.createCell(m + 1).setCellValue((Double) fieldValue.getValue());
+                        HSSFCell cell =row.createCell(m + 1);
+                        cell.setCellStyle(cellStyle);
+                        cell.setCellValue((Double) fieldValue.getValue());
                     }
                     if (fieldValue.getValue() instanceof Long) {
-                        row.createCell(m + 1).setCellValue((Long) fieldValue.getValue());
+                        //row.createCell(m + 1).setCellValue((Long) fieldValue.getValue());
+                        HSSFCell cell =row.createCell(m + 1);
+                        cell.setCellStyle(cellStyle);
+                        cell.setCellValue((Long) fieldValue.getValue());
                     }
                     if (fieldValue.getValue() instanceof Float) {
-                        row.createCell(m + 1).setCellValue((Float) fieldValue.getValue());
+                        //row.createCell(m + 1).setCellValue((Float) fieldValue.getValue());
+                        HSSFCell cell =row.createCell(m + 1);
+                        cell.setCellStyle(cellStyle);
+                        cell.setCellValue((Float) fieldValue.getValue());
                     }
                     if (fieldValue.getValue() instanceof Date) {
                         row.createCell(m + 1).setCellValue(DateUtils.formatDate((Date) fieldValue.getValue(), DateUtils.DEFAULT_PATTERN));
