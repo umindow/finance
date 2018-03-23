@@ -83,10 +83,11 @@ public class RecourseDataImport extends AbstractDataImport {
                             }
                             break;
                         case 1://机构编码
-                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
-                                value = CellUtil.trimValue(value);
-                                recourseEntity.setOrgId(value);
-                            }
+//                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
+//                                value = CellUtil.trimValue(value);
+//                                recourseEntity.setOrgId(value);
+//                            }
+                            recourseEntity.setOrgId(Constants.ORG_ID);
                             break;
                         case 2://项目编码
                             if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {

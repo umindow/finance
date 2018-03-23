@@ -84,10 +84,11 @@ public class BankCreditDataImport extends AbstractDataImport {
                             }
                             break;
                         case 2://机构编码
-                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
-                                value = CellUtil.trimValue(value);
-                                bankCreditEntity.setOrgId(value);
-                            }
+//                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
+//                                value = CellUtil.trimValue(value);
+//                                bankCreditEntity.setOrgId(value);
+//                            }
+                            bankCreditEntity.setOrgId(Constants.ORG_ID);
                             break;
                         case 3://银行编号
                             if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("bankId"))) {

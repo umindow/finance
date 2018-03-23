@@ -14,7 +14,6 @@ import com.supervise.core.data.in.*;
 import com.supervise.core.data.out.*;
 import com.supervise.core.data.translate.GenericDataTranslate;
 import com.supervise.dao.mysql.entity.*;
-import com.supervise.dao.mysql.mapper.*;
 import com.supervise.dao.mysql.middleDao.*;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -25,13 +24,14 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xishui.hb on 2018/1/30 下午5:30.
@@ -61,18 +61,18 @@ public class DataController {
     private FeeAndRefundDao feeAndRefundDao;
     @Autowired
     private RecourseDao recourseDao;
-    @Autowired
-    private BankCreditMapper bankCreditMapper;
-    @Autowired
-    private RepaymentMapper repaymentMapper;
-    @Autowired
-    private BusinessDataMapper businessDataMapper;
-    @Autowired
-    private CompensatoryMapper compensatoryMapper;
-    @Autowired
-    private FeeAndRefundMapper feeAndRefundMapper;
-    @Autowired
-    private RecourseMapper recourseMapper;
+//    @Autowired
+//    private BankCreditMapper bankCreditMapper;
+//    @Autowired
+//    private RepaymentMapper repaymentMapper;
+//    @Autowired
+//    private BusinessDataMapper businessDataMapper;
+//    @Autowired
+//    private CompensatoryMapper compensatoryMapper;
+//    @Autowired
+//    private FeeAndRefundMapper feeAndRefundMapper;
+//    @Autowired
+//    private RecourseMapper recourseMapper;
     @Autowired
     private BankCreditDataImport bankCreditDataImport;
     @Autowired
@@ -453,34 +453,34 @@ public class DataController {
     public String deleteData(@RequestParam(value = "dataId", required = false) Long dataId, @RequestParam(value = "dataType", required = false) Integer dataType) {
         try {
             if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == dataType.intValue()) {
-                bankCreditMapper.deleteByPrimaryKey(dataId);
+                bankCreditDao.deleteRepaymentByID(dataId);
             } else if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
 //                RecourseEntity recourseEntity = recourseMapper.selectByPrimaryKey(dataId);
 //                recourseReset(recourseEntity);
 //                recourseMapper.updateByPrimaryKeySelective(recourseEntity);
                 //直接删除
-                recourseMapper.deleteByPrimaryKey(dataId);
+                repaymentDao.deleteRepaymentByID(dataId);
             } else if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
 //                CompensatoryEntity compensatoryEntity = compensatoryMapper.selectByPrimaryKey(dataId);
 //                compensatoryReset(compensatoryEntity);
 //                compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
                 //直接删除
-                compensatoryMapper.deleteByPrimaryKey(dataId);
+                compensatoryDao.deleteCompensatoryByID(dataId);
             } else if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
 //                FeeAndRefundEntity feeAndRefundEntity = feeAndRefundMapper.selectByPrimaryKey(dataId);
 //                feeAndRefundReset(feeAndRefundEntity);
 //                feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
                 //直接删除
-                feeAndRefundMapper.deleteByPrimaryKey(dataId);
+                feeAndRefundDao.deleteFeeAndRefundByID(dataId);
             } else if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
-                BusinessDataEntity businessDataEntity = businessDataMapper.selectByPrimaryKey(dataId);
+                BusinessDataEntity businessDataEntity = businessDataDao.queryBusinessDataByKey(dataId);
                 userEntity = SessionUser.INSTANCE.getCurrentUser();
                 //如果是综合营运部，或者管理员则可以直接删除该条记录；否则只能清除该部门所有权限字段的内容,并更新数据
                 if (isCompdep(userEntity) || "20".equalsIgnoreCase(userEntity.getDataLevels())) {
-                    businessDataMapper.deleteByPrimaryKey(dataId);
+                    businessDataDao.deleteBusinessDataByID(dataId);
                     //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
                     String batchDate = businessDataEntity.getBatchDate();
                     String orgId = businessDataEntity.getOrgId();
@@ -497,10 +497,7 @@ public class DataController {
                     //否则清除有权限部分的字段，并更新数据库
                     Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
                     deleteBusinessDataEntity4Role(businessDataEntity, filedRoles, userEntity);
-                    String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
-                    Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
-                    businessDataEntity.setUpdateDate(newDate);
-                    businessDataMapper.updateByPrimaryKeySelective(businessDataEntity);
+                    businessDataDao.updateBusinessData(businessDataEntity);
                 }
             } else if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == dataType.intValue()) {
                 //只能清除字段，必留机构ID+项目id+batchdate
@@ -508,7 +505,7 @@ public class DataController {
 //                repaymentReset(repaymentEntity);
 //                repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
                 //直接删除
-                repaymentMapper.deleteByPrimaryKey(dataId);
+                repaymentDao.deleteRepaymentByID(dataId);
             } else {
                 return "数据类型不存在";
             }
@@ -525,11 +522,11 @@ public class DataController {
             if (null == bankCreditEntity || bankCreditEntity.getId() == null) {
                 return false;
             }
-            BankCreditEntity ebankCreditEntity  = bankCreditMapper.selectByPrimaryKey(bankCreditEntity.getId());
+            BankCreditEntity ebankCreditEntity  = bankCreditDao.queryBankCreditByKey(bankCreditEntity.getId());
             bankCreditEntity.setSendStatus(ebankCreditEntity.getSendStatus());
             bankCreditEntity.setCreateDate(ebankCreditEntity.getCreateDate());
             bankCreditEntity.setUpdateDate(new Date());
-            bankCreditMapper.updateByPrimaryKey(bankCreditEntity);
+            bankCreditDao.updateBankCredit(bankCreditEntity);
         } catch (Exception e) {
             return false;
         }
@@ -547,25 +544,17 @@ public class DataController {
             String batchDate = recourseEntity.getBatchDate();
             String orgId = recourseEntity.getOrgId();
             String projId = recourseEntity.getProjId();
-
-            Example example = new Example(BusinessDataEntity.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("batchDate", batchDate);
-            criteria.andEqualTo("orgId", orgId);
-            criteria.andEqualTo("projId", projId);
-            List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
-
+            List<BusinessDataEntity> resList = this.businessDataDao.queryBusinessDataByExample(batchDate,orgId,projId);
             //如果没有查询到数据，则说明项目不存在
             if (CollectionUtils.isEmpty(resList)) {
-                recourseMapper.delete(recourseEntity);
+                recourseDao.deleteRecourseByID(recourseEntity.getId());
                 logger.info("delete recourse record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
-                RecourseEntity erecourseEntity = recourseMapper.selectByPrimaryKey(recourseEntity.getId());
+                RecourseEntity erecourseEntity = recourseDao.queryRecourseByKey(recourseEntity.getId());
                 recourseEntity.setSendStatus(erecourseEntity.getSendStatus());
                 recourseEntity.setCreateDate(erecourseEntity.getCreateDate());
-                recourseEntity.setUpdateDate(new Date());
-                recourseMapper.updateByPrimaryKeySelective(recourseEntity);
+                recourseDao.updateRecourse(recourseEntity);
                 logger.info("update recourse record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
         } catch (Exception e) {
@@ -586,24 +575,18 @@ public class DataController {
             String orgId = compensatoryEntity.getOrgId();
             String projId = compensatoryEntity.getProjId();
 
-            Example example = new Example(BusinessDataEntity.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("batchDate", batchDate);
-            criteria.andEqualTo("orgId", orgId);
-            criteria.andEqualTo("projId", projId);
-            List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
+            List<BusinessDataEntity> resList = this.businessDataDao.queryBusinessDataByExample(batchDate, orgId, projId);
 
             //如果没有查询到数据，则说明项目不存在
             if (CollectionUtils.isEmpty(resList)) {
-                compensatoryMapper.delete(compensatoryEntity);
+                compensatoryDao.deleteCompensatoryByID(compensatoryEntity.getId());
                 logger.info("delete compensatory record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
-                CompensatoryEntity ecompensatoryEntity = compensatoryMapper.selectByPrimaryKey(compensatoryEntity.getId());
+                CompensatoryEntity ecompensatoryEntity = compensatoryDao.queryCompensatoryByKey(compensatoryEntity.getId());
                 compensatoryEntity.setSendStatus(ecompensatoryEntity.getSendStatus());
                 compensatoryEntity.setCreateDate(ecompensatoryEntity.getCreateDate());
-                compensatoryEntity.setUpdateDate(new Date());
-                compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
+                compensatoryDao.updateCompensatory(compensatoryEntity);
                 logger.info("update compensatory record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
         } catch (Exception e) {
@@ -624,24 +607,18 @@ public class DataController {
             String orgId = feeAndRefundEntity.getOrgId();
             String projId = feeAndRefundEntity.getProjId();
 
-            Example example = new Example(BusinessDataEntity.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("batchDate", batchDate);
-            criteria.andEqualTo("orgId", orgId);
-            criteria.andEqualTo("projId", projId);
-            List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
+            List<BusinessDataEntity> resList = this.businessDataDao.queryBusinessDataByExample(batchDate, orgId, projId);
 
             //如果没有查询到数据，则说明项目不存在
             if (CollectionUtils.isEmpty(resList)) {
-                feeAndRefundMapper.delete(feeAndRefundEntity);
+                feeAndRefundDao.deleteFeeAndRefundByID(feeAndRefundEntity.getId());
                 logger.info("delete feeAndRefund record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
-                FeeAndRefundEntity efeeAndRefundEntity = feeAndRefundMapper.selectByPrimaryKey(feeAndRefundEntity.getId());
+                FeeAndRefundEntity efeeAndRefundEntity = feeAndRefundDao.queryFeeAndRefundByKey(feeAndRefundEntity.getId());
                 feeAndRefundEntity.setSendStatus(efeeAndRefundEntity.getSendStatus());
                 feeAndRefundEntity.setCreateDate(efeeAndRefundEntity.getCreateDate());
-                feeAndRefundEntity.setUpdateDate(new Date());
-                feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
+                feeAndRefundDao.updateFeeAndRefund(feeAndRefundEntity);
                 logger.info("update feeAndRefund record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
 
@@ -661,15 +638,15 @@ public class DataController {
             //根据ID号查询全量的业务数据
             Long dataId = businessDataEntity.getId();
 
-            BusinessDataEntity businessDataExist = businessDataMapper.selectByPrimaryKey(dataId);
+            BusinessDataEntity businessDataExist = businessDataDao.queryBusinessDataByKey(dataId);
             userEntity = SessionUser.INSTANCE.getCurrentUser();
             //根据权限设置更新的字段
             Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
             businessDataExist = updateBusinessDataEntity4Role(businessDataExist, businessDataEntity, filedRoles, userEntity);
 //            String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 //            Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
-            businessDataExist.setUpdateDate(new Date());
-            businessDataMapper.updateByPrimaryKeySelective(businessDataExist);
+//            businessDataExist.setUpdateDate(new Date());
+            businessDataDao.updateBusinessData(businessDataExist);
         } catch (Exception e) {
             return false;
         }
@@ -688,24 +665,19 @@ public class DataController {
             String orgId = repaymentEntity.getOrgId();
             String projId = repaymentEntity.getProjId();
 
-            Example example = new Example(BusinessDataEntity.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("batchDate", batchDate);
-            criteria.andEqualTo("orgId", orgId);
-            criteria.andEqualTo("projId", projId);
-            List<BusinessDataEntity> resList = this.businessDataMapper.selectByExample(example);
+            List<BusinessDataEntity> resList = this.businessDataDao.queryBusinessDataByExample(batchDate, orgId, projId);
 
             //如果没有查询到数据，则说明项目不存在
             if (CollectionUtils.isEmpty(resList)) {
-                repaymentMapper.delete(repaymentEntity);
+                repaymentDao.deleteRepaymentByID(repaymentEntity.getId());
                 logger.info("delete repayment record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
                 logger.info("reason:the project in business Not Existed");
             } else {
-                RepaymentEntity erepaymentEntity = repaymentMapper.selectByPrimaryKey(repaymentEntity.getId());
+                RepaymentEntity erepaymentEntity = repaymentDao.queryRepaymentByKey(repaymentEntity.getId());
                 repaymentEntity.setSendStatus(erepaymentEntity.getSendStatus());
                 repaymentEntity.setCreateDate(erepaymentEntity.getCreateDate());
                 repaymentEntity.setUpdateDate(new Date());
-                repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
+                repaymentDao.updateRepayment(repaymentEntity);
                 logger.info("update repayment record : orgId:" + orgId + " projId:" + projId + " batchDate:" + batchDate);
             }
 

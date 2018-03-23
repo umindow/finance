@@ -250,7 +250,8 @@ public final class Constants {
     public static final String FINANCE_FEE_AND_REFUND_INFO = "finance_fee_and_refund_info";
     public static final String FINANCE_RECOURSE_INFO = "finance_recourse_info";
     public static final String FCS_RM_BATCHDATE = "批次";
-    public static final String FCS_RM_PROJ_STATUS = "项目状态";
+    public static final String FCS_RM_PROJ_STATUS = "项目状态";//渝061001L
+    public static final String ORG_ID = "渝061001L";//
     /***************************数据库表常量 end********************************/
     /***************************视图常量 start********************************/
 //	public static final String REPAYMENT_VIEW = "repayment_info_view";

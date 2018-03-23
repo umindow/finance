@@ -83,10 +83,11 @@ public class CompensatoryDataImport extends AbstractDataImport {
                             }
                             break;
                         case 1://机构编码
-                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
-                                value = CellUtil.trimValue(value);
-                                compensatoryEntity.setOrgId(value);
-                            }
+//                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
+//                                value = CellUtil.trimValue(value);
+//                                compensatoryEntity.setOrgId(value);
+//                            }
+                            compensatoryEntity.setOrgId(Constants.ORG_ID);
                             break;
                         case 2://项目编码
                             if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
