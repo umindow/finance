@@ -49,86 +49,101 @@ public class RepaymentDataImport extends AbstractDataImport {
 
     @Override
     public void resolve(Workbook wb) throws Exception {
+        logger.info("Repaymentfile start import!");
         Sheet sheet = wb.getSheetAt(0);//获取第一个表格
         if (null == sheet) {
             return;
         }
         RepaymentEntity repaymentEntity = null;
-        for (Row row : sheet) {
-            if (null == row) {
-                continue;
-            }
-            if (row.getRowNum() == 0) {
-                continue;
-            }
-            if (null==row.getCell(1)) {
-                break;
-            }
-            Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_REBACK_DATA.getDataLevel());
-            repaymentEntity = new RepaymentEntity();
-            for (Cell cell : row) {
-                if (cell == null) {
+        try {
+            for (Row row : sheet) {
+                if (null == row) {
                     continue;
                 }
-                String value = getValue(cell);
-                switch (cell.getColumnIndex()) {
-                    case 0://主键ID号
-                        value = CellUtil.trimValue(value);
-                        repaymentEntity.setId(Long.parseLong(value));
-                        break;
-                    case 1://机构编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
-                            value = CellUtil.trimValue(value);
-                            repaymentEntity.setOrgId(value);
-                        }
-                        break;
-                    case 2://项目编码
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
-                            value = CellUtil.trimValue(value);
-                            repaymentEntity.setProjId(value);
-                        }
-                        break;
-                    case 3://合同编号
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contractId"))) {
-                            value = CellUtil.trimValue(value);
-                            repaymentEntity.setContractId(value);
-                        }
-                        break;
-                    case 4://实际还款日期
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repayDate"))) {
-                            repaymentEntity.setRepayDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
-                        }
-                        break;
-                    case 5://实际归还本金
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("principal"))) {
-                            Double money = CellUtil.transfValuetoDouble(value);
-                            repaymentEntity.setPrincipal(new BigDecimal(money));
-                        }
-                        break;
-                    case 6://实际归还利息
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("interest"))) {
-                            Double money = CellUtil.transfValuetoDouble(value);
-                            repaymentEntity.setInterest(new BigDecimal(money));
-                        }
-                        break;
-                    case 7://收取罚息
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("punishMoney"))) {
-                            Double money = CellUtil.transfValuetoDouble(value);
-                            repaymentEntity.setPunishMoney(new BigDecimal(money));
-                        }
-                        break;
-                    case 8:
-                        if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batchDate"))) {
-                            String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
-                            repaymentEntity.setBatchDate(batchDate);
-                        }
-                        break;
-                    default:
-                        break;
+                if (row.getRowNum() == 0) {
+                    continue;
                 }
+                if (null==row.getCell(1)) {
+                    break;
+                }
+                Map<String,FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_REBACK_DATA.getDataLevel());
+                repaymentEntity = new RepaymentEntity();
+                for (Cell cell : row) {
+                    if (cell == null) {
+                        continue;
+                    }
+                    String value = getValue(cell);
+                    switch (cell.getColumnIndex()) {
+                        case 0://主键ID号
+                            value = CellUtil.trimValue(value);
+                            repaymentEntity.setId(Long.parseLong(value));
+                            break;
+                        case 1://机构编码
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("orgId"))) {
+                                value = CellUtil.trimValue(value);
+                                repaymentEntity.setOrgId(value);
+                            }
+                            break;
+                        case 2://项目编码
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("projId"))) {
+                                value = CellUtil.trimValue(value);
+                                repaymentEntity.setProjId(value);
+                            }
+                            break;
+                        case 3://合同编号
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("contractId"))) {
+                                value = CellUtil.trimValue(value);
+                                repaymentEntity.setContractId(value);
+                            }
+                            break;
+                        case 4://实际还款日期
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("repayDate"))) {
+                                repaymentEntity.setRepayDate(DateUtils.parseStringDate(value, Constants.YYYY_MM_DD));
+                            }
+                            break;
+                        case 5://实际归还本金
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("principal"))) {
+                                Double money = CellUtil.transfValuetoDouble(value);
+                                if(null!=money){
+                                    repaymentEntity.setPrincipal(new BigDecimal(money));
+                                }
+                            }
+                            break;
+                        case 6://实际归还利息
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("interest"))) {
+                                Double money = CellUtil.transfValuetoDouble(value);
+                                if(null!=money){
+                                    repaymentEntity.setInterest(new BigDecimal(money));
+                                }
+                            }
+                            break;
+                        case 7://收取罚息
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("punishMoney"))) {
+                                Double money = CellUtil.transfValuetoDouble(value);
+                                if(null!=money){
+                                    repaymentEntity.setPunishMoney(new BigDecimal(money));
+                                }
+                            }
+                            break;
+                        case 8:
+                            if(FiedRoleCache.checkFieldRole(getUserEntity(),filedRoles.get("batchDate"))) {
+                                String batchDate = new SimpleDateFormat(Constants.YYYY_MM_DD).format(new Date());
+                                repaymentEntity.setBatchDate(batchDate);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                repaymentEntitys.add(repaymentEntity);
             }
-            repaymentEntitys.add(repaymentEntity);
+        }catch (Exception e){
+            repaymentEntitys.clear();
+            logger.info("Repaymentfile import error!");
+            e.printStackTrace();
         }
+        logger.info("Repaymentfile import end,size:"+repaymentEntitys.size());
+
     }
 
     @Override
@@ -142,43 +157,51 @@ public class RepaymentDataImport extends AbstractDataImport {
 //        String batchDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 //        this.repaymentDao.deleteRepaymentByBatchDate(batchDate);
         //然后保存导入的EXCEL记录
-        for (final RepaymentEntity repaymentEntity : repaymentEntitys) {
-            String orgid = repaymentEntity.getOrgId();
-            String projid = repaymentEntity.getProjId();
-            String batchdate = repaymentEntity.getBatchDate();
-            QueryCondition queryCondition = createQueryCondition(orgid,projid,batchdate);
-            List<RepaymentEntity> repayEntityList = this.repaymentDao.queryRepaymentByCondition(queryCondition);
-            if (!CollectionUtils.isEmpty(repayEntityList)) {
-                //不为空，同时主键ID号相同，则表示做更新;否则表示新增
-                boolean hasID = false;
-                for(RepaymentEntity repay :repayEntityList){
-                    if(repaymentEntity.getId()== repay.getId()){
-                        repaymentEntity.setSendStatus(repay.getSendStatus());
-                        repaymentEntity.setCreateDate(repay.getCreateDate());
-                        this.repaymentDao.updateRepayment(repaymentEntity);
-                        hasID = true;
-                        break;
+        try {
+            for (final RepaymentEntity repaymentEntity : repaymentEntitys) {
+                String orgid = repaymentEntity.getOrgId();
+                String projid = repaymentEntity.getProjId();
+                String batchdate = repaymentEntity.getBatchDate();
+                QueryCondition queryCondition = createQueryCondition(orgid,projid,batchdate);
+                List<RepaymentEntity> repayEntityList = this.repaymentDao.queryRepaymentByCondition(queryCondition);
+                if (!CollectionUtils.isEmpty(repayEntityList)) {
+                    //不为空，同时主键ID号相同，则表示做更新;否则表示新增
+                    boolean hasID = false;
+                    for(RepaymentEntity repay :repayEntityList){
+                        if(null!=repaymentEntity.getId()&&repaymentEntity.getId()== repay.getId()){
+                            repaymentEntity.setSendStatus(repay.getSendStatus());
+                            repaymentEntity.setCreateDate(repay.getCreateDate());
+                            this.repaymentDao.updateRepayment(repaymentEntity);
+                            hasID = true;
+                            break;
+                        }
+                    }
+                    if(!hasID){
+                        //标明没有查询到相同的主键ID
+                        repaymentEntity.setId(0L);//重新设置主键，避免主键重复
+                        this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
+                    }
+                }else{
+                    //否则表示新增，同时查询业务数据，查看是否立项，如果有立项则新增，否则丢弃
+                    List<BusinessDataEntity> resList  = this.businessDataDao.queryBusinessDataByCondition(queryCondition);
+                    if(!CollectionUtils.isEmpty(resList)){
+                        repaymentEntity.setId(0L);//重新设置主键，避免主键重复
+                        this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
+                    }else{
+                        logger.info("orgid :"+orgid +" projid:"+projid +" batchdate:"+batchdate);
+                        logger.info("Not Exist in BusinessData!");
+                        logger.info("Can not save repayment with new projid in this batchdate!");
                     }
                 }
-                if(!hasID){
-                    //标明没有查询到相同的主键ID
-                    repaymentEntity.setId(0L);//重新设置主键，避免主键重复
-                    this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
-                }
-            }else{
-                //否则表示新增，同时查询业务数据，查看是否立项，如果有立项则新增，否则丢弃
-                List<BusinessDataEntity> resList  = this.businessDataDao.queryBusinessDataByCondition(queryCondition);
-                if(!CollectionUtils.isEmpty(resList)){
-                    repaymentEntity.setId(0L);//重新设置主键，避免主键重复
-                    this.repaymentDao.insertRepaymentToMiddleDB(repaymentEntity);
-                }else{
-                    logger.info("orgid :"+orgid +" projid:"+projid +" batchdate:"+batchdate);
-                    logger.info("Not Exist in BusinessData!");
-                    logger.info("Can not save repayment with new projid in this batchdate!");
-                }
             }
+        }catch (Exception e){
+            logger.error("repaymentfile import updateDB error!");
+            e.printStackTrace();
+        }finally {
+            repaymentEntitys.clear();
         }
-        repaymentEntitys.clear();
+
+
         /**
          * 增加判断逻辑
          * 1、先根据ID作为查询条件，查询是否存在记录

@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
 /**
@@ -143,7 +144,8 @@ public abstract class AbstractDataImport implements DataImport {
                 return new SimpleDateFormat(DATE_FULL_STR).format(DateUtil.getJavaDate(cell.getNumericCellValue()));
             }else{
                 Double big  = (Double)getCellValue(cell);
-                value = big.toString();
+                BigDecimal bd = new BigDecimal(Double.toString(big));
+                value = bd.toPlainString();
             }
         }else if(Cell.CELL_TYPE_STRING==cell.getCellType()){
             value = (String) getCellValue(cell);

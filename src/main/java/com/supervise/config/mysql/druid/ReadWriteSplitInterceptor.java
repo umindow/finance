@@ -22,7 +22,7 @@ public class ReadWriteSplitInterceptor implements Ordered {
     public void setWriteDataSourceType() {
         DbContextHolder.clearDbType();
         DbContextHolder.setDbType(DbContextHolder.DbType.MASTER);
-        logger.info("the current datasource is master");
+        //logger.info("the current datasource is master");
     }
 
     @Before(" execution(* tk.mybatis.mapper.common..*.find*(..)) " +
@@ -33,7 +33,7 @@ public class ReadWriteSplitInterceptor implements Ordered {
     public void setReadDataSourceType() {
         DbContextHolder.clearDbType();
         DbContextHolder.setDbType(DbContextHolder.DbType.SLAVE);
-        logger.info("the current datasource is slave");
+        //logger.info("the current datasource is slave");
     }
 
     @Override
