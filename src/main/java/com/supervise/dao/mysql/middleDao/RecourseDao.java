@@ -79,7 +79,7 @@ public class RecourseDao {
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			recourseEntity.setUpdateDate(newDate);
-			id = this.recourseMapper.updateByPrimaryKeySelective(recourseEntity);
+			id = this.recourseMapper.updateByPrimaryKey(recourseEntity);
 		}
 		return id;
 	}

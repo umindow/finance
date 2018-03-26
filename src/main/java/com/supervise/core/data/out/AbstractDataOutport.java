@@ -58,36 +58,46 @@ public abstract class AbstractDataOutport implements DataOutport {
                         HSSFCell cell =row.createCell(m + 1);
                         cell.setCellStyle(cellStyle);
                         cell.setCellValue((Integer) fieldValue.getValue());
+                        continue;
                     }
                     if (fieldValue.getValue() instanceof String) {
                         row.createCell(m + 1).setCellValue((String) fieldValue.getValue());
+                        continue;
                     }
                     if (fieldValue.getValue() instanceof BigDecimal) {
                        // row.createCell(m + 1).setCellValue(((BigDecimal) fieldValue.getValue()).doubleValue());
                         HSSFCell cell =row.createCell(m + 1);
                         cell.setCellStyle(cellStyle);
                         cell.setCellValue(((BigDecimal) fieldValue.getValue()).doubleValue());
+                        continue;
                     }
                     if (fieldValue.getValue() instanceof Double) {
                         //row.createCell(m + 1).setCellValue((Double) fieldValue.getValue());
                         HSSFCell cell =row.createCell(m + 1);
                         cell.setCellStyle(cellStyle);
                         cell.setCellValue((Double) fieldValue.getValue());
+                        continue;
                     }
                     if (fieldValue.getValue() instanceof Long) {
                         //row.createCell(m + 1).setCellValue((Long) fieldValue.getValue());
                         HSSFCell cell =row.createCell(m + 1);
                         cell.setCellStyle(cellStyle);
                         cell.setCellValue((Long) fieldValue.getValue());
+                        continue;
                     }
                     if (fieldValue.getValue() instanceof Float) {
                         //row.createCell(m + 1).setCellValue((Float) fieldValue.getValue());
                         HSSFCell cell =row.createCell(m + 1);
                         cell.setCellStyle(cellStyle);
                         cell.setCellValue((Float) fieldValue.getValue());
+                        continue;
                     }
                     if (fieldValue.getValue() instanceof Date) {
                         row.createCell(m + 1).setCellValue(DateUtils.formatDate((Date) fieldValue.getValue(), DateUtils.DEFAULT_PATTERN));
+                        continue;
+                    }
+                    else{
+                        row.createCell(m + 1).setCellValue("");
                     }
                 }
             }

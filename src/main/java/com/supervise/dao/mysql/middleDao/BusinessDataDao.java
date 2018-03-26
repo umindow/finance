@@ -27,7 +27,7 @@ public class BusinessDataDao {
 	* @param businessDataEntity 还款记录
 	* @return int 主键ID号
 	 */
-    public synchronized  int insertBusinessDataToMiddleDB(BusinessDataEntity businessDataEntity){
+    public   int insertBusinessDataToMiddleDB(BusinessDataEntity businessDataEntity){
     
     	//将entity中的batchdate做处理，格式：yyyy-MM-dd HH:mm:ss 转换成yyyy-MM-dd
     	int id = -1;
@@ -73,13 +73,13 @@ public class BusinessDataDao {
 	 * @param businessDataEntity
 	 * int id
 	 */
-	public synchronized  int updateBusinessData(BusinessDataEntity businessDataEntity){
+	public   int updateBusinessData(BusinessDataEntity businessDataEntity){
 		int id = -1;
 		if(null!=businessDataEntity){
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			businessDataEntity.setUpdateDate(newDate);
-			id = this.businessDataMapper.updateByPrimaryKeySelective(businessDataEntity);
+			id = this.businessDataMapper.updateByPrimaryKey(businessDataEntity);
 		}
 		return id;
 	}
@@ -89,7 +89,7 @@ public class BusinessDataDao {
 	 * @param businessDataEntity
 	 * int id
 	 */
-	public synchronized  int deleteBusinessData(BusinessDataEntity businessDataEntity){
+	public   int deleteBusinessData(BusinessDataEntity businessDataEntity){
 		int id = -1;
 		if(null!=businessDataEntity){
 			id = this.businessDataMapper.delete(businessDataEntity);
@@ -102,7 +102,7 @@ public class BusinessDataDao {
 	 * @param key
 	 * int
 	 */
-	public synchronized  int deleteBusinessDataByID(Long key){
+	public   int deleteBusinessDataByID(Long key){
 		int id = -1;
 		if(null!=key){
 			id = this.businessDataMapper.deleteByPrimaryKey(key);
@@ -126,7 +126,7 @@ public class BusinessDataDao {
 	 * @param batchDate  条件
 	 * @return
 	 */
-	public synchronized  void deleteBusinessDataByBatchDate(String batchDate){
+	public   void deleteBusinessDataByBatchDate(String batchDate){
 		Example example = new Example(BusinessDataEntity.class);
 		Example.Criteria criteria = example.createCriteria();
 		criteria.andEqualTo("batchDate", batchDate);

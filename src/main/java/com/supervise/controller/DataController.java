@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -455,55 +456,17 @@ public class DataController {
             if (DataType.SUPERVISE_BANK_DATA.getDataLevel() == dataType.intValue()) {
                 bankCreditDao.deleteRepaymentByID(dataId);
             } else if (DataType.SUPERVISE_TRACE_DATA.getDataLevel() == dataType.intValue()) {
-                //只能清除字段，必留机构ID+项目id+batchdate
-//                RecourseEntity recourseEntity = recourseMapper.selectByPrimaryKey(dataId);
-//                recourseReset(recourseEntity);
-//                recourseMapper.updateByPrimaryKeySelective(recourseEntity);
                 //直接删除
-                repaymentDao.deleteRepaymentByID(dataId);
+                recourseDao.deleteRecourseByID(dataId);
             } else if (DataType.SUPERVISE_REPLACE_DATA.getDataLevel() == dataType.intValue()) {
-                //只能清除字段，必留机构ID+项目id+batchdate
-//                CompensatoryEntity compensatoryEntity = compensatoryMapper.selectByPrimaryKey(dataId);
-//                compensatoryReset(compensatoryEntity);
-//                compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
                 //直接删除
                 compensatoryDao.deleteCompensatoryByID(dataId);
             } else if (DataType.SUPERVISE_FEE_DATA.getDataLevel() == dataType.intValue()) {
-                //只能清除字段，必留机构ID+项目id+batchdate
-//                FeeAndRefundEntity feeAndRefundEntity = feeAndRefundMapper.selectByPrimaryKey(dataId);
-//                feeAndRefundReset(feeAndRefundEntity);
-//                feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
                 //直接删除
                 feeAndRefundDao.deleteFeeAndRefundByID(dataId);
             } else if (DataType.SUPERVISE_BIZ_DATA.getDataLevel() == dataType.intValue()) {
-                BusinessDataEntity businessDataEntity = businessDataDao.queryBusinessDataByKey(dataId);
-                userEntity = SessionUser.INSTANCE.getCurrentUser();
-                //如果是综合营运部，或者管理员则可以直接删除该条记录；否则只能清除该部门所有权限字段的内容,并更新数据
-                if (isCompdep(userEntity) || "20".equalsIgnoreCase(userEntity.getDataLevels())) {
-                    businessDataDao.deleteBusinessDataByID(dataId);
-                    //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
-                    String batchDate = businessDataEntity.getBatchDate();
-                    String orgId = businessDataEntity.getOrgId();
-                    String projId = businessDataEntity.getProjId();
-                    //删除收退费信息
-                    feeAndRefundDao.deleteFeeAndRefundByCondition(batchDate,orgId,projId);
-                    //删除还款信息
-                    repaymentDao.deleteRepaymentByCondition(batchDate,orgId,projId);
-                    //删除追偿信息
-                    recourseDao.deleteRecourseByCondition(batchDate,orgId,projId);
-                    //删除代偿信息
-                    compensatoryDao.deleteCompensatoryByCondition(batchDate,orgId,projId);
-                } else {
-                    //否则清除有权限部分的字段，并更新数据库
-                    Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
-                    deleteBusinessDataEntity4Role(businessDataEntity, filedRoles, userEntity);
-                    businessDataDao.updateBusinessData(businessDataEntity);
-                }
+                deleteBusinessDataEntity(dataId);
             } else if (DataType.SUPERVISE_REBACK_DATA.getDataLevel() == dataType.intValue()) {
-                //只能清除字段，必留机构ID+项目id+batchdate
-//                RepaymentEntity repaymentEntity = repaymentMapper.selectByPrimaryKey(dataId);
-//                repaymentReset(repaymentEntity);
-//                repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
                 //直接删除
                 repaymentDao.deleteRepaymentByID(dataId);
             } else {
@@ -630,7 +593,7 @@ public class DataController {
 
     @ResponseBody
     @RequestMapping(value = "/businessModify", method = RequestMethod.POST)
-    public boolean businessModify(BusinessDataEntity businessDataEntity) {
+    public synchronized boolean businessModify(BusinessDataEntity businessDataEntity) {
         try {
             if (null == businessDataEntity || businessDataEntity.getId() == null) {
                 return false;
@@ -643,9 +606,6 @@ public class DataController {
             //根据权限设置更新的字段
             Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
             businessDataExist = updateBusinessDataEntity4Role(businessDataExist, businessDataEntity, filedRoles, userEntity);
-//            String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
-//            Date newDate = DateUtils.String2Date(dateStr, Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
-//            businessDataExist.setUpdateDate(new Date());
             businessDataDao.updateBusinessData(businessDataExist);
         } catch (Exception e) {
             return false;
@@ -1108,13 +1068,44 @@ public class DataController {
     private boolean isCompdep(UserEntity userEntity){
         String depId = userEntity.getDepId();
         Long dep = -1L;
-        if(org.apache.commons.lang3.StringUtils.isEmpty(depId)){
+        if(!StringUtils.isEmpty(depId)){
             dep = Long.parseLong(depId);
         }
-        if(DepType.COMPREHENSIVE_DEP.getDepId()==dep){
+        if(DepType.COMPREHENSIVE_DEP.getDepId()==dep||20==userEntity.getLevel()){
             return true;
         }
         return false;
+    }
+
+    /**
+     * 删除根据角色删除BusinessDataEntity中的字段
+     */
+    private synchronized void deleteBusinessDataEntity(Long dataId){
+
+            BusinessDataEntity businessDataEntity = businessDataDao.queryBusinessDataByKey(dataId);
+            userEntity = SessionUser.INSTANCE.getCurrentUser();
+            //如果是综合营运部，或者管理员则可以直接删除该条记录；否则只能清除该部门所有权限字段的内容,并更新数据
+            if (isCompdep(userEntity)) {
+                businessDataDao.deleteBusinessDataByID(dataId);
+                //同时删除还款、代偿、追偿、收退费信息，以机构ID+项目id+batchdate为删除条件
+                String batchDate = businessDataEntity.getBatchDate();
+                String orgId = businessDataEntity.getOrgId();
+                String projId = businessDataEntity.getProjId();
+                //删除收退费信息
+                feeAndRefundDao.deleteFeeAndRefundByCondition(batchDate,orgId,projId);
+                //删除还款信息
+                repaymentDao.deleteRepaymentByCondition(batchDate,orgId,projId);
+                //删除追偿信息
+                recourseDao.deleteRecourseByCondition(batchDate,orgId,projId);
+                //删除代偿信息
+                compensatoryDao.deleteCompensatoryByCondition(batchDate,orgId,projId);
+            } else {
+                //否则清除有权限部分的字段，并更新数据库
+                Map<String, FiedRoleCache.DepRoleRef> filedRoles = FiedRoleCache.mapDepRoleRefs(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
+                deleteBusinessDataEntity4Role(businessDataEntity, filedRoles, userEntity);
+                businessDataDao.updateBusinessData(businessDataEntity);
+            }
+
     }
 
 }

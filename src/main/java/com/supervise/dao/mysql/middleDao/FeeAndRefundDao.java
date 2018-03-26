@@ -79,7 +79,7 @@ public class FeeAndRefundDao {
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			feeAndRefundEntity.setUpdateDate(newDate);
-			id = this.feeAndRefundMapper.updateByPrimaryKeySelective(feeAndRefundEntity);
+			id = this.feeAndRefundMapper.updateByPrimaryKey(feeAndRefundEntity);
 		}
 		return id;
 	}
