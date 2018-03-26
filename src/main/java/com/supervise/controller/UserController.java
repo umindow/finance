@@ -38,21 +38,35 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/init")
     private String initUser(){
-        UserEntity userEntity = new UserEntity();
-        userEntity.setLevel(RoleType.MANAGER.getRoleLevel());
-        userEntity.setUserCnName("管理员");
-        userEntity.setUserName("admin");
-        userEntity.setUserStatus(UserEntity.UserStatus.ALIVE.getStatus());
-        List<Integer> dataLevels = Lists.newArrayList();
-        dataLevels.add(DataType.SUPERVISE_BANK_DATA.getDataLevel());
-        dataLevels.add(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
-        dataLevels.add(DataType.SUPERVISE_FEE_DATA.getDataLevel());
-        dataLevels.add(DataType.SUPERVISE_REPLACE_DATA.getDataLevel());
-        dataLevels.add(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
-        userEntity.setDataLevels(JSON.toJSONString(dataLevels));
-        userEntity.setDepId(String.valueOf(DepType.COMPREHENSIVE_DEP.getDepId()));
-        userEntity.setPassword("123456");
-        userMapper.insert(userEntity);
+        //先查询是否存在admin的账号，如果存在则直接更新密码，否则新建
+        Example example = new Example(UserEntity.class);
+        Example.Criteria fcriteria = example.createCriteria();
+        fcriteria.andEqualTo("userName", "admin");
+        List<UserEntity> responseList  = this.userMapper.selectByExample(example);
+
+        if(!CollectionUtils.isEmpty(responseList)){
+            for(UserEntity userEntity:responseList){
+                userEntity.setPassword("123456");
+                userMapper.updateByPrimaryKeySelective(userEntity);
+            }
+        }else{
+            UserEntity userEntity = new UserEntity();
+            userEntity.setLevel(RoleType.MANAGER.getRoleLevel());
+            userEntity.setUserCnName("管理员");
+            userEntity.setUserName("admin");
+            userEntity.setUserStatus(UserEntity.UserStatus.ALIVE.getStatus());
+            List<Integer> dataLevels = Lists.newArrayList();
+            dataLevels.add(DataType.SUPERVISE_BANK_DATA.getDataLevel());
+            dataLevels.add(DataType.SUPERVISE_BIZ_DATA.getDataLevel());
+            dataLevels.add(DataType.SUPERVISE_FEE_DATA.getDataLevel());
+            dataLevels.add(DataType.SUPERVISE_REPLACE_DATA.getDataLevel());
+            dataLevels.add(DataType.SUPERVISE_TRACE_DATA.getDataLevel());
+            userEntity.setDataLevels(JSON.toJSONString(dataLevels));
+            userEntity.setDepId(String.valueOf(DepType.COMPREHENSIVE_DEP.getDepId()));
+            userEntity.setPassword("123456");
+            userMapper.insert(userEntity);
+        }
+
         return "success";
     }
 

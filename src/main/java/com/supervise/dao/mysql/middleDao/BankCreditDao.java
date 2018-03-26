@@ -79,7 +79,7 @@ public class BankCreditDao {
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			bankCreditEntity.setUpdateDate(newDate);
-			id = this.bankCreditMapper.updateByPrimaryKeySelective(bankCreditEntity);
+			id = this.bankCreditMapper.updateByPrimaryKey(bankCreditEntity);
 		}
 		return id;
 	}

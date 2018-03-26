@@ -21,7 +21,7 @@ public class CellUtil {
 				value=item[0];
 			}
 		}
-		return value;
+		return value.trim();
 	}
 
 	/**

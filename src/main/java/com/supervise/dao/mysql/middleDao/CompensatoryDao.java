@@ -79,7 +79,7 @@ public class CompensatoryDao {
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			compensatoryEntity.setUpdateDate(newDate);
-			id = this.compensatoryMapper.updateByPrimaryKeySelective(compensatoryEntity);
+			id = this.compensatoryMapper.updateByPrimaryKey(compensatoryEntity);
 		}
 		return id;
 	}

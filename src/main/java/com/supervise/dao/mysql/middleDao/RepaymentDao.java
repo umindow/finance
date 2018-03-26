@@ -79,7 +79,7 @@ public class RepaymentDao{
 			String dateStr = new SimpleDateFormat(Constants.YYYY_MM_DD_HH_MM_SS).format(new Date());
 			Date newDate = DateUtils.String2Date(dateStr,Constants.YYYY_MM_DD_HH_MM_SS, Locale.ENGLISH);
 			repaymentEntity.setUpdateDate(newDate);
-			id = this.repaymentMapper.updateByPrimaryKeySelective(repaymentEntity);
+			id = this.repaymentMapper.updateByPrimaryKey(repaymentEntity);
 		}
 		return id;
 	}
