@@ -353,9 +353,9 @@ public class BusinessDataImport extends AbstractDataImport {
             boolean isComdep = isCompdep(getUserEntity());
             //删除不在导入EXCEL中的记录
             for(final BusinessDataEntity businessExsit : resList){
-                Long exsitId = businessExsit.getId();
-                String exsitclientId = businessExsit.getClientId();
-                String exsitclientName = businessExsit.getClientName();
+//                Long exsitId = businessExsit.getId();
+//                String exsitclientId = businessExsit.getClientId();
+//                String exsitclientName = businessExsit.getClientName();
                 String exsitorgid = businessExsit.getOrgId();
                 String exsitprojid = businessExsit.getProjId();
                 isMatch = false;
@@ -409,6 +409,7 @@ public class BusinessDataImport extends AbstractDataImport {
                         if(StringUtils.isEmpty(businessDataEntity.getBatchDate())){
                             businessDataEntity.setBatchDate(batchDate);
                         }
+                        businessDataEntity.setProjSatus(Constants.PROJ_STATUS_REINS);
                         this.businessDataDao.insertBusinessDataToMiddleDB(businessDataEntity);
                     }else{
                         logger.info("authority less ，deptID is ："+getUserEntity().getDepId());
