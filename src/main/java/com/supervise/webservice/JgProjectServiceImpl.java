@@ -1,14 +1,10 @@
 
 package com.supervise.webservice;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -17,7 +13,8 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "jgProjectServiceImpl", targetNamespace = "http://impl.webservice.why.com/", wsdlLocation = "http://10.3.4.81:9999/fios/webservice/jgProjectServiceImpl?wsdl")
+@WebServiceClient(name = "jgProjectServiceImpl", targetNamespace = "http://impl.webservice.why.com/", wsdlLocation = "http://10.3.4.81:8888/fios/webservice/jgProjectServiceImpl?wsdl")
+//"http://10.3.4.81:9999/fios/webservice/jgProjectServiceImpl?wsdl"
 public class JgProjectServiceImpl
     extends Service
 {
@@ -30,7 +27,8 @@ public class JgProjectServiceImpl
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://10.3.4.81:9999/fios/webservice/jgProjectServiceImpl?wsdl");
+            url = new URL("http://10.3.4.81:8888/fios/webservice/jgProjectServiceImpl?wsdl");
+            //url = new URL("http://10.3.4.81:9999/fios/webservice/jgProjectServiceImpl?wsdl");//
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
